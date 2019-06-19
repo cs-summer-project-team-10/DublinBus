@@ -2,10 +2,11 @@
 <body>
     <p>Hi there!</p>
     <p>It works!</p>
-    {% for item in markers %}
-      <h2> {{ item.name }}</h2>
-      {{ item.lat }} <br>
-      {{ item.long }}
+    {% for stop in bus_stops %}
+      <h2> {{ stop.name }}</h2>
+      {{ stop.stat_number }}<br>
+      {{ stop.lat }} <br>
+      {{ stop.long }}
     {% endfor %}
 </body>
 </html>

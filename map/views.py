@@ -18,6 +18,6 @@ def send_json(request):
     bus_stops = BusStop.objects.all()
     bus_stop_list = []
     for bus_stop in bus_stops:
-        bus_stop_list.append((bus_stop.stat_number, bus_stop.name, bus_stop.lat, bus_stop.long))
+        bus_stop_list.append((bus_stop.stat_number, bus_stop.name, bus_stop.lat, bus_stop.lng))
 
     return JsonResponse({'JSONdata': bus_stop_list})

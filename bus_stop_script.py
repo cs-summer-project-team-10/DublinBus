@@ -16,7 +16,7 @@ with open("bus_locations.csv", "r") as f:
         name = row[1]
         lat = row[2]
         lng = row[3]
-        BusStop.objects.get_or_create(stat_number=stat_id, name=name, lat=lat, long=lng)
+        BusStop.objects.get_or_create(stat_number=stat_id, name=name, lat=lat, lng=lng)
 
 
 with open("Routes.csv", "r") as f:
@@ -27,7 +27,7 @@ with open("Routes.csv", "r") as f:
          routeName = row[1]
          Routes.objects.get_or_create(routeID=routeID, routeName=routeName)
 
-
+'''
 with open("rt_leavetimes_2017_I_DB_1000.txt", "r") as f:
     reader = csv.reader(f, delimiter=';')
     next(reader, None)
@@ -109,3 +109,4 @@ with open("rt_Vehicle.txt", "r") as f:
         Trip.objects.get_or_create(Datasource=datasource, Dayofservice=dayofservice,
                                 VehicleID=vehicleid, Distance=distance,Minutes=minutes,
                                 Lastupdate=lastupdate, Note=note)
+'''

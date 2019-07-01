@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'map',
+    'map.apps.MapConfig',
 ]
 
 MIDDLEWARE = [
@@ -78,8 +78,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'dub_bus',
-        'USER': 'stephen',
-        'PASSWORD': '1993',
+        'USER': 'postgres',
+        'PASSWORD': 'steve003',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }

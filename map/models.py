@@ -21,7 +21,7 @@ class RouteStops(models.Model):
 class Routes(models.Model):
 
     routeID  = models.IntegerField(verbose_name='Route ID', primary_key=True)
-    routeName = models.CharField(verbose_name='Route Name', max_length=50)
+    routeName = models.CharField(verbose_name='Route Name', unique=True, max_length=50)
 
 '''
 class Vehicle(models.Model):
@@ -33,10 +33,8 @@ class Vehicle(models.Model):
     Minutes = models.IntegerField(verbose_name='Time worked by the vehicle in the corresponding day')
     LastUpdate = models.CharField(verbose_name='Time of the last record update',max_length=100)
     Note = models.CharField(verbose_name='Free note',max_length=255)
-
-
-
 '''
+
 
 class Trip(models.Model):
 
@@ -57,8 +55,9 @@ class Trip(models.Model):
     JustificationID = models.IntegerField(verbose_name='Fault code')
     LastUpdate = models.CharField(verbose_name='Time of the last record update',max_length=100)
     Note = models.CharField(verbose_name='Free note',max_length=255)
-'''
 
+
+'''
 class LeaveTime(models.Model):
 
     DataSource = models.CharField( verbose_name = 'Unique Bus Operator Code',max_length=50)

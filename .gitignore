@@ -3,4 +3,3 @@ myenv
 *.pyc
 __ pycache __
 .DS_Store
-.idea

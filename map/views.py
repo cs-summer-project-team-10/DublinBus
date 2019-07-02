@@ -32,7 +32,7 @@ def return_id(num):
     return route_stops_list
 
 
-def send_data(request):
+def send_jdata(request):
     ''' Django API that will return the bus stop data as JSON data
     '''
     num1=2

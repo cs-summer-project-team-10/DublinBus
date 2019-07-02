@@ -9,6 +9,21 @@ class BusStop(models.Model):
     lng = models.FloatField(null=True, verbose_name = 'Longitude')
 
 
+class RouteStops(models.Model):
+
+    routeID= models.ForeignKey( 'Routes', on_delete=models.CASCADE)
+    # routeID = models.IntegerField(verbose_name='Route ID')
+    # stopID = models.IntegerField(verbose_name='Route Name', max_length=50)
+    stopID = models.ForeignKey( 'BusStop', on_delete=models.CASCADE)
+    stop_order =models.IntegerField(verbose_name='Route Name')
+
+
+class Routes(models.Model):
+
+    routeID  = models.IntegerField(verbose_name='Route ID', primary_key=True)
+    routeName = models.CharField(verbose_name='Route Name', max_length=50)
+
+'''
 class Vehicle(models.Model):
 
     DataSource = models.CharField( verbose_name = 'Unique Bus Operator Code',max_length=50)
@@ -20,7 +35,9 @@ class Vehicle(models.Model):
     Note = models.CharField(verbose_name='Free note',max_length=255)
 
 
+
 '''
+
 class Trip(models.Model):
 
     DataSource = models.CharField( verbose_name = 'Unique Bus Operator Code',max_length=50)
@@ -41,9 +58,6 @@ class Trip(models.Model):
     LastUpdate = models.CharField(verbose_name='Time of the last record update',max_length=100)
     Note = models.CharField(verbose_name='Free note',max_length=255)
 '''
-
-
-
 
 class LeaveTime(models.Model):
 
@@ -71,18 +85,14 @@ class LeaveTime(models.Model):
 
 
 
+class TrackingRawData(models.Model):
 
-
-
-'''
- class TrackingRawData(models.Model):
-
-     DataSource = models.CharField(verbose_name = 'Unique Bus Operator Code',max_length=50)
-     DayOfService = models.CharField(verbose_name='Day of service,One day of service could last more than 24 hours',max_length=100)
-     VehicleID = models.CharField(verbose_name='Unique vehicle code', max_length=50)
-     TimePos = models.CharField(verbose_name='Time of the tracking',max_length=100)
-     TripID = models.CharField(verbose_name='Unique trip code', max_length=50)
-     PosX = models.IntegerField(verbose_name='Longitude')
+    DataSource = models.CharField(verbose_name = 'Unique Bus Operator Code',max_length=50)
+    DayOfService = models.CharField(verbose_name='Day of service,One day of service could last more than 24 hours',max_length=100)
+    VehicleID = models.CharField(verbose_name='Unique vehicle code', max_length=50)
+    TimePos = models.CharField(verbose_name='Time of the tracking',max_length=100)
+    TripID = models.CharField(verbose_name='Unique trip code', max_length=50)
+    PosX = models.IntegerField(verbose_name='Longitude')
     PosY = models.IntegerField(verbose_name='Latitude')
     Odometer = models.IntegerField(verbose_name='Odometer of the vehicle')
     TripOdometer = models.IntegerField(verbose_name='Odometer for the trip')
@@ -90,35 +100,8 @@ class LeaveTime(models.Model):
     PassengersOut = models.IntegerField(verbose_name='Number of descended passengers')
 
 
-
 class Justification(models.Model):
 
     DataSource = models.CharField(primary_key=True, verbose_name = 'Unique Bus Operator Code',max_length=50)
     JustificationID = models.IntegerField(verbose_name='Unique Variation Code')
-
-
 '''
-class RouteStops(models.Model):
-
-    routeID= models.ForeignKey( 'Routes', on_delete=models.CASCADE)
-
-    # routeID = models.IntegerField(verbose_name='Route ID')
-    # stopID = models.IntegerField(verbose_name='Route Name', max_length=50)
-
-    stopID = models.ForeignKey( 'BusStop', on_delete=models.CASCADE)
-
-    stop_order =models.IntegerField(verbose_name='Route Name')
-
-class Routes(models.Model):
-
-    routeID  = models.IntegerField(verbose_name='Route ID', primary_key=True)
-
-    routeName = models.CharField(unique=True ,verbose_name='Route Name', max_length=50)
-
-
-
-
-
-
-
-

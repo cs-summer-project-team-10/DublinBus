@@ -1,9 +1,10 @@
-from django.shortcuts import render
-from .models import BusStop,RouteStops,Routes,LeaveTime,Trip,Vehicle
+from django.shortcuts import render, get_object_or_404
+#from .models import BusStop,RouteStops,Routes,LeaveTime,Trip,Vehicle,TrackingRawData,Justification
+from .models import BusStop,RouteStops, Routes
 from django.http import JsonResponse
 
 # Create your views here.
-def display(request):
+def Display(request):
     ''' Simple view that renders the index html template with all the bus stop information
         using Jinja2
     '''
@@ -21,6 +22,7 @@ def send_json(request):
         bus_stop_list.append((bus_stop.stat_number, bus_stop.name, bus_stop.lat, bus_stop.long))
 
     return JsonResponse({'JSONdata': bus_stop_list})
+
 
 def return_id(num):
     route_stops = RouteStops.objects.filter(stopID=num)
@@ -65,4 +67,3 @@ def send_data(request):
         # return JsonResponse({'commondata': common})
 
     # return JsonResponse({'JSONdata': route_stops_list2})
-

@@ -1,4 +1,4 @@
-mport csv
+import csv
 import os
 from django.shortcuts import get_object_or_404
 
@@ -7,7 +7,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE','website.settings')
 import django
 django.setup()
 
-from map.models import BusStop,RouteStops,Routes,LeaveTime,Trip,Vehicle,TrackingRawData,Justification
+from map.models import RouteStops, Routes, BusStop
 
 with open("Route_Stops.csv", "r") as f:
     reader = csv.reader(f, delimiter=',')

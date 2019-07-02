@@ -7,7 +7,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE','website.settings')
 import django
 django.setup()
 
-from map.models import BusStop,RouteStops,Routes,LeaveTime,Trip,Vehicle,TrackingRawData,Justification
+from map.models import BusStop,Routes
+#from map.models import BusStop,RouteStops,Routes,LeaveTime,Trip,Vehicle,TrackingRawData,Justification
 
 with open("bus_locations.csv", "r") as f:
     reader = csv.reader(f, delimiter=',')

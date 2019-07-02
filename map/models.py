@@ -9,6 +9,21 @@ class BusStop(models.Model):
     lng = models.FloatField(null=True, verbose_name = 'Longitude')
 
 
+class RouteStops(models.Model):
+
+    routeID= models.ForeignKey( 'Routes', on_delete=models.CASCADE)
+    # routeID = models.IntegerField(verbose_name='Route ID')
+    # stopID = models.IntegerField(verbose_name='Route Name', max_length=50)
+    stopID = models.ForeignKey( 'BusStop', on_delete=models.CASCADE)
+    stop_order =models.IntegerField(verbose_name='Route Name')
+
+
+class Routes(models.Model):
+
+    routeID  = models.IntegerField(verbose_name='Route ID', primary_key=True)
+    routeName = models.CharField(verbose_name='Route Name', max_length=50)
+
+'''
 class Vehicle(models.Model):
 
     DataSource = models.CharField( verbose_name = 'Unique Bus Operator Code',max_length=50)
@@ -82,16 +97,4 @@ class Justification(models.Model):
     DataSource = models.CharField(primary_key=True, verbose_name = 'Unique Bus Operator Code',max_length=50)
     JustificationID = models.IntegerField(verbose_name='Unique Variation Code')
 
-
-class RouteStops(models.Model):
-
-    routeID= models.ForeignKey( 'Routes', on_delete=models.CASCADE)
-    # routeID = models.IntegerField(verbose_name='Route ID')
-    # stopID = models.IntegerField(verbose_name='Route Name', max_length=50)
-    stopID = models.ForeignKey( 'BusStop', on_delete=models.CASCADE)
-    stop_order =models.IntegerField(verbose_name='Route Name')
-
-class Routes(models.Model):
-
-    routeID  = models.IntegerField(verbose_name='Route ID', primary_key=True)
-    routeName = models.CharField(verbose_name='Route Name', max_length=50)
+'''

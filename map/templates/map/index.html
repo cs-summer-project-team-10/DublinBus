@@ -207,6 +207,11 @@
     </script>
      <script>
 
+     var getUrl = window.location;
+     // Get the local url.
+     var map_Url = getUrl.protocol + "//" + getUrl.host + "/";         
+         
+         
  function initMap() {
 //    var getUrl = window.location;
 //     // Get the local url.
@@ -215,9 +220,7 @@
              var latlngbounds = new google.maps.LatLngBounds();
 //     var map_Url = "127.0.0.1:8000/Dublin_map/send_jason";
 
-     var getUrl = window.location;
-     // Get the local url.
-     var map_Url = getUrl.protocol + "//" + getUrl.host + "/" + "json";
+
 
 
 
@@ -275,7 +278,7 @@ var MapOption = {
 
                     for (var i = 0; i < markers.length; i++) {
 
-                 stopset[i] = markers[i][1];
+                 stopset[i] = markers[i][1] + " (Stop " + markers[i][0] + ")";
 
                     }
 
@@ -331,24 +334,24 @@ function hideTimeAndDataPicker() {
    $('#searchbutton').click(function () {
 
 //                csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
-//                var startstop = $('#startInput').val();
-//                var endstop = $('#destitationInput').val();
-
-//            $.get("/routes/",{'startstop':startstop,'endstop':endstop}, function(ret){
-//            $('#result').html(ret)
-//    })
+                var startstop = parseInt($('#startInput').val().substring($('#startInput').val().indexOf("(") + 6, $('#startInput').val().indexOf(")")));
+                var endstop = parseInt($('#destitationInput').val().substring($('#destitationInput').val().indexOf("(") + 6, $('#destitationInput').val().indexOf(")")));
 
     $.ajax({
-        url: '../../static/common_routes_API.json',
+        url: map_Url + "routes",
         async: false,
-        success: function (data) {
+        data: {
+               startstop: startstop,
+               endstop: endstop
+               },
+        success: function (result) {
         var MapOption = {
            center: {lat: 53.350140, lng: -6.266155},
            zoom: 14,
            mapTypeId: google.maps.MapTypeId.ROADMAP
            };
         var map2 = new google.maps.Map(document.getElementById('map'), MapOption);
-            var commonroutes = data.common_routes;
+            var commonroutes = result.commondata;
             var pathArray = new Array();
 //            var deleteArray = new Array();
             for (var i = 0; i < commonroutes.length; i++) {
@@ -384,7 +387,7 @@ function hideTimeAndDataPicker() {
           strokeWeight: 4
         });
 
-        flightPath.setMap(map2);
+//        flightPath.setMap(map2);
 //        map2.removeOverlay(deleteArray);
 
 

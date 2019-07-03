@@ -22,13 +22,23 @@ def Display(request):
 
 # # Below it the test code written by James Su, please feel free to modify or delete it if anyone needs that
 
-def send_data(request):
+def return_id(num):
+   route_stops = RouteStops.objects.filter(stopID=num)
+   route_stops_list = []
+   for route_stop in route_stops:
+       route_stops_list.append(route_stop.routeID.routeID)
+   return route_stops_list
+
+
+
+
+def return_routes(request):
     ''' Django API that will return the bus stop data as JSON data
     '''
-    num1=7
-    num2=18
-    list1=return_id(num1)
-    list2=return_id(num2)
+    num1 = request.GET['startstop']
+    num2 = request.GET['endstop']
+    list1 = return_id(num1)
+    list2 = return_id(num2)
     common = [val for val in list1 if val in list2]
     route_stops_order = []
     route_all_stops = []
@@ -57,11 +67,3 @@ def send_data(request):
         # return JsonResponse({'commondata': common})
 
     # return JsonResponse({'JSONdata': route_stops_list2})
-
-def routes(request):
-
-    startstop = request.GET['startstop']
-    endstop = request.GET['endstop']
-    routelane = "Success ! " + " Start:  " + startstop + ",   " + " End: " + endstop
-    r = HttpResponse(routelane)
-    return r

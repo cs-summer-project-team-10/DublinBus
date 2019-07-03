@@ -1,7 +1,11 @@
+
 from django.shortcuts import render, get_object_or_404
 #from .models import BusStop,RouteStops,Routes,LeaveTime,Trip,Vehicle,TrackingRawData,Justification
 from .models import BusStop,RouteStops, Routes
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import HttpResponse, render, redirect
+import json
+
 
 # Create your views here.
 def Display(request):
@@ -9,28 +13,14 @@ def Display(request):
         using Jinja2
     '''
     bus_stops = BusStop.objects.all()
-    return render(request, 'map/index.html', {'bus_stops': bus_stops})
-
-
-def send_json(request):
-    ''' Django API that will return the bus stop data as JSON data
-    '''
-
-    bus_stops = BusStop.objects.all()
     bus_stop_list = []
     for bus_stop in bus_stops:
-        bus_stop_list.append((bus_stop.stat_number, bus_stop.name, bus_stop.lat, bus_stop.long))
+        bus_stop_list.append((bus_stop.stat_number, bus_stop.name, bus_stop.lat, bus_stop.lng))
+    return render(request, 'map/index.html', {'JSONdata': json.dumps(bus_stop_list)})
 
-    return JsonResponse({'JSONdata': bus_stop_list})
 
 
-def return_id(num):
-    route_stops = RouteStops.objects.filter(stopID=num)
-    route_stops_list = []
-    for route_stop in route_stops:
-        route_stops_list.append(route_stop.routeID.routeID)
-    return route_stops_list
-
+# # Below it the test code written by James Su, please feel free to modify or delete it if anyone needs that
 
 def send_data(request):
     ''' Django API that will return the bus stop data as JSON data
@@ -67,3 +57,11 @@ def send_data(request):
         # return JsonResponse({'commondata': common})
 
     # return JsonResponse({'JSONdata': route_stops_list2})
+
+def routes(request):
+
+    startstop = request.GET['startstop']
+    endstop = request.GET['endstop']
+    routelane = "Success ! " + " Start:  " + startstop + ",   " + " End: " + endstop
+    r = HttpResponse(routelane)
+    return r

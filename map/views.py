@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from .models import BusStop
-from django.http import JsonResponse
+from django.http import HttpResponse
+from django.shortcuts import HttpResponse, render, redirect 
+import json
 
 # Create your views here.
 def display(request):
@@ -8,16 +10,19 @@ def display(request):
         using Jinja2
     '''
     bus_stops = BusStop.objects.all()
-    return render(request, 'map/index.html', {'bus_stops': bus_stops})
-
-
-def send_json(request):
-    ''' Django API that will return the bus stop data as JSON data
-    '''
-
-    bus_stops = BusStop.objects.all()
     bus_stop_list = []
     for bus_stop in bus_stops:
         bus_stop_list.append((bus_stop.stat_number, bus_stop.name, bus_stop.lat, bus_stop.lng))
+    return render(request, 'map/index.html', {'JSONdata': json.dumps(bus_stop_list)})
 
-    return JsonResponse({'JSONdata': bus_stop_list})
+
+
+# # Below it the test code written by James Su, please feel free to modify or delete it if anyone needs that
+
+def routes(request):
+    
+    startstop = request.GET['startstop']
+    endstop = request.GET['endstop']
+    routelane = "Success ! " + " Start:  " + startstop + ",   " + " End: " + endstop
+    r = HttpResponse(routelane)
+    return r

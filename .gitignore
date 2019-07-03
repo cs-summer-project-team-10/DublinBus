@@ -1,6 +1,6 @@
-bus_locations.csv
 db.sqlite3
 myenv
 *.pyc
 __ pycache __
 .DS_Store
+migrations/

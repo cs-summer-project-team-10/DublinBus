@@ -35,8 +35,8 @@ def return_id(num):
 def send_data(request):
     ''' Django API that will return the bus stop data as JSON data
     '''
-    num1=2
-    num2=19
+    num1=7
+    num2=18
     list1=return_id(num1)
     list2=return_id(num2)
     common = [val for val in list1 if val in list2]

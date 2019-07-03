@@ -4,3 +4,4 @@ myenv
 __ pycache __
 .DS_Store
 map/migrations/
+website/settings.py

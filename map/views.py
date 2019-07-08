@@ -8,7 +8,7 @@ import json
 
 
 # Create your views here.
-def Display(request):
+def home_page(request):
     ''' Simple view that renders the index html template with all the bus stop information
         using Jinja2
     '''
@@ -19,8 +19,12 @@ def Display(request):
     return render(request, 'map/index.html', {'JSONdata': json.dumps(bus_stop_list)})
 
 
-
-# # Below it the test code written by James Su, please feel free to modify or delete it if anyone needs that
+def return_id(num):
+    route_stops = RouteStops.objects.filter(stopID=num)
+    route_stops_list = []
+    for route_stop in route_stops:
+        route_stops_list.append(route_stop.routeID.routeID)
+    return route_stops_list
 
 def return_id(num):
    route_stops = RouteStops.objects.filter(stopID=num)

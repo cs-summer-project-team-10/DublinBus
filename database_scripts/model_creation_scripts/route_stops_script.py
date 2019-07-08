@@ -1,15 +1,14 @@
-import csv
-import os
+import csv, os, django, sys
 from django.shortcuts import get_object_or_404
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE','website.settings')
+sys.path.append('../../')
 
-import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE','website.settings')
 django.setup()
 
 from map.models import RouteStops, Routes, BusStop
 
-with open("Route_Stops.csv", "r") as f:
+with open("../csvs/route_stops.csv", "r") as f:
     reader = csv.reader(f, delimiter=',')
     next(reader, None)
     for row in reader:

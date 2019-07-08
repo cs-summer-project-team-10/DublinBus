@@ -6,18 +6,19 @@ sys.path.append('../../')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE','website.settings')
 django.setup()
 
-from map.models import BusStop,Routes
+from map.models import BusStop,Route
 
-with open("../csvs/bus_locations.csv", "r") as f:
-    reader = csv.reader(f, delimiter=',')
+with open("../csvs/bus_stops.csv", "r") as read_file:
+    reader = csv.reader(read_file, delimiter=',')
+    next(reader, None)
     for row in reader:
-        stat_id = row[0]
-        name = row[1]
-        lat = row[2]
-        lng = row[3]
-        BusStop.objects.get_or_create(stat_number=stat_id, name=name, lat=lat, lng=lng)
+        stop_id = row[1]
+        stop_name = row[2]
+        lat = float(row[3])
+        lng = float(row[4])
+        BusStop.objects.get_or_create(stop_id=stop_id, stop_name=stop_name, lat=lat, lng=lng)
 
-
+'''
 with open("../csvs/routes.csv", "r") as f:
      reader = csv.reader(f, delimiter=',')
      next(reader, None)
@@ -25,3 +26,4 @@ with open("../csvs/routes.csv", "r") as f:
          routeID = row[0]
          routeName = row[1]
          Routes.objects.get_or_create(routeID=routeID, routeName=routeName)
+'''

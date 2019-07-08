@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8e6807dd-ed0d-43bd-97b2-c5decd06aa31" name="Default Changelist" comment="" />
+    <list default="true" id="8e6807dd-ed0d-43bd-97b2-c5decd06aa31" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/model_copy.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/map/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/map/views.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,11 +18,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/map/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="29" column="6" lean-forward="true" selection-start-line="29" selection-start-column="6" selection-end-line="29" selection-end-column="6" />
+            <state relative-caret-position="285">
+              <caret line="15" column="108" selection-start-line="15" selection-start-column="108" selection-end-line="15" selection-end-column="108" />
             </state>
           </provider>
         </entry>
@@ -25,7 +30,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/map/templates/map/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
+            <state relative-caret-position="171">
               <caret line="9" column="21" lean-forward="true" selection-start-line="9" selection-start-column="21" selection-end-line="9" selection-end-column="21" />
             </state>
           </provider>
@@ -34,8 +39,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/map/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="7" column="94" lean-forward="true" selection-start-line="7" selection-start-column="94" selection-end-line="7" selection-end-column="94" />
+            <state relative-caret-position="114">
+              <caret line="7" column="1" lean-forward="true" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -46,7 +51,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/website/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
+            <state relative-caret-position="285">
               <caret line="15" selection-start-line="15" selection-end-line="15" />
               <folding>
                 <element signature="e#631#663#0" expanded="true" />
@@ -55,14 +60,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/map/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
+            <state relative-caret-position="114">
               <caret line="11" column="42" selection-start-line="11" selection-start-column="42" selection-end-line="11" selection-end-column="42" />
-              <folding>
-                <element signature="e#0#54#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -88,12 +90,12 @@
         <option value="$PROJECT_DIR$/bus_stop_script.py" />
         <option value="$PROJECT_DIR$/map/urls.py" />
         <option value="$PROJECT_DIR$/map/orderid.py" />
-        <option value="$PROJECT_DIR$/map/models.py" />
         <option value="$PROJECT_DIR$/map/views.py" />
+        <option value="$PROJECT_DIR$/map/models.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="160" />
     <option name="y" value="185" />
     <option name="width" value="1750" />
@@ -105,46 +107,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="dublin" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dublin" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dublin" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dublin" type="462c0819:PsiDirectoryNode" />
-              <item name="DublinBus-development" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dublin" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dublin" type="462c0819:PsiDirectoryNode" />
-              <item name="map" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dublin" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dublin" type="462c0819:PsiDirectoryNode" />
-              <item name="map" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dublin" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dublin" type="462c0819:PsiDirectoryNode" />
-              <item name="map" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="map" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dublin" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dublin" type="462c0819:PsiDirectoryNode" />
-              <item name="website" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="Scope" />
+      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -280,11 +244,10 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Django server.DublinBus-development" />
-      <item itemvalue="Python.manage" />
       <item itemvalue="Python.bus_stop_script" />
-      <item itemvalue="Python.views" />
+      <item itemvalue="Python.manage" />
       <item itemvalue="Python.utils" />
+      <item itemvalue="Python.views" />
     </list>
     <recent_temporary>
       <list>
@@ -327,11 +290,11 @@
     <option name="totallyTimeSpent" value="74280000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.3016086" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.30136988" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" order="0" />
       <window_info anchor="bottom" id="Terminal" order="1" weight="0.32921812" />
@@ -404,20 +367,8 @@
     <entry file="file://$PROJECT_DIR$/map/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/envs/dublinbus/Lib/importlib/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1076">
-          <caret line="126" selection-start-line="126" selection-end-line="126" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/envs/dublinbus/Lib/site-packages/django/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="145">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/envs/dublinbus/Lib/importlib/__init__.py" />
+    <entry file="file://$USER_HOME$/Anaconda3/envs/dublinbus/Lib/site-packages/django/__init__.py" />
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -426,13 +377,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/envs/dublinbus/Lib/site-packages/django/conf/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="145">
-          <caret line="78" selection-start-line="78" selection-end-line="78" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/envs/dublinbus/Lib/site-packages/django/conf/__init__.py" />
     <entry file="file://$PROJECT_DIR$/map/admin.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -495,13 +440,7 @@
         <state relative-caret-position="-1917" />
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/envs/dublinbus/Lib/site-packages/django/db/backends/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="85" column="27" selection-start-line="85" selection-start-column="27" selection-end-line="85" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/envs/dublinbus/Lib/site-packages/django/db/backends/utils.py" />
     <entry file="file://$PROJECT_DIR$/rt_Vehicle.csv">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -509,27 +448,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/map/orderid.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="21" column="14" lean-forward="true" selection-start-line="21" selection-start-column="8" selection-end-line="23" selection-end-column="49" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/map/orderid.py" />
+    <entry file="file://$PROJECT_DIR$/bus_stop_script.py" />
     <entry file="file://$PROJECT_DIR$/map/templates/map/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
+        <state relative-caret-position="171">
           <caret line="9" column="21" lean-forward="true" selection-start-line="9" selection-start-column="21" selection-end-line="9" selection-end-column="21" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/map/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="7" column="94" lean-forward="true" selection-start-line="7" selection-start-column="94" selection-end-line="7" selection-end-column="94" />
+        <state relative-caret-position="114">
+          <caret line="7" column="1" lean-forward="true" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
@@ -538,7 +469,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/website/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
+        <state relative-caret-position="285">
           <caret line="15" selection-start-line="15" selection-end-line="15" />
           <folding>
             <element signature="e#631#663#0" expanded="true" />
@@ -546,30 +477,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bus_stop_script.py">
+    <entry file="file://$PROJECT_DIR$/map/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1601">
-          <caret line="96" column="29" lean-forward="true" selection-start-line="96" selection-start-column="29" selection-end-line="96" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="114">
+          <caret line="11" column="42" selection-start-line="11" selection-start-column="42" selection-end-line="11" selection-end-column="42" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/map/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="29" column="6" lean-forward="true" selection-start-line="29" selection-start-column="6" selection-end-line="29" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/map/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="11" column="42" selection-start-line="11" selection-start-column="42" selection-end-line="11" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#54#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="285">
+          <caret line="15" column="108" selection-start-line="15" selection-start-column="108" selection-end-line="15" selection-end-column="108" />
         </state>
       </provider>
     </entry>

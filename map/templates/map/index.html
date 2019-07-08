@@ -106,7 +106,6 @@
             <div class="row last">
               <button class="btn-search" type="button" id="searchbutton">Search</button>
             </div>
-            <p style="color: white" action="/routes/" method="get">result: <span id='result'></span></p>
           </div>
         </div>
         <div class="information">
@@ -238,12 +237,12 @@ var MapOption = {
 //                type: "get",
 //                dataType: "json",
 //                success: function (content) {
-                var markers = {{JSONdata|safe}};
+                 var markers = {{JSONdata|safe}};
                     for (var i = 0; i < 30; i++) {
 
-                 var busstop = markers[i];
+                  var busstop = markers[i];
                  var myLatlng = {lat: busstop[2], lng: busstop[3]};
-
+ 
 
                      var marker = new google.maps.Marker({
                          position: myLatlng,
@@ -336,6 +335,14 @@ function hideTimeAndDataPicker() {
 //                csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
                 var startstop = parseInt($('#startInput').val().substring($('#startInput').val().indexOf("(") + 6, $('#startInput').val().indexOf(")")));
                 var endstop = parseInt($('#destitationInput').val().substring($('#destitationInput').val().indexOf("(") + 6, $('#destitationInput').val().indexOf(")")));
+                         var infoWindow = new google.maps.InfoWindow();
+             var latlngbounds = new google.maps.LatLngBounds();
+            var markers = {{JSONdata|safe}};
+             for (var i = 0; i < 30; i++) {
+
+                  var busstop = markers[i];
+       
+   }
 
     $.ajax({
         url: map_Url + "routes",
@@ -374,7 +381,19 @@ function hideTimeAndDataPicker() {
 
                      });
 
+                    (function (marker, busstop) {
+                     google.maps.event.addListener(marker, "click", function (e) {
 
+
+                                 infoWindow.setContent("<div style = 'width: 200px; min-height: 40px; font-style: italic; font-weight: 800'>" + "Stop ID: " + busstop[0] + "<br>" + "Address: " + busstop[1] + "</div>");
+                                 infoWindow.open(map2, marker);
+
+
+
+
+                     });
+                 })(marker, busstop);
+                 latlngbounds.extend(marker.position);
 
                 }
             }
@@ -426,7 +445,7 @@ function hideTimeAndDataPicker() {
 
 
 
- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAR48jLtATZO3aZWwS9CICs4Q8CDGpzVm8&callback=initMap"
+ <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFj_OVOzGe5xHdcq4CqpikFfrnk7AP1p8&callback=initMap"
  async defer></script>
   </body><!-- This templates was made by Colorlib (https://colorlib.com) -->
 </html>

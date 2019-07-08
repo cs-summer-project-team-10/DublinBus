@@ -5,5 +5,5 @@ __ pycache __
 .DS_Store
 map/migrations/*
 website/settings.py
-.idea
+.idea/*
 DublinBus-development

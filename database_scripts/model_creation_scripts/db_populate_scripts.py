@@ -12,7 +12,7 @@ with open("../csvs/bus_stops.csv", "r") as read_file:
     reader = csv.reader(read_file, delimiter=',')
     next(reader, None)
     for row in reader:
-        stop_id = row[1]
+        stop_id = int(row[1])
         stop_name = row[2]
         lat = float(row[3])
         lng = float(row[4])

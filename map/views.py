@@ -8,7 +8,7 @@ import json
 
 
 # Create your views here.
-def Display(request):
+def home_page(request):
     ''' Simple view that renders the index html template with all the bus stop information
         using Jinja2
     '''

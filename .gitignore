@@ -3,5 +3,5 @@ myenv
 *.pyc
 __ pycache __
 .DS_Store
-map/migrations/
+map/migrations/*
 website/settings.py

@@ -26,26 +26,19 @@ def return_id(num):
         route_stops_list.append(route_stop.routeID.routeID)
     return route_stops_list
 
-def return_id(num):
-   route_stops = RouteStops.objects.filter(stop_id=num)
-   route_stops_list = []
-   for route_stop in route_stops:
-       route_stops_list.append(route_stop.route_id.route_id)
-   return route_stops_list
-
-
-
 
 def return_routes(request):
     ''' Django API that will return the bus stop data as JSON data
     '''
-    num1 = request.GET['startstop']
-    num2 = request.GET['endstop']
-    list1 = return_id(num1)
-    list2 = return_id(num2)
+    start_stop = request.GET['startstop']
+    dest_stop = request.GET['endstop']
+    list1 = return_id(start_stop)
+    list2 = return_id(dest_stop)
     common = [val for val in list1 if val in list2]
     route_stops_order = []
     route_all_stops = []
+
+    print("common: " + str(common))
 
     if len(common):
         for com_route in common:
@@ -71,3 +64,51 @@ def return_routes(request):
         # return JsonResponse({'commondata': common})
 
     # return JsonResponse({'JSONdata': route_stops_list2})
+
+
+class TempRoute():
+    def __init__(self, line_id, route_id, number_stops):
+        self.line_id = line_id
+        self.route_id = route_id
+        #self.number_stops = number_stops
+
+    def get_stop_list(self):
+        self.stops_serviced = []
+
+
+def return_routes2(request):
+    '''
+    '''
+
+    start_stop = request.GET['startstop']
+    dest_stop = request.GET['endstop']
+
+    start_stop = BusStop.objects.get(stop_id = start_stop)
+    dest_stop = BusStop.objects.get(stop_id = dest_stop)
+
+    start_stop_routes_serviced = start_stop.routes_serviced()
+    dest_stop_routes_serviced = dest_stop.routes_serviced()
+
+    print("start", start_stop_routes_serviced)
+    print("End", dest_stop_routes_serviced)
+
+    #common_routes = start_stop_routes_serviced.intersection(dest_stop_routes_serviced)
+    common_routes = [route for route in start_stop_routes_serviced if route in dest_stop_routes_serviced]
+
+    print("common", common_routes)
+
+    stop_list = []
+    for route in common_routes:
+        stops = list(RouteStops.objects.values_list('stop_id', 'stop_order').filter(route_id = route))
+        stop_list += stops
+
+    print(stop_list)
+
+'''
+    common_routes_info_dict = {}
+    for common_route in common_routes:
+        common_routes_info_dict[common_route] = Route(common_route, 11)
+
+    for key in common_routes_info_dict:
+        print("Key",key)
+'''

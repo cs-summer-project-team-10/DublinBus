@@ -8,6 +8,10 @@ class BusStop(models.Model):
     lat = models.FloatField(null=True, verbose_name='Latitude')
     lng = models.FloatField(null=True, verbose_name='Longitude')
 
+    def routes_serviced(self):
+        #route_stop_objects = RouteStops.objects.filter(stop_id = self.stop_id)
+        routes = list(RouteStops.objects.values_list('route_id', flat=True).filter(stop_id = self.stop_id))
+        return routes
 
 class RouteStops(models.Model):
 

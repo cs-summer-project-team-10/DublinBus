@@ -7,3 +7,4 @@ map/migrations/*
 website/settings.py
 .idea/*
 DublinBus-development
+README.md

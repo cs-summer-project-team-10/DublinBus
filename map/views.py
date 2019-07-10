@@ -18,54 +18,6 @@ def home_page(request):
         bus_stop_list.append((bus_stop.stop_id, bus_stop.stop_name, bus_stop.lat, bus_stop.lng))
     return render(request, 'map/index.html', {'JSONdata': json.dumps(bus_stop_list)})
 
-
-def return_id(num):
-    route_stops = RouteStops.objects.filter(stopID=num)
-    route_stops_list = []
-    for route_stop in route_stops:
-        route_stops_list.append(route_stop.routeID.routeID)
-    return route_stops_list
-
-
-def return_routes(request):
-    ''' Django API that will return the bus stop data as JSON data
-    '''
-    start_stop = request.GET['startstop']
-    dest_stop = request.GET['endstop']
-    list1 = return_id(start_stop)
-    list2 = return_id(dest_stop)
-    common = [val for val in list1 if val in list2]
-    route_stops_order = []
-    route_all_stops = []
-
-    print("common: " + str(common))
-
-    if len(common):
-        for com_route in common:
-            Rname=RouteStops.objects.get(route_id=com_route).line_id
-            Rstops=RouteStops.objects.filter(route_id=com_route)
-            for Rstop in Rstops:
-                dict2 = {}
-                dict2['stopid'] = Rstop.stopID.stat_number
-                dict2['shortname']=BusStop.objects.get(stop_id=Rstop.stop_id.stop_id).stop_name
-                dict2['latitude']=BusStop.objects.get(stop_id=Rstop.stop_id.stop_id).lat
-                dict2['longitude']=BusStop.objects.get(stop_id=Rstop.stop_id.stop_id).lng
-                dict2['stop_order']=Rstop.stop_order
-                route_all_stops.append(dict2)
-            dict={}
-            dict['route_id']=com_route
-            dict['line_id'] = Rname
-            dict['stops'] =route_all_stops
-            route_stops_order.append(dict)
-
-        return JsonResponse({'commondata': route_stops_order})
-    else:
-        return JsonResponse({'commondata': route_stops_order})
-        # return JsonResponse({'commondata': common})
-
-    # return JsonResponse({'JSONdata': route_stops_list2})
-
-
 class TempRoute():
     def __init__(self, line_id, route_id, start_stop, dest_stop):
         self.line_id = line_id
@@ -98,23 +50,30 @@ class TempRoute():
 
     def get_subroute(self):
         subroute = []
+
         for tuple in self.stops_serviced:
             #print(type(tuple))
             #print(self.start_stop.stop_id)
             #print(tuple[0])
+
             if tuple[0] == self.start_stop.stop_id:
                 self.start_stop_order = tuple[1]
 
             elif tuple[0] == self.dest_stop.stop_id:
                 self.dest_stop_order = tuple[1]
 
+        max_stop_order = max(self.start_stop_order, self.dest_stop_order)
+        min_stop_order = min(self.start_stop_order, self.dest_stop_order)
+
         for tuple in self.stops_serviced:
-            stop_order = tuple[1]
+            stop_order = int(tuple[1])
             #print(stop_order)
             #print(self.dest_stop_order)
             #print(self.start_stop_order)
-            if stop_order <= self.dest_stop_order and stop_order >= self.start_stop_order:
+
+            if stop_order <= max_stop_order and stop_order >= min_stop_order:
                 subroute.append(tuple)
+
         return subroute
 
     def get_number_stops_subroute(self):
@@ -143,7 +102,7 @@ class TempRoute():
 
 
 
-def return_routes2(request):
+def return_routes(request):
     '''
     '''
 
@@ -168,6 +127,10 @@ def return_routes2(request):
 
     print("common routes", common_routes)
 
+    #Return error if no common routes
+    if len(common_routes) == 0:
+        return HttpResponse('Error or no route', status=400)
+
     list_of_lists = []
     temp_route_dict = {}
 
@@ -190,7 +153,7 @@ def return_routes2(request):
         route_dict["routeId"] = route_id
         route_dict["numberStops"] = temp_route_dict[route_id].number_stops
         route_dict["stopsServiced"] = temp_route_dict[route_id].stops_serviced_array
-        route_dict["stopsServiced"] = temp_route_dict[route_id].subroute_stop_array
+        route_dict["subrouteStops"] = temp_route_dict[route_id].subroute_stop_array
 
         data.append(route_dict)
 

@@ -22,7 +22,7 @@
   </head>
   <body>
      <div id="map"></div>
-      
+
 
 
     <div class="s011">
@@ -208,9 +208,9 @@
 
      var getUrl = window.location;
      // Get the local url.
-     var map_Url = getUrl.protocol + "//" + getUrl.host + "/";         
-         
-         
+     var map_Url = getUrl.protocol + "//" + getUrl.host + "/";
+
+
  function initMap() {
 //    var getUrl = window.location;
 //     // Get the local url.
@@ -242,7 +242,7 @@ var MapOption = {
 
                   var busstop = markers[i];
                  var myLatlng = {lat: busstop[2], lng: busstop[3]};
- 
+
 
                      var marker = new google.maps.Marker({
                          position: myLatlng,
@@ -341,7 +341,7 @@ function hideTimeAndDataPicker() {
              for (var i = 0; i < 30; i++) {
 
                   var busstop = markers[i];
-       
+
    }
 
     $.ajax({
@@ -358,13 +358,22 @@ function hideTimeAndDataPicker() {
            mapTypeId: google.maps.MapTypeId.ROADMAP
            };
         var map2 = new google.maps.Map(document.getElementById('map'), MapOption);
-            var commonroutes = result.commondata;
+            var routesData = result.routes_data;
+            console.log(routesData);
             var pathArray = new Array();
 //            var deleteArray = new Array();
-            for (var i = 0; i < commonroutes.length; i++) {
-                for (var j = 0; j < commonroutes[i].stops.length; j++) {
-            var routeLat = commonroutes[i].stops[j].latitude;
-            var routeLng = commonroutes[i].stops[j].longitude;
+            for (var i = 0; i < routesData.length; i++) {
+                var lineId = routesData[i].lineId;
+                var routeId = routesData[i].routeId;
+                var numberStops = routesData[i].numberStops;
+                console.log(lineId, routeId, numberStops)
+
+                for (var j = 0; j < routesData[i].subrouteStops.length; j++) {
+                  var routeLat = routesData[i].subrouteStops[j].lat;
+                  var routeLng = routesData[i].subrouteStops[j].lng;
+                  var stopName = routesData[i].subrouteStops[j].stopName;
+                  var stopOrder = routesData[i].subrouteStops[j].stopOrder;
+                  console.log(routeLat, routeLng, stopName, stopOrder)
 
 
             var myLatlng = {lat: parseFloat(routeLat), lng: parseFloat(routeLng)};
@@ -413,6 +422,10 @@ function hideTimeAndDataPicker() {
 
 
 
+},
+
+        error: function (result) {
+          console.log("Error or no result: ", result);
         }
     });
    })

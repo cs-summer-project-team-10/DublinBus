@@ -77,6 +77,8 @@ class TempRoute():
         self.stops_serviced = self.get_stop_list()
         self.subroute = self.get_subroute()
         self.number_stops = self.get_number_stops_subroute()
+        self.subroute_stop_array = self.generate_stops_array(self.subroute)
+        self.stops_serviced_array = self.generate_stops_array(self.stops_serviced)
 
     def get_stop_list(self):
         stops_serviced = list(RouteStops.objects.values_list('stop_id', 'stop_order').filter(route_id = self.route_id))
@@ -119,6 +121,26 @@ class TempRoute():
         number_stops = len(self.subroute)
         return number_stops - 1
 
+    def generate_stops_array(self, stop_list):
+        stop_array = []
+        #print("********")
+        for stop_tuple in stop_list:
+            #print(tuple)
+            stop_dict = {}
+            stop_id = stop_tuple[0]
+            stop = BusStop.objects.get(stop_id = stop_id)
+
+            stop_dict["stopId"] = stop_id
+            stop_dict["stopName"] = stop.stop_name
+            stop_dict["lat"] = stop.lat
+            stop_dict["lng"] = stop.lng
+            stop_dict["stopOrder"] = stop_tuple[1]
+
+            stop_array.append(stop_dict)
+        #print("END******")
+        #print("Stops Dict",stop_array)
+        return stop_array
+
 
 
 def return_routes2(request):
@@ -149,6 +171,8 @@ def return_routes2(request):
     list_of_lists = []
     temp_route_dict = {}
 
+    data = []
+
     for route_id in common_routes:
         line_id = route_id.split("_")[0]
         temp_route_dict[route_id] = TempRoute(line_id, route_id, start_stop, dest_stop)
@@ -160,3 +184,16 @@ def return_routes2(request):
         temp_route_dict[route_id].print_subroute()
         temp_route_dict[route_id].print_lineID()
         temp_route_dict[route_id].print_number_stops()
+
+        route_dict = {}
+        route_dict["lineId"] = line_id
+        route_dict["routeId"] = route_id
+        route_dict["numberStops"] = temp_route_dict[route_id].number_stops
+        route_dict["stopsServiced"] = temp_route_dict[route_id].stops_serviced_array
+        route_dict["stopsServiced"] = temp_route_dict[route_id].subroute_stop_array
+
+        data.append(route_dict)
+
+    #print(data)
+    #print({'routes_data':data})
+    return JsonResponse({'routes_data': data})

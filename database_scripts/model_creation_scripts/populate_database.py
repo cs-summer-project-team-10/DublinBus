@@ -1,62 +1,152 @@
 import csv, os, django, sys
 from django.shortcuts import get_object_or_404
-
 sys.path.append('../../')
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE','website.settings')
 django.setup()
 
-from map.models import BusStop,RouteStops, Route
+from map.models import Routes, Stops, Shapes, CalendarService, CalendarExceptions, Trips
 
-with open("../csvs/bus_stops.csv", "r") as read_file:
+
+def change_date_format(date):
+    '''
+    Simple function that inserts '-' between YYYY MM DD
+    '''
+
+    new_date = date[:4] + "-" + date[4:6] + "-" + date[6:]
+
+    return new_date
+
+
+with open("../csvs/routes.txt", "r") as read_file:
     reader = csv.reader(read_file, delimiter=',')
     next(reader, None)
-    for row in reader:
-        stop_id = int(row[1])
-        stop_name = row[2]
-        lat = float(row[3])
-        lng = float(row[4])
-        BusStop.objects.get_or_create(stop_id=stop_id, stop_name=stop_name, lat=lat, lng=lng)
-
-
-with open("../csvs/route_stops.csv", "r") as read_file:
-    reader = csv.reader(read_file, delimiter=',')
-    next(reader, None)
-    #count = 0
-    # error_set_stops = set([])
-    # error_set_routes = set([])
 
     for row in reader:
-        line_id = row[0]
         route_id = row[1]
-        stop_id = row[2]
-        stop_order = row[3]
+        agency_id = row[4]
+        route_short_name = row[7]
 
-        start_stop = BusStop.objects.get(stop_id = 131)
-        end_stop = BusStop.objects.get(stop_id = 131)
+        Routes.objects.get_or_create(route_id = route_id, agency_id = agency_id, route_short_name = route_short_name)
 
-        #Must change at later date
-        Route.objects.get_or_create(route_id=route_id, start_stop= start_stop, end_stop=end_stop)
+with open("../csvs/stops.txt", "r") as read_file:
+    reader = csv.reader(read_file, delimiter=',')
+    next(reader, None)
 
-        try:
-            route =  Route.objects.get(route_id = route_id)
-            stop = BusStop.objects.get(stop_id = stop_id)
-            #print(stop)
-            RouteStops.objects.get_or_create(line_id=line_id, route_id=route, stop_id=stop, stop_order=stop_order)
+    for row in reader:
+        stop_id = row[3]
+        stop_name = row[4]
+        stop_lat = row[0]
+        stop_lng = row[2]
+
+        Stops.objects.get_or_create(stop_id = stop_id, stop_name = stop_name, stop_lat = stop_lat, stop_lng = stop_lng)
+
+with open("../csvs/calendar.txt", "r") as read_file:
+    reader = csv.reader(read_file, delimiter=',')
+    next(reader, None)
+
+    for row in reader:
+        service_id = row[0]
+        start_date = change_date_format(row[1])
+        end_date = change_date_format(row[2])
+
+        CalendarService.objects.get_or_create(service_id = service_id, start_date = start_date, end_date = end_date, \
+                                            monday = row[3], tuesday = row[4], wednesday = row[5], thursday = row[6], \
+                                            friday = row[7], saturday = row[8], sunday = row[9])
 
 
-        except:
-            pass
-            #error_set_stops.add(stop_id)
-            #error_set_routes.add(row[1])
-            #count+=1
+with open("../csvs/calendar_dates.txt", "r") as read_file:
+    reader = csv.reader(read_file, delimiter=',')
+    next(reader, None)
+
+    for row in reader:
+        service_id = row[0]
+        service_id = CalendarService.objects.get(service_id = service_id)
+        exception_date = change_date_format(row[1])
+        exception_type = row[2]
+
+        CalendarExceptions.objects.get_or_create(service_id = service_id, exception_date = exception_date, exception_type = exception_type)
+
+with open("../csvs/shapes.txt", "r") as read_file:
+    reader = csv.reader(read_file, delimiter=',')
+    next(reader, None)
+
+    for row in reader:
+        shape_id = row[0]
+        shape_point_lat = row[1]
+        shape_point_lng = row[2]
+        shape_point_sequence = row[3]
+        shape_dist_travelled = row[4]
+
+        Shapes.objects.get_or_create(shape_id = shape_id, shape_point_lat = shape_point_lat, shape_point_lng = shape_point_lng, shape_point_sequence = shape_point_sequence, shape_dist_travelled = shape_dist_travelled)
+
+
+with open("../csvs/trips.txt", "r") as read_file:
+    reader = csv.reader(read_file, delimiter=',')
+    next(reader, None)
+
+    for row in reader:
+        trip_id = row[5]
+        route_id = Routes.objects.get(route_id = row[0])
+        direction = row[1]
+        trip_headsign = row[2]
+        shape_id = row[3]
+        service_id = CalendarService.objects.get(service_id = row[4])
+
+
+    Trips.objects.get_or_create(trip_id = trip_id, route_id = route_id, direction = direction, trip_headsign = trip_headsign, shape_id = shape_id, service_id = service_id)
+
+
 '''
-    print(count)
+Used to create models using SQL to speed up process
+'''
 
-    with open('errors.txt', 'w') as f:
-        for item in error_set_stops:
-            f.write(str(item)+ " ")
-        f.write("\nRoutes Below\n")
-        for item in error_set_routes:
-            f.write(str(item) + " ")
+from sqlalchemy import create_engine
+import pandas as pd
+import sqlalchemy
+
+engine = create_engine('postgresql+psycopg2://stephen:1993@127.0.0.1:5432/new_models')
+
+#data = pd.read_csv("../csvs/shapes.txt")
+#data.to_sql('test', engine, if_exists = 'append', chunksize = 1000)
+
+data = pd.read_csv("../csvs/stop_times.txt")
+
+data = data[['trip_id', 'stop_id', 'stop_sequence', 'arrival_time', 'departure_time', 'stop_headsign', 'shape_dist_traveled']]
+
+data.to_sql(name = 'map_trip_stop_times', con = engine, if_exists = 'append', chunksize = 1000, index = False, \
+            dtype = {"trip_id" : sqlalchemy.types.VARCHAR(length=100),
+                    "stop_id" : sqlalchemy.types.VARCHAR(length=100),
+                    "stop_sequence" : sqlalchemy.types.INTEGER(),
+                    "scheduled_arrival_time" : sqlalchemy.DateTime(),
+                    "scheduled_dept_time" : sqlalchemy.DateTime(),
+                    "stop_headsign" : sqlalchemy.types.VARCHAR(length=200),
+                    "distance_travelled" : sqlalchemy.types.VARCHAR(length=200)})
+
+
+# Old long way of creating models
+
+'''
+with open("../csvs/stop_times.txt", "r") as read_file:
+    reader = csv.reader(read_file, delimiter=',')
+    next(reader, None)
+
+    bulk_list = []
+
+    for row in reader:
+        trip_id = Trips.objects.get(trip_id = row[0])
+        stop_id = Stops.objects.get(stop_id = row[3])
+        scheduled_arrival_time = row[1]
+        scheduled_dept_time = row[2]
+        stop_sequence = row[4]
+        stop_headsign = row[5]
+        distance_travelled = str(row[8])
+
+        bulk_list.append(StopTripTimes(trip_id = trip_id, stop_id = stop_id, scheduled_arrival_time = scheduled_arrival_time, scheduled_dept_time = scheduled_dept_time, stop_sequence = stop_sequence, stop_headsign = stop_headsign, distance_travelled = distance_travelled))
+
+    print("Finished making list")
+
+    StopTripTimes.objects.bulk_create(bulk_list)
+
+        #StopTripTimes.get_or_create(trip_id = trip_id, stop_id = stop_id, scheduled_arrival_time = scheduled_arrival_time, scheduled_dept_time = scheduled_dept_time, stop_sequence = stop_sequence, stop_headsign = stop_headsign, distance_travelled = distance_travelled)
 '''

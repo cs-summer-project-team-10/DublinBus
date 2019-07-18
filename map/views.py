@@ -1,7 +1,5 @@
 
 from django.shortcuts import render, get_object_or_404
-#from .models import BusStop,RouteStops,Routes,LeaveTime,Trip,Vehicle,TrackingRawData,Justification
-#from .models import BusStop,RouteStops, Route
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import HttpResponse, render, redirect
 import json

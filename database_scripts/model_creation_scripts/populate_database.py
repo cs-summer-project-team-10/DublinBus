@@ -93,8 +93,7 @@ with open("../csvs/trips.txt", "r") as read_file:
         shape_id = row[3]
         service_id = CalendarService.objects.get(service_id = row[4])
 
-
-    Trips.objects.get_or_create(trip_id = trip_id, route_id = route_id, direction = direction, trip_headsign = trip_headsign, shape_id = shape_id, service_id = service_id)
+        Trips.objects.get_or_create(trip_id = trip_id, route_id = route_id, direction = direction, trip_headsign = trip_headsign, shape_id = shape_id, service_id = service_id)
 
 
 '''

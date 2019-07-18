@@ -320,8 +320,9 @@ def predict(request):
     dataframe = pd.DataFrame([(14, 6, True, 0)], columns=('PROGRNUMBER',  'Time_period', 'DIRECTION', 'rain'))
     features = ['PROGRNUMBER', 'Time_period', 'DIRECTION', 'rain']
 
-    linear_model = pickle.load(open('pickles/14_bus_model.sav', 'rb'))
+    linear_model = pickle.load(open('map/pickles/14_bus_model.sav', 'rb'))
 
-    result = linear_model(dataframe[features])
+    result = linear_model.predict(dataframe[features])
 
     print(result)
+    return HttpResponse(result)

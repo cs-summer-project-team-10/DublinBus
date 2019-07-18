@@ -4,6 +4,9 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import HttpResponse, render, redirect
 import json
 import datetime
+import pickle
+import pandas as pd
+
 from datetime import date
 
 from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
@@ -310,3 +313,15 @@ class Route():
         print("ALL SHAPE POINTS:\n", self.route_shape_points)
         print("SUBROUTE SHAPE POINTS:\n", self.subroute_shape_points)
         print("************************************")
+
+
+def predict(request):
+
+    dataframe = pd.DataFrame([(14, 6, True, 0)], columns=('PROGRNUMBER',  'Time_period', 'DIRECTION', 'rain'))
+    features = ['PROGRNUMBER', 'Time_period', 'DIRECTION', 'rain']
+
+    linear_model = pickle.load(open('pickles/14_bus_model.sav', 'rb'))
+
+    result = linear_model(dataframe[features])
+
+    print(result)

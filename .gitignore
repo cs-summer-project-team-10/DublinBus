@@ -4,6 +4,7 @@ myenv
 __ pycache __
 .DS_Store
 map/migrations/*
-website/settings.py
 .idea/*
 DublinBus-development
+README.md
+database_scripts/csvs/*

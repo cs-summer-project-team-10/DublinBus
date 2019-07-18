@@ -9,7 +9,7 @@ import json
 import datetime
 from datetime import date
 
-from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
+#from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
 import requests
 from bs4 import BeautifulSoup
 import urllib
@@ -19,10 +19,10 @@ def home_page(request):
     ''' Simple view that renders the index html template with all the bus stop information
         using Jinja2
     '''
-    bus_stops = Stops.objects.all()
+    #bus_stops = Stops.objects.all()
     bus_stop_list = []
-    for bus_stop in bus_stops:
-        bus_stop_list.append((bus_stop.stop_id, bus_stop.stop_name, bus_stop.stop_lat, bus_stop.stop_lng))
+    #for bus_stop in bus_stops:
+        #bus_stop_list.append((bus_stop.stop_id, bus_stop.stop_name, bus_stop.stop_lat, bus_stop.stop_lng))
 
     return render(request, 'map/index.html', {'JSONdata': json.dumps(bus_stop_list)})
 

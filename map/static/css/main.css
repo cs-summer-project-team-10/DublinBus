@@ -2,9 +2,12 @@ html {
     line-height: 1.15;
     /* 1 */
     -ms-text-size-adjust: 100%;
+    2 -webkit-text-size-adjust: 100%;
     /* 2 */
-    -webkit-text-size-adjust: 100%;
-    /* 2 */
+        height: 100%;
+    width: 100%;
+        margin: 0;
+    padding: 0;
 }
 
 /* Sections
@@ -13,13 +16,16 @@ html {
  * Remove the margin in all browsers (opinionated).
  */
 body {
+    height: 100%;
+    width: 100%;
     margin: 0;
+    padding: 0;
 }
 
 #map {
     height: 100%;
-    width: 70%;
-    float: right;
+    margin-left: 450px;
+    min-height: 900px;
 
 }
 
@@ -69,10 +75,21 @@ article,
 aside,
 footer,
 header,
-nav,
+/*nav,*/
 section {
     display: block;
 }
+
+
+nav {
+    display: block;
+}
+
+
+a i {
+    display: none;
+}
+
 
 /**
  * Correct the font size and margin on `h1` elements within `section` and
@@ -1690,10 +1707,12 @@ span.flatpickr-weekday {
   transform: scale(1);
 }
 */
-
+#startjourney {
+    display: none;
+}
 
 .s011 {
-    min-height: 100vh;
+    min-height: 900px;
     -ms-flex-pack: center;
     justify-content: center;
     -ms-flex-align: center;
@@ -1703,9 +1722,12 @@ span.flatpickr-weekday {
     background-position: center center;
     padding: 15px;
     font-family: 'Lato', sans-serif;
-    width: 30%;
-    float: right;
+    width: 450px;
+    float: left;
     height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 .s011 form {
@@ -2015,7 +2037,8 @@ span.flatpickr-weekday {
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg fill='%23999' xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3e%3cpath d='M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z'/%3e%3c/svg%3e");
 }
 
-.s011 form .btn-search {
+
+ .s011 form #searchButtonforSmallScreen {
     min-width: 100px;
     height: 3em;
     padding: 0 1em;
@@ -2029,13 +2052,333 @@ span.flatpickr-weekday {
     cursor: pointer;
     font-weight: 900;
     width: 30%;
+    display: none;
 }
 
-.s011 form .btn-search:hover {
+.s011 form #searchButtonforSmallScreen:hover {
     background: #e67600;
 }
 
+
+
+.s011 form #searchButtonforBigScreen {
+    min-width: 100px;
+    height: 3em;
+    padding: 0 1em;
+    background: #ff8300;
+    white-space: nowrap;
+    border-radius: 3px;
+    font-size: 1em;
+    color: #fff;
+    transition: all .2s ease-out, color .2s ease-out;
+    border: 0;
+    cursor: pointer;
+    font-weight: 900;
+    width: 30%;
+    display: block;
+}
+
+.s011 form #searchButtonforBigScreen:hover {
+    background: #e67600;
+}
+
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*for different sizes of screen*/
+
+
 @media screen and (max-width: 767px) {
+
+    #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+
+    }   
+    
+    
+    
+    
+    
+  .s011 form #searchButtonforBigScreen {
+    min-width: 100px;
+    height: 3em;
+    padding: 0 1em;
+    background: #ff8300;
+    white-space: nowrap;
+    border-radius: 3px;
+    font-size: 1em;
+    color: #fff;
+    transition: all .2s ease-out, color .2s ease-out;
+    border: 0;
+    cursor: pointer;
+    font-weight: 900;
+    width: 30%;
+    display: none;
+}
+
+.s011 form #searchButtonforBigScreen:hover {
+    background: #e67600;
+}
+
+
+    
+    
+ .s011 form #searchButtonforSmallScreen {
+    min-width: 100px;
+    height: 3em;
+    padding: 0 1em;
+    background: #ff8300;
+    white-space: nowrap;
+    border-radius: 3px;
+    font-size: 1em;
+    color: #fff;
+    transition: all .2s ease-out, color .2s ease-out;
+    border: 0;
+    cursor: pointer;
+    font-weight: 900;
+    width: 30%;
+     display: block;
+}
+
+.s011 form #searchButtonforSmallScreen:hover {
+    background: #e67600;
+}  
+    
+    
+
+
+    #startjourney {
+        display: block;
+        background-color: #ff8300;
+        opacity: 0.5;
+        position: absolute;
+        left: 30%;
+        top: 10%;
+        width: 40%;
+        height: 5%;
+        min-height: 40px;
+        border: none;
+        color: white;
+        font-weight: 600;
+        cursor:pointer;
+    }
+
+
+
+    a {
+        text-decoration: none;
+    }
+
+    a i {
+        font: 0/0 a;
+        text-shadow: none;
+        color: transparent;
+    }
+
+
+
+    .s011 {
+        min-height: 900px;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -ms-flex-align: center;
+        align-items: center;
+        background: transparent;
+        background-size: cover;
+        background-position: center center;
+        padding: 15px;
+        font-family: 'Lato', sans-serif;
+        width: 100%;
+        float: left;
+        height: 100%;
+    }
+
+    .s011 form .inner-form .main-form {
+        background: transparent;
+        border-radius: 3px;
+        position: relative;
+        padding: 2em;
+        padding-bottom: 0.05em;
+    }
+
+    .s011 form .inner-form .main-form:after {
+        display: none;
+    }
+
+
+    .information {
+
+        height: 55%;
+        width: 100%;
+        background: transparent;
+    }
+
+
+
+
+    nav {
+        display: block;
+        background-color: rgba(0, 0, 0, 0.6);
+        height: 100%;
+        position: fixed;
+        right: -83%;
+        top: 0;
+        -moz-transition: right 0.2s linear;
+        -o-transition: right 0.2s linear;
+        -webkit-transition: right 0.2s linear;
+        transition: right 0.2s linear;
+        width: 83%;
+        z-index: 9001;
+        /* IT'S OVER 9000! */
+    }
+
+    nav #menuToggleIcon {
+        background: rgba(0, 0, 0, 0.6);
+        display: block;
+        position: relative;
+        height: 3em;
+        left: -3.3em;
+        top: 4.8em;
+        width: 3.2em;
+    }
+
+
+
+
+
+
+
+    nav #menuToggleIcon span {
+        background: white;
+        display: block;
+        height: 10%;
+        left: 10%;
+        position: absolute;
+        top: 45%;
+        width: 80%;
+    }
+
+    nav #menuToggleIcon span:before,
+    nav #menuToggleIcon span:after {
+        background: white;
+        content: '';
+        display: block;
+        height: 100%;
+        position: absolute;
+        top: -250%;
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+        width: 100%;
+    }
+
+    nav #menuToggleIcon span:after {
+        top: 250%;
+    }
+
+    nav a:nth-child(n+2) {
+        color: white;
+        display: block;
+        font-size: 2.5em;
+        margin: 0.8em 0 0.8em 0.8em;
+    }
+
+    nav a:nth-child(n+2):after {
+        background: #ffa53e;
+        content: '';
+        display: block;
+        height: 0.08em;
+        -moz-transition: width 0.2s;
+        -o-transition: width 0.2s;
+        -webkit-transition: width 0.2s;
+        transition: width 0.2s;
+        width: 0;
+    }
+
+    nav a:nth-child(n+2):hover:after {
+        width: 100%;
+    }
+
+    .open {
+        right: 0;
+    }
+
+    .open #menuToggleIcon span {
+        background: transparent;
+        left: 10%;
+        top: 45%;
+    }
+
+    .open #menuToggleIcon span:before,
+    .open #menuToggleIcon span:after {
+        background: white;
+        top: 0;
+        -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+
+    .open #menuToggleIcon span:after {
+        -moz-transform: rotate(-45deg);
+        -ms-transform: rotate(-45deg);
+        -webkit-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+    }
+
+    #menuToggleIcon .navClosed {
+        -moz-transition: background 0.1s linear;
+        -o-transition: background 0.1s linear;
+        -webkit-transition: background 0.1s linear;
+        transition: background 0.1s linear;
+    }
+
+    #menuToggleIcon .navClosed:before,
+    #menuToggleIcon .navClosed:after {
+        -moz-transition: top 0.2s linear 0.1s, -moz-transform 0.2s linear 0.1s;
+        -o-transition: top 0.2s linear 0.1s, -o-transform 0.2s linear 0.1s;
+        -webkit-transition: top 0.2s linear, -webkit-transform 0.2s linear;
+        -webkit-transition-delay: 0.1s, 0.1s;
+        transition: top 0.2s linear 0.1s, transform 0.2s linear 0.1s;
+    }
+
+    #menuToggleIcon .navOpen {
+        -moz-transition: background 0.1s linear 0.2s;
+        -o-transition: background 0.1s linear 0.2s;
+        -webkit-transition: background 0.1s linear;
+        -webkit-transition-delay: 0.2s;
+        transition: background 0.1s linear 0.2s;
+    }
+
+    #menuToggleIcon .navOpen:before,
+    #menuToggleIcon .navOpen:after {
+        -moz-transition: top 0.2s linear, -moz-transform 0.2s linear;
+        -o-transition: top 0.2s linear, -o-transform 0.2s linear;
+        -webkit-transition: top 0.2s linear, -webkit-transform 0.2s linear;
+        transition: top 0.2s linear, transform 0.2s linear;
+    }
+
+
+}
+
+@media screen and (max-width: 516px) {
     .s011 form .inner-form header {
         overflow: hidden;
     }
@@ -2065,6 +2408,287 @@ span.flatpickr-weekday {
     .s011 form .inner-form .main-form:after {
         display: none;
     }
+
+
+
+
+    #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+
+    }   
+    
+    
+    
+    
+    
+  .s011 form #searchButtonforBigScreen {
+    min-width: 100px;
+    height: 3em;
+    padding: 0 1em;
+    background: #ff8300;
+    white-space: nowrap;
+    border-radius: 3px;
+    font-size: 1em;
+    color: #fff;
+    transition: all .2s ease-out, color .2s ease-out;
+    border: 0;
+    cursor: pointer;
+    font-weight: 900;
+    width: 30%;
+    display: none;
 }
 
-/*# sourceMappingURL=Searchs_011.css.map */
+.s011 form #searchButtonforBigScreen:hover {
+    background: #e67600;
+}
+
+
+    
+    
+ .s011 form #searchButtonforSmallScreen {
+    min-width: 100px;
+    height: 3em;
+    padding: 0 1em;
+    background: #ff8300;
+    white-space: nowrap;
+    border-radius: 3px;
+    font-size: 1em;
+    color: #fff;
+    transition: all .2s ease-out, color .2s ease-out;
+    border: 0;
+    cursor: pointer;
+    font-weight: 900;
+    width: 30%;
+     display: block;
+}
+
+.s011 form #searchButtonforSmallScreen:hover {
+    background: #e67600;
+}  
+    
+    
+
+
+
+
+    #startjourney {
+        display: block;
+        background-color: #ff8300;
+        opacity: 0.5;
+        position: absolute;
+        left: 30%;
+        top: 10%;
+        width: 40%;
+        height: 5%;
+        min-height: 40px;
+        border: none;
+        color: white;
+        font-weight: 600;
+        cursor:pointer;
+        min-width: 90px;
+    }
+
+
+
+    a {
+        text-decoration: none;
+    }
+
+    a i {
+        font: 0/0 a;
+        text-shadow: none;
+        color: transparent;
+    }
+
+
+
+    .s011 {
+        min-height: 900px;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -ms-flex-align: center;
+        align-items: center;
+        background: transparent;
+        background-size: cover;
+        background-position: center center;
+        padding: 15px;
+        font-family: 'Lato', sans-serif;
+        width: 100%;
+        float: left;
+        height: 100%;
+    }
+
+    .s011 form .inner-form .main-form {
+        background: transparent;
+        border-radius: 3px;
+        position: relative;
+        padding: 2em;
+        padding-bottom: 0.05em;
+    }
+
+    .s011 form .inner-form .main-form:after {
+        display: none;
+    }
+
+
+    .information {
+
+        height: 55%;
+        width: 100%;
+        background: transparent;
+    }
+
+
+
+
+    nav {
+        display: block;
+        background-color: rgba(0, 0, 0, 0.6);
+        height: 100%;
+        position: fixed;
+        right: -83%;
+        top: 0;
+        -moz-transition: right 0.2s linear;
+        -o-transition: right 0.2s linear;
+        -webkit-transition: right 0.2s linear;
+        transition: right 0.2s linear;
+        width: 83%;
+        z-index: 9001;
+        /* IT'S OVER 9000! */
+    }
+
+    nav #menuToggleIcon {
+        background: rgba(0, 0, 0, 0.6);
+        display: block;
+        position: relative;
+        height: 3em;
+        left: -3.3em;
+        top: 4.8em;
+        width: 3.2em;
+    }
+
+
+
+
+
+
+
+    nav #menuToggleIcon span {
+        background: white;
+        display: block;
+        height: 10%;
+        left: 10%;
+        position: absolute;
+        top: 45%;
+        width: 80%;
+    }
+
+    nav #menuToggleIcon span:before,
+    nav #menuToggleIcon span:after {
+        background: white;
+        content: '';
+        display: block;
+        height: 100%;
+        position: absolute;
+        top: -250%;
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+        width: 100%;
+    }
+
+    nav #menuToggleIcon span:after {
+        top: 250%;
+    }
+
+    nav a:nth-child(n+2) {
+        color: white;
+        display: block;
+        font-size: 2.5em;
+        margin: 0.8em 0 0.8em 0.8em;
+    }
+
+    nav a:nth-child(n+2):after {
+        background: #ffa53e;
+        content: '';
+        display: block;
+        height: 0.08em;
+        -moz-transition: width 0.2s;
+        -o-transition: width 0.2s;
+        -webkit-transition: width 0.2s;
+        transition: width 0.2s;
+        width: 0;
+    }
+
+    nav a:nth-child(n+2):hover:after {
+        width: 100%;
+    }
+
+    .open {
+        right: 0;
+    }
+
+    .open #menuToggleIcon span {
+        background: transparent;
+        left: 10%;
+        top: 45%;
+    }
+
+    .open #menuToggleIcon span:before,
+    .open #menuToggleIcon span:after {
+        background: white;
+        top: 0;
+        -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+
+    .open #menuToggleIcon span:after {
+        -moz-transform: rotate(-45deg);
+        -ms-transform: rotate(-45deg);
+        -webkit-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+    }
+
+    #menuToggleIcon .navClosed {
+        -moz-transition: background 0.1s linear;
+        -o-transition: background 0.1s linear;
+        -webkit-transition: background 0.1s linear;
+        transition: background 0.1s linear;
+    }
+
+    #menuToggleIcon .navClosed:before,
+    #menuToggleIcon .navClosed:after {
+        -moz-transition: top 0.2s linear 0.1s, -moz-transform 0.2s linear 0.1s;
+        -o-transition: top 0.2s linear 0.1s, -o-transform 0.2s linear 0.1s;
+        -webkit-transition: top 0.2s linear, -webkit-transform 0.2s linear;
+        -webkit-transition-delay: 0.1s, 0.1s;
+        transition: top 0.2s linear 0.1s, transform 0.2s linear 0.1s;
+    }
+
+    #menuToggleIcon .navOpen {
+        -moz-transition: background 0.1s linear 0.2s;
+        -o-transition: background 0.1s linear 0.2s;
+        -webkit-transition: background 0.1s linear;
+        -webkit-transition-delay: 0.2s;
+        transition: background 0.1s linear 0.2s;
+    }
+
+    #menuToggleIcon .navOpen:before,
+    #menuToggleIcon .navOpen:after {
+        -moz-transition: top 0.2s linear, -moz-transform 0.2s linear;
+        -o-transition: top 0.2s linear, -o-transform 0.2s linear;
+        -webkit-transition: top 0.2s linear, -webkit-transform 0.2s linear;
+        transition: top 0.2s linear, transform 0.2s linear;
+    }
+
+
+
+
+
+}

@@ -5,10 +5,14 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import HttpResponse, render, redirect
 import json
+
 import datetime
 from datetime import date
 
 from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
+import requests
+from bs4 import BeautifulSoup
+import urllib
 
 
 def home_page(request):
@@ -312,3 +316,34 @@ class Route():
         print("ALL SHAPE POINTS:\n", self.route_shape_points)
         print("SUBROUTE SHAPE POINTS:\n", self.subroute_shape_points)
         print("************************************")
+
+
+# Below is the test code from James about getting price of trips on buses
+
+def return_prices(request):
+    route_number = request.GET['LineID']
+    direction = "O"
+    board = "0"
+    alight = str(request.GET['Number'])
+    url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=" + route_number + "&direction=" + direction + "&board=" + board + "&alight="+ alight
+    html = urllib.request.urlopen(url)
+    page = html.read()
+    soup = BeautifulSoup(page, 'html.parser')
+    Adult_Cash = soup.find("div", attrs={'class': 'other-fares-display'}).table.tbody.select('tr')[1].select('td')[1].get_text().replace(' ', '').replace('\n', '').replace('\r', '').replace('€', '')
+    Adult_Leap = soup.find("div", attrs={'class': 'other-fares-display'}).table.tbody.select('tr')[2].select('td')[1].get_text().replace(' ', '').replace('\n', '').replace('\r', '').replace('€', '')
+    Child_Cash_16 = soup.find("div", attrs={'class': 'other-fares-display'}).table.tbody.select('tr')[3].select('td')[1].get_text().replace(' ', '').replace('\n', '').replace('\r', '').replace('€', '')
+    Child_Cash_19 = soup.find("div", attrs={'class': 'other-fares-display'}).table.tbody.select('tr')[4].select('td')[1].get_text().replace(' ', '').replace('\n', '').replace('\r', '').replace('€', '')
+    School_Hours_Cash = soup.find("div", attrs={'class': 'other-fares-display'}).table.tbody.select('tr')[5].select('td')[1].get_text().replace(' ', '').replace('\n', '').replace('\r', '').replace('€', '')
+    School_Hours_Leap = soup.find("div", attrs={'class': 'other-fares-display'}).table.tbody.select('tr')[6].select('td')[1].get_text().replace(' ', '').replace('\n', '').replace('\r', '').replace('€', '')
+    prices = []
+    dict={}
+    dict['Adult_Cash'] = Adult_Cash
+    dict['Adult_Leap'] = Adult_Leap
+    dict['Child_Cash_16'] = Child_Cash_16
+    dict['Child_Cash_19'] = Child_Cash_19
+    dict['School_Hours_Cash'] = School_Hours_Cash
+    dict['School_Hours_Leap'] = School_Hours_Leap
+    prices.append(dict)
+
+    return JsonResponse({'prices': prices})
+

@@ -8,4 +8,3 @@ website/settings.py
 .idea/*
 DublinBus-development
 README.md
-database_scripts/csvs/*

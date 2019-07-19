@@ -9,7 +9,7 @@ import pandas as pd
 
 from datetime import date
 
-from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
+#from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
 
 
 def home_page(request):

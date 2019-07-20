@@ -49,16 +49,16 @@ def change_stop_id(stop_id):
     return short_stop_id
 
 
-# with open("../csvs/routes.txt", "r") as read_file:
-#     reader = csv.reader(read_file, delimiter=',')
-#     next(reader, None)
-#
-#     for row in reader:
-#         route_id = row[1]
-#         agency_id = row[4]
-#         route_short_name = row[7]
-        #
-        # Routes.objects.get_or_create(route_id = route_id, agency_id = agency_id, route_short_name = route_short_name)
+with open("../csvs/routes.txt", "r") as read_file:
+    reader = csv.reader(read_file, delimiter=',')
+    next(reader, None)
+
+    for row in reader:
+        route_id = row[1]
+        agency_id = row[4]
+        route_short_name = row[7]
+
+        Routes.objects.get_or_create(route_id = route_id, agency_id = agency_id, route_short_name = route_short_name)
 
 
 with open("../csvs/stops.txt", "r") as read_file:
@@ -79,60 +79,60 @@ with open("../csvs/stops.txt", "r") as read_file:
 
         Stops.objects.get_or_create(stop_id = stop_id, stop_id_short = stop_id_short, stop_name = stop_name, stop_lat = stop_lat, stop_lng = stop_lng)
 
-# with open("../csvs/calendar.txt", "r") as read_file:
-#     reader = csv.reader(read_file, delimiter=',')
-#     next(reader, None)
-#
-#     for row in reader:
-#         service_id = row[0]
-#         start_date = change_date_format(row[1])
-#         end_date = change_date_format(row[2])
-#
-#         CalendarService.objects.get_or_create(service_id = service_id, start_date = start_date, end_date = end_date, \
-#                                             monday = row[3], tuesday = row[4], wednesday = row[5], thursday = row[6], \
-#                                             friday = row[7], saturday = row[8], sunday = row[9])
-#
-#
-# with open("../csvs/calendar_dates.txt", "r") as read_file:
-#     reader = csv.reader(read_file, delimiter=',')
-#     next(reader, None)
-#
-#     for row in reader:
-#         service_id = row[0]
-#         service_id = CalendarService.objects.get(service_id = service_id)
-#         exception_date = change_date_format(row[1])
-#         exception_type = row[2]
-#
-#         CalendarExceptions.objects.get_or_create(service_id = service_id, exception_date = exception_date, exception_type = exception_type)
-#
-# with open("../csvs/shapes.txt", "r") as read_file:
-#     reader = csv.reader(read_file, delimiter=',')
-#     next(reader, None)
-#
-#     for row in reader:
-#         shape_id = row[0]
-#         shape_point_lat = row[1]
-#         shape_point_lng = row[2]
-#         shape_point_sequence = row[3]
-#         shape_dist_travelled = row[4]
-#
-#         Shapes.objects.get_or_create(shape_id = shape_id, shape_point_lat = shape_point_lat, shape_point_lng = shape_point_lng, shape_point_sequence = shape_point_sequence, shape_dist_travelled = shape_dist_travelled)
-#
-#
-# with open("../csvs/trips.txt", "r") as read_file:
-#     reader = csv.reader(read_file, delimiter=',')
-#     next(reader, None)
-#
-#     for row in reader:
-#         trip_id = row[5]
-#         route_id = Routes.objects.get(route_id = row[0])
-#         direction = row[1]
-#         trip_headsign = row[2]
-#         shape_id = row[3]
-#         service_id = CalendarService.objects.get(service_id = row[4])
-#
-#         Trips.objects.get_or_create(trip_id = trip_id, route_id = route_id, direction = direction, trip_headsign = trip_headsign, shape_id = shape_id, service_id = service_id)
-#
+with open("../csvs/calendar.txt", "r") as read_file:
+    reader = csv.reader(read_file, delimiter=',')
+    next(reader, None)
+
+    for row in reader:
+        service_id = row[0]
+        start_date = change_date_format(row[1])
+        end_date = change_date_format(row[2])
+
+        CalendarService.objects.get_or_create(service_id = service_id, start_date = start_date, end_date = end_date, \
+                                            monday = row[3], tuesday = row[4], wednesday = row[5], thursday = row[6], \
+                                            friday = row[7], saturday = row[8], sunday = row[9])
+
+
+with open("../csvs/calendar_dates.txt", "r") as read_file:
+    reader = csv.reader(read_file, delimiter=',')
+    next(reader, None)
+
+    for row in reader:
+        service_id = row[0]
+        service_id = CalendarService.objects.get(service_id = service_id)
+        exception_date = change_date_format(row[1])
+        exception_type = row[2]
+
+        CalendarExceptions.objects.get_or_create(service_id = service_id, exception_date = exception_date, exception_type = exception_type)
+
+with open("../csvs/shapes.txt", "r") as read_file:
+    reader = csv.reader(read_file, delimiter=',')
+    next(reader, None)
+
+    for row in reader:
+        shape_id = row[0]
+        shape_point_lat = row[1]
+        shape_point_lng = row[2]
+        shape_point_sequence = row[3]
+        shape_dist_travelled = row[4]
+
+        Shapes.objects.get_or_create(shape_id = shape_id, shape_point_lat = shape_point_lat, shape_point_lng = shape_point_lng, shape_point_sequence = shape_point_sequence, shape_dist_travelled = shape_dist_travelled)
+
+
+with open("../csvs/trips.txt", "r") as read_file:
+    reader = csv.reader(read_file, delimiter=',')
+    next(reader, None)
+
+    for row in reader:
+        trip_id = row[5]
+        route_id = Routes.objects.get(route_id = row[0])
+        direction = row[1]
+        trip_headsign = row[2]
+        shape_id = row[3]
+        service_id = CalendarService.objects.get(service_id = row[4])
+
+        Trips.objects.get_or_create(trip_id = trip_id, route_id = route_id, direction = direction, trip_headsign = trip_headsign, shape_id = shape_id, service_id = service_id)
+
 
 '''
 Used to create models using SQL to speed up process

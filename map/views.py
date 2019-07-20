@@ -9,7 +9,7 @@ import pandas as pd
 
 from datetime import date
 
-#from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
+from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
 
 
 def home_page(request):
@@ -40,8 +40,11 @@ def return_routes(request):
     start_stop = "8220DB001069"
     dest_stop = "8220DB000670"
 
-    start_stop = Stops.objects.get(stop_id = start_stop)
-    dest_stop = Stops.objects.get(stop_id = dest_stop)
+    start_stop = 1069
+    dest_stop = 670
+
+    start_stop = Stops.objects.get(stop_id_short = start_stop)
+    dest_stop = Stops.objects.get(stop_id_short = dest_stop)
 
     date_time = datetime.datetime.now()
     time = datetime.datetime.now().strftime('%H:%M:%S')
@@ -130,6 +133,8 @@ def return_routes(request):
         route_dict["trip_headsign"] = temp_route_dict[trip].trip_headsign
         route_dict["start_stop_id"] = temp_route_dict[trip].start_stop_id
         route_dict["dest_stop_id"] = temp_route_dict[trip].dest_stop_id
+        route_dict["start_stop_id_short"] = temp_route_dict[trip].start_stop_id_short
+        route_dict["dest_stop_id_short"] = temp_route_dict[trip].dest_stop_id_short
         route_dict["number_stops"] = temp_route_dict[trip].number_stops
         route_dict["departure_time"] = temp_route_dict[trip].departure_time
         route_dict["all_stops_list"] = temp_route_dict[trip].all_stops_list
@@ -150,7 +155,9 @@ class Route():
 
     def __init__(self, start_stop, dest_stop, trip_id, route_id, route_short_name, trip_headsign, shape_id):
         self.start_stop_id = start_stop.stop_id
+        self.start_stop_id_short = start_stop.stop_id_short
         self.dest_stop_id = dest_stop.stop_id
+        self.dest_stop_id_short = dest_stop.stop_id_short
         self.route_id = route_id
         self.trip_id = trip_id
         self.route_short_name = route_short_name
@@ -186,21 +193,28 @@ class Route():
         #print(self.departure_time)
         #print(stops)
 
-
-
         for stop in stop_ids:
             #print(stop)
             #print(stop[0])
             stop_dict = {}
-            stops_query_set = Stops.objects.filter(stop_id = stop[0]).values_list('stop_name', 'stop_lat', 'stop_lng')
+            stops_query_set = Stops.objects.filter(stop_id = stop[0]).values_list('stop_name', 'stop_lat', 'stop_lng', 'stop_id_short')
             #print(stops_query_set)
 
             stop_dict["stop_id"] = stop[0]
+            stop_dict["stop_id_short"] = stops_query_set[0][3]
             stop_dict["stop_name"] = stops_query_set[0][0]
             stop_dict["stop_lat"] = stops_query_set[0][1]
             stop_dict["stop_lng"] = stops_query_set[0][2]
             stop_dict["stop_sequence"] = stop[1]
             stop_dict["due_arrival_time"] = stop[2]
+
+            predicted_diff_in_time = predict(self.route_short_name, stop_dict["stop_sequence"], 0)
+
+            due_time = datetime.datetime.strptime(stop_dict["due_arrival_time"], "%H:%M:%S")
+
+            #print(due_time)
+            predicted_diff_in_time = (due_time + datetime.timedelta(seconds=predicted_diff_in_time)).time()
+            stop_dict["predicted_arrival_time"] = predicted_diff_in_time
 
 
             if stop[3] == None:
@@ -315,14 +329,42 @@ class Route():
         print("************************************")
 
 
-def predict(request):
+def predict(route_short_name, PROGRNUMBER, direction):
 
-    dataframe = pd.DataFrame([(14, 6, True, 0)], columns=('PROGRNUMBER',  'Time_period', 'DIRECTION', 'rain'))
+    #Get time
+    time_period = 1
+    #Get weather
+    rain = 0.5
+
+    if direction == 1:
+        direction = True
+    else:
+        direction = False
+
+    dataframe = pd.DataFrame([(PROGRNUMBER, time_period, direction, rain)], columns=('PROGRNUMBER',  'Time_period', 'DIRECTION', 'rain'))
     features = ['PROGRNUMBER', 'Time_period', 'DIRECTION', 'rain']
 
-    linear_model = pickle.load(open('map/pickles/14_bus_model.sav', 'rb'))
+    if route_short_name == "14":
 
-    result = linear_model.predict(dataframe[features])
+        file = 'map/pickles/' + str(route_short_name) + '_bus_model.sav'
+        linear_model = pickle.load(open(file, 'rb'))
 
-    print(result)
-    return HttpResponse(result)
+        time_diff = int((linear_model.predict(dataframe[features]))[0])
+
+
+    else:
+        time_diff = 10
+
+    return time_diff
+
+# def predict2(request):
+#
+#     dataframe = pd.DataFrame([(14, 6, True, 0)], columns=('PROGRNUMBER',  'Time_period', 'DIRECTION', 'rain'))
+#     features = ['PROGRNUMBER', 'Time_period', 'DIRECTION', 'rain']
+#
+#     linear_model = pickle.load(open('map/pickles/14_bus_model.sav', 'rb'))
+#
+#     result = linear_model.predict(dataframe[features])
+#
+#     print(result)
+#     return HttpResponse(result)

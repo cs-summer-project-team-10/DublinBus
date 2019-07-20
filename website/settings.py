@@ -77,11 +77,11 @@ WSGI_APPLICATION = 'website.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'new_models',
-        'USER': 'stephen',
-        'PASSWORD': '1993',
+        'NAME': 'dub_bus',
+        'USER': 'student',
+        'PASSWORD': 'group10bus',
         'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'PORT': '3333',
     }
 }
 

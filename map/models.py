@@ -58,7 +58,7 @@ class Trips(models.Model):
 
 #Insert Here Model from inspectDB
 
-''''
+
 class MapTripStopTimes(models.Model):
 
     trip = models.ForeignKey('Trips', models.CASCADE, primary_key=True)
@@ -73,4 +73,3 @@ class MapTripStopTimes(models.Model):
         managed = False
         db_table = 'map_trip_stop_times'
         unique_together = (('trip', 'stop', 'stop_sequence'),)
-'''

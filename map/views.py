@@ -1,7 +1,6 @@
 
 from django.shortcuts import render, get_object_or_404
-#from .models import BusStop,RouteStops,Routes,LeaveTime,Trip,Vehicle,TrackingRawData,Justification
-#from .models import BusStop,RouteStops, Route
+
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import HttpResponse, render, redirect
 import json
@@ -37,11 +36,11 @@ def return_routes(request):
     It will then call a predictive model on this route per stop etc.
     '''
 
-    #start_stop = request.GET['startstop']
-    #dest_stop = request.GET['endstop']
+    start_stop = request.GET['startstop']
+    dest_stop = request.GET['endstop']
 
-    start_stop = "8220DB001069"
-    dest_stop = "8220DB000670"
+    # start_stop = "8220DB000018"
+    # dest_stop =  "8220DB000007"
 
     start_stop = Stops.objects.get(stop_id = start_stop)
     dest_stop = Stops.objects.get(stop_id = dest_stop)

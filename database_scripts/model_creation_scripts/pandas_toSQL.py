@@ -2,7 +2,9 @@ from sqlalchemy import create_engine
 import pandas as pd
 import sqlalchemy
 
-engine = create_engine('postgresql+psycopg2://James:smh5861125@127.0.0.1:5432/dub_bus')
+
+engine = create_engine('postgresql+psycopg2://student:group10bus@127.0.0.1:3333/dub_bus')
+
 
 #data = pd.read_csv("../csvs/shapes.txt")
 #data.to_sql('test', engine, if_exists = 'append', chunksize = 1000)

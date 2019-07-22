@@ -9,6 +9,7 @@ class Routes(models.Model):
 class Stops(models.Model):
 
     stop_id = models.CharField(primary_key = True, verbose_name = "Bus stop ID", max_length = 100)
+    stop_id_short = models.IntegerField(verbose_name = "Short Bus stop ID")
     stop_name = models.CharField(verbose_name = "Stop Name", max_length = 200)
     stop_lat = models.FloatField(verbose_name = "Stop Latitude")
     stop_lng = models.FloatField(verbose_name = "Stop Longitude")

@@ -7,4 +7,3 @@ map/migrations/*
 .idea/*
 DublinBus-development
 README.md
-database_scripts/csvs/*

@@ -17,6 +17,37 @@ def change_date_format(date):
 
     return new_date
 
+def change_stop_id(stop_id):
+    '''
+    Function that changes stop ids to a shortened version
+    '''
+
+    exception_dict = {
+        "gen:57102:7730:0:1" : "8240DB007682",
+        "gen:57102:7732:0:1" : "8240DB007676",
+        "gen:57102:7743:0:1" : "8240DB007690",
+        "gen:57102:7943:0:1" : "8240DB007703",
+        "gen:57102:7731:0:1" : "8240DB007674",
+        "gen:57102:7733:0:1" : "8240DB007677",
+        "gen:57102:7948:0:1" : "8240DB007701"
+    }
+
+    try:
+        short_stop_id = int(stop_id[6:])
+
+    except ValueError:
+        try:
+            s = stop_id.split("_")[0]
+            short_stop_id = int(s[6:])
+
+        except ValueError:
+            #print(stop_id)
+            dict_value = exception_dict[stop_id]
+            short_stop_id = change_stop_id(dict_value)
+            #print(short_stop_id)
+
+    return short_stop_id
+
 
 with open("../csvs/routes.txt", "r") as read_file:
     reader = csv.reader(read_file, delimiter=',')
@@ -29,17 +60,24 @@ with open("../csvs/routes.txt", "r") as read_file:
 
         Routes.objects.get_or_create(route_id = route_id, agency_id = agency_id, route_short_name = route_short_name)
 
+
 with open("../csvs/stops.txt", "r") as read_file:
     reader = csv.reader(read_file, delimiter=',')
     next(reader, None)
 
     for row in reader:
+        try:
+            stop_id_short = change_stop_id(row[3])
+        except:
+            stop_id_short = 666666
+            continue
+
         stop_id = row[3]
         stop_name = row[4]
         stop_lat = row[0]
         stop_lng = row[2]
 
-        Stops.objects.get_or_create(stop_id = stop_id, stop_name = stop_name, stop_lat = stop_lat, stop_lng = stop_lng)
+        Stops.objects.get_or_create(stop_id = stop_id, stop_id_short = stop_id_short, stop_name = stop_name, stop_lat = stop_lat, stop_lng = stop_lng)
 
 with open("../csvs/calendar.txt", "r") as read_file:
     reader = csv.reader(read_file, delimiter=',')
@@ -101,7 +139,9 @@ with open("../csvs/trips.txt", "r") as read_file:
 '''
 Used to create models using SQL to speed up process
 '''
-''''
+
+
+
 from sqlalchemy import create_engine
 import pandas as pd
 import sqlalchemy
@@ -126,7 +166,7 @@ data.to_sql(name = 'map_trip_stop_times', con = engine, if_exists = 'append', ch
 
 '''
 # Old long way of creating models
-
+'''
 '''
 with open("../csvs/stop_times.txt", "r") as read_file:
     reader = csv.reader(read_file, delimiter=',')

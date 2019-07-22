@@ -2,29 +2,24 @@
 
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="author" content="colorlib.com">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900|Poppins:700" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static "css/main.css" %}" >
-    <link rel="icon" href="data:;base64,=">
-    <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
-    <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-    {#<script src="static/js/choices.js"></script>#}
-    <script src="{% static "js/choices.js" %}"></script>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <link rel="icon" href="data:;base64,=">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta name="author" content="colorlib.com">
+   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900%7CPoppins:700" rel="stylesheet" />
+   <link rel="stylesheet" href="{% static "css/main.css" %}" >
+     <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+ <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+   <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
+
 <!--
 {#      <script src="static/js/jquery-3.4.1.min.js"></script>#}
-    <script src="{% static "js/jquery-3.4.1.min.js" %}"></script>
+   <script src="{% static "js/jquery-3.4.1.min.js" %}"></script>
 -->
 </head>
+
 <body><!-- the template of search block was referenced from Colorlib (https://colorlib.com) -->
-
-
-
-  </head>
-  <body>
 <div id="map"></div>       
 <nav> <a href="" class="menuToggle" id="menuToggleIcon" title="Go Back" style="display: none"> <span class="navClosed"><i>Go Back</i></span></a>
 
@@ -121,9 +116,9 @@
                 </div>
                 <div class="routes">
                     <div class="icons">
-                        <div class="icon1" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static " images/clock.svg" %}" type="image/svg+xml" height="80%"></object></div>
-                        <div class="icon2" style="height: 100%; width: 60%; float: left; text-align: center"><object data="{% static " images/bus.svg" %}" type="image/svg+xml" height="80%"></object></div>
-                        <div class="icon3" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static " images/euro.svg" %}" type="image/svg+xml" height="80%"></object></div>
+                        <div class="icon1" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static "images/clock.svg" %}" type="image/svg+xml" height="80%"></object></div>
+                        <div class="icon2" style="height: 100%; width: 60%; float: left; text-align: center"><object data="{% static "images/bus.svg" %}" type="image/svg+xml" height="80%"></object></div>
+                        <div class="icon3" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static "images/euro.svg" %}" type="image/svg+xml" height="80%"></object></div>
                     </div>
                     <div class="details">
                     </div>
@@ -174,7 +169,8 @@
  })(jQuery);
 </script>
 
-
+    {#<script src="static/js/choices.js"></script>#}
+    <script src="{% static "js/choices.js" %}"></script>
 <script>
       const choices = new Choices('[data-trigger]',
       {
@@ -279,8 +275,21 @@
         //A function to implement autocomplete about stop names with stop ID
         $(function() {
             var stopset = [];
+//            var start_stop_id;
             for (var i = 0; i < markers.length; i++) {
-                stopset[i] = markers[i][1] + " (Stop " + markers[i][0] + ")";
+//            if (markers[i][0].substring(markers[i][0].length-4)[0] == 0 && markers[i][0].substring(markers[i][0].length-4)[1] != 0) {
+//              start_stop_id = markers[i][0].substring(markers[i][0].length-4)[1] + markers[i][0].substring(markers[i][0].length-4)[2] + markers[i][0].substring(markers[i][0].length-4)[3];
+//            }
+//            else if (markers[i][0].substring(markers[i][0].length-4)[0] == 0 && markers[i][0].substring(markers[i][0].length-4)[1] == 0 && markers[i][0].substring(markers[i][0].length-4)[2] != 0) {
+//              start_stop_id = markers[i][0].substring(markers[i][0].length-4)[2] + markers[i][0].substring(markers[i][0].length-4)[3];
+//            }
+//            else if (markers[i][0].substring(markers[i][0].length-4)[0] == 0 && markers[i][0].substring(markers[i][0].length-4)[1] == 0 && markers[i][0].substring(markers[i][0].length-4)[2] == 0 && markers[i][0].substring(markers[i][0].length-4)[3] != 0) {
+//              start_stop_id = markers[i][0].substring(markers[i][0].length-4)[3];
+//            }
+//            else if (markers[i][0].substring(markers[i][0].length-4)[0] != 0) {
+//              start_stop_id = markers[i][0].substring(markers[i][0].length-4)[0] + markers[i][0].substring(markers[i][0].length-4)[1] + markers[i][0].substring(markers[i][0].length-4)[2] + markers[i][0].substring(markers[i][0].length-4)[3];
+//            }
+            stopset[i] = markers[i][1] + " (Stop " + markers[i][0] + ")";
             }
             $(".locationInput").autocomplete({
                 source: deleteDuplicatedStops(stopset)
@@ -315,15 +324,46 @@ function hideTimeAndDataPicker() {
 
 //Submit the location of start and destination based on stopID and then the routes will be shown on the map
 $('.searchInformation').click(function() {
-    var startstop = parseInt($('#startInput').val().substring($('#startInput').val().indexOf("(") + 6, $('#startInput').val().indexOf(")")));
-    var endstop = parseInt($('#destitationInput').val().substring($('#destitationInput').val().indexOf("(") + 6, $('#destitationInput').val().indexOf(")")));
+    var start_stop_code = $('#startInput').val().substring($('#startInput').val().indexOf("(Stop") + 6, $('#startInput').val().length - 1);
+    var end_stop_code = $('#destitationInput').val().substring($('#destitationInput').val().indexOf("(Stop") + 6, $('#destitationInput').val().length - 1);
+//    var start_code_pass_to_backend;
+//    var end_code_pass_to_backend;
+//    if (start_stop_code.length == 1) {
+//       start_code_pass_to_backend = "8220DB00000" + String(start_stop_code);
+//    }
+//    else if (start_stop_code.length == 2) {
+//       start_code_pass_to_backend = "8220DB0000" + String(start_stop_code);
+//    }
+//    else if (start_stop_code.length == 3) {
+//       start_code_pass_to_backend = "8220DB000" + String(start_stop_code);
+//    }
+//    else if (start_stop_code.length == 4) {
+//       start_code_pass_to_backend = "8220DB00" + String(start_stop_code);
+//    }
+//    
+//    if (end_stop_code.length == 1) {
+//       end_code_pass_to_backend = "8220DB00000" + String(end_stop_code);
+//    }
+//    else if (end_stop_code.length == 2) {
+//       end_code_pass_to_backend = "8220DB0000" + String(end_stop_code);
+//    }
+//    else if (end_stop_code.length == 3) {
+//       end_code_pass_to_backend = "8220DB000" + String(end_stop_code);
+//    }
+//    else if (end_stop_code.length == 4) {
+//       end_code_pass_to_backend = "8220DB00" + String(end_stop_code);
+//    }
+//    var startstop = parseInt($('#startInput').val().substring($('#startInput').val().indexOf("(") + 6, $('#startInput').val().indexOf(")")));
+//    var endstop = parseInt($('#destitationInput').val().substring($('#destitationInput').val().indexOf("(") + 6, $('#destitationInput').val().indexOf(")")));
+    var startstop = parseInt(start_stop_code);
+    var endstop = parseInt(end_stop_code);
     var infoWindow = new google.maps.InfoWindow();
     var latlngbounds = new google.maps.LatLngBounds();
     var markers = {{JSONdata | safe}};
-    for (var i = 0; i < 30; i++) {
+    for (var i = 0; i < markers.length; i++) {
         var busstop = markers[i];
     }
-
+//    alert(startstop.length);
 //Ajax, get information from the specific url
     $.ajax({
         url: map_Url + "routes",
@@ -342,12 +382,12 @@ $('.searchInformation').click(function() {
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             var map2 = new google.maps.Map(document.getElementById('map'), MapOption);
-            var commonroutes = result.commondata;
+            var commonroutes = result.routes_data;
             var pathArray = new Array();
             for (var i = 0; i < commonroutes.length; i++) {
-                for (var j = 0; j < commonroutes[i].stops.length; j++) {
-                    var routeLat = commonroutes[i].stops[j].latitude;
-                    var routeLng = commonroutes[i].stops[j].longitude;
+                for (var j = 0; j < commonroutes[i].all_stops_list.length; j++) {
+                    var routeLat = commonroutes[i].all_stops_list[j].stop_lat;
+                    var routeLng = commonroutes[i].all_stops_list[j].stop_lng;
                     var myLatlng = {
                         lat: parseFloat(routeLat),
                         lng: parseFloat(routeLng)
@@ -378,8 +418,8 @@ $('.searchInformation').click(function() {
                 strokeOpacity: 1.0,
                 strokeWeight: 4
             });
-            //        flightPath.setMap(map2);
-            //        map2.removeOverlay(deleteArray);
+//                    flightPath.setMap(map2);
+//                    map2.removeOverlay(deleteArray);
         }
     });
 })
@@ -388,6 +428,7 @@ $('.searchInformation').click(function() {
 
 
 
+<!--
 <script>
 //Fare calculator
 $('.searchInformation').click(function() {
@@ -408,22 +449,23 @@ $('.searchInformation').click(function() {
         var Child_Cash_19 = price[0]['Child_Cash_19'];
         var School_Hours_Cash = price[0]['School_Hours_Cash'];
         var School_Hours_Leap = price[0]['School_Hours_Leap'];
-        alert("Adult Cash: €" + Adult_Cash + "\n" + "Adult with Leap Card: €" + Adult_Leap + "\n" + "Child Cash(Under 16): €" + Child_Cash_16 + "\n" + "Child with Leap Card(Under 19): €" + Child_Cash_19)
+//        alert("Adult Cash: €" + Adult_Cash + "\n" + "Adult with Leap Card: €" + Adult_Leap + "\n" + "Child Cash(Under 16): €" + Child_Cash_16 + "\n" + "Child with Leap Card(Under 19): €" + Child_Cash_19)
     },
         error: function(result) {
             if (Number >= 1 && Number <= 3) {
-                alert("Adult Cash: €" + "2.15" + "\n" + "Adult with Leap Card: €" + "1.55" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
+//                alert("Adult Cash: €" + "2.15" + "\n" + "Adult with Leap Card: €" + "1.55" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
             }
             else if (Number > 3 && Number <= 13) {
-                alert("Adult Cash: €" + "3.00" + "\n" + "Adult with Leap Card: €" + "2.25" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
+//                alert("Adult Cash: €" + "3.00" + "\n" + "Adult with Leap Card: €" + "2.25" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
             }
             else {
-                alert("Adult Cash: €" + "3.30" + "\n" + "Adult with Leap Card: €" + "2.50" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
+//                alert("Adult Cash: €" + "3.30" + "\n" + "Adult with Leap Card: €" + "2.50" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
             }
         }
 }) 
   })   
-</script>>
+</script>
+-->
 
 
 
@@ -453,9 +495,11 @@ $('.searchInformation').click(function() {
 
 
 
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<!--
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+-->
  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAR48jLtATZO3aZWwS9CICs4Q8CDGpzVm8&callback=initMap" async defer></script>
 </body>
 </html>

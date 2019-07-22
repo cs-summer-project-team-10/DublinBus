@@ -84,7 +84,6 @@ def return_routes(request):
     time_range1 = (datetime.datetime.now() + datetime.timedelta(minutes=80)).strftime('%H:%M:%S')
     time_range2 = (datetime.datetime.now() + datetime.timedelta(minutes=60)).strftime('%H:%M:%S')
 
-    #print(start_stop, dest_stop, time, time_range1, time_range2, todays_date, day)
 
     #Get service IDs for todays dates
     if day == 0:
@@ -109,29 +108,15 @@ def return_routes(request):
         service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, sunday = True))
         weekday = False
 
-    #print(service_list)
-    #tuple
-    #print((service_list)[0][0])
-
     # Get all trips of starting bus stop that are within a time range given either side of what user specified
     trip_id_list = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = start_stop, arrival_time__range = (time_range2, time_range1)))
 
-    #print(trip_id_list)
-    #print(len(trip_id_list))
 
     # Narrow the trips to those that have service on todays date
     valid_trip_id_list = list(Trips.objects.values_list('trip_id', flat = True).filter(trip_id__in = trip_id_list, service_id__in = service_list))
 
-    #print(valid_trip_id_list)
-    #print(len(valid_trip_id_list))
-    #for trip in trip_id_list:
-    #    valid_trip_id_list.append(trip)
-
-
     # Get trips that are also specfic to destiantion stop
     common_trip_id_list = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(trip_id__in = valid_trip_id_list, stop_id = dest_stop))
-    #print(common_trip_id_list)
-    #print("Common trips:",len(common_trip_id_list))
 
     # Create dictionary of routes possible between stops
     temp_route_dict = {}
@@ -140,16 +125,12 @@ def return_routes(request):
     for trip in common_trip_id_list:
         route_dict = {}
 
-        #print(trip)
         trips_query_set = Trips.objects.filter(trip_id = trip).values_list('route_id', 'trip_headsign', 'shape_id')
 
         route_id = trips_query_set[0][0]
         trip_headsign = trips_query_set[0][1]
         shape_id = trips_query_set[0][2]
-        #print(trips_query_set)
-        #print(route_id, trip_headsign, shape_id)
         route_short_name = Routes.objects.filter(route_id = route_id).values_list('route_short_name', flat = True)[0]
-        #print(route_short_name)
 
         # Create a route object that holds all the details for this route
         # Pass weather, time period etc in here
@@ -224,15 +205,11 @@ class Route():
         stop_ids = list(MapTripStopTimes.objects.filter(trip_id = self.trip_id).values_list('stop_id','stop_sequence', 'arrival_time', 'shape_dist_traveled'))
 
         self.departure_time = stop_ids[0][2]
-        #print(self.departure_time)
-        #print(stops)
 
         for stop in stop_ids:
-            #print(stop)
-            #print(stop[0])
+
             stop_dict = {}
             stops_query_set = Stops.objects.filter(stop_id = stop[0]).values_list('stop_name', 'stop_lat', 'stop_lng', 'stop_id_short')
-            #print(stops_query_set)
 
             stop_dict["stop_id"] = stop[0]
             stop_dict["stop_id_short"] = stops_query_set[0][3]
@@ -246,7 +223,6 @@ class Route():
 
             due_time = datetime.datetime.strptime(stop_dict["due_arrival_time"], "%H:%M:%S")
 
-            #print(due_time)
             predicted_diff_in_time = (due_time + datetime.timedelta(seconds=predicted_diff_in_time)).time()
             stop_dict["predicted_arrival_time"] = predicted_diff_in_time
 
@@ -261,10 +237,8 @@ class Route():
                 stop_dict["distance_from_previous"] = stop[3] - previous_dist_travelled
 
             previous_dist_travelled = stop_dict["shape_distance_travelled"]
-            #print(stop_dict)
             stops.append(stop_dict)
 
-        #print(stops)
         return stops
 
 
@@ -276,25 +250,21 @@ class Route():
         stops = []
 
         for stop_dict in self.all_stops_list:
-            #print(stop_dict)
-            #print(tup[0], self.start_stop_id)
             if stop_dict["stop_id"] == self.start_stop_id:
                 start_seq = stop_dict["stop_sequence"]
-                #print(start_seq)
 
             elif stop_dict["stop_id"] == self.dest_stop_id:
                 dest_seq = stop_dict["stop_sequence"]
-                #print(dest_seq)
 
         max_stop_order = max(start_seq,dest_seq)
         min_stop_order = min(start_seq,dest_seq)
 
         for stop_dict in self.all_stops_list:
             stop_sequence = stop_dict["stop_sequence"]
-            #print(stop_sequence)
+
             if stop_sequence <= max_stop_order and stop_sequence >= min_stop_order:
                 stops.append(stop_dict)
-        #print(stops)
+
         return stops
 
 
@@ -306,8 +276,8 @@ class Route():
         '''
 
         shape_distance_travelled = MapTripStopTimes.objects.filter(trip_id = self.trip_id, stop_id = stop_id).values_list('shape_dist_traveled', flat = True)[0]
-        #print(shape_distance_travelled)
-        return shape_distance_travelled
+        r
+        eturn shape_distance_travelled
 
 
     def get_all_shape_points(self):
@@ -316,7 +286,6 @@ class Route():
         '''
 
         shape_points = list(Shapes.objects.filter(shape_id = self.shape_id).values('shape_point_sequence', 'shape_point_lat', 'shape_point_lng', 'shape_dist_travelled'))
-        #print(shape_points)
 
         return shape_points
 
@@ -328,7 +297,7 @@ class Route():
 
         shape_points = []
         for point in self.route_shape_points:
-            #print(point[3])
+
             if point["shape_dist_travelled"] == self.start_stop_distance:
                 start_seq = point["shape_point_sequence"]
             elif point["shape_dist_travelled"] == self.dest_stop_distance:
@@ -341,7 +310,6 @@ class Route():
             shape_seq = point["shape_point_sequence"]
 
             if shape_seq >= min_seq and shape_seq <= max_seq:
-                #print(point)
                 shape_points.append(point)
 
         return shape_points

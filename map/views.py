@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import HttpResponse, render, redirect
 import json
+import requests
 import datetime
 import pickle
 import pandas as pd
@@ -19,7 +20,7 @@ def home_page(request):
     bus_stops = Stops.objects.all()
     bus_stop_list = []
     for bus_stop in bus_stops:
-        bus_stop_list.append((bus_stop.stop_id, bus_stop.stop_name, bus_stop.stop_lat, bus_stop.stop_lng))
+        bus_stop_list.append((bus_stop.stop_id, bus_stop.stop_id_short, bus_stop.stop_name, bus_stop.stop_lat, bus_stop.stop_lng))
 
     return render(request, 'map/index.html', {'JSONdata': json.dumps(bus_stop_list)})
 
@@ -36,12 +37,40 @@ def return_routes(request):
 
     #start_stop = request.GET['startstop']
     #dest_stop = request.GET['endstop']
+    #time_specified = request.GET['time_specified']
+    #date_specified = request.GET['date_specified']
+
+    #Get weather
+    #response = requests.get("http://api.openweathermap.org/data/2.5/weather?id=7778677&APPID=0927fd5dff272fdbd486187e54283310")
+    #weather_data = json.loads(response.content.decode('utf-8'))
+    #print(weather_data)
+    weather = "dummy"
+
+    # Convert time to time period
+    # if seconds >= 0 and seconds < 25200:
+    #     return 0
+    # elif seconds >= 25200 and seconds < 36000:
+    #     return 5
+    # elif seconds >= 36000 and seconds < 54000:
+    #     return 3
+    # elif seconds >= 54000 and seconds < 61200:
+    #     return 4
+    # elif seconds >= 61200 and seconds < 68400:
+    #     return 6
+    # elif seconds >= 68400 and seconds < 79200:
+    #     return 2
+    # elif seconds >= 79200:
+    #     return 1
+
+    time_period =  "dummy"
+
+    # Convert date to week or weekend
 
     start_stop = "8220DB001069"
     dest_stop = "8220DB000670"
 
-    start_stop = 1069
-    dest_stop = 670
+    start_stop = 2007
+    dest_stop = 2017
 
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
@@ -57,30 +86,28 @@ def return_routes(request):
 
     #print(start_stop, dest_stop, time, time_range1, time_range2, todays_date, day)
 
-    # day_dict = {'0' : 'Monday',
-    #             '1' : 'Tuesday',
-    #             '2' : 'Wednesday',
-    #             '3' : 'Thursday',
-    #             '4' : 'Friday',
-    #             '5' : 'Saturday',
-    #             '6' : 'Sunday',}
-
     #Get service IDs for todays dates
-
     if day == 0:
         service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, monday = True))
+        weekday = True
     elif day == 1:
         service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, tuesday = True))
+        weekday = True
     elif day == 2:
         service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, wednesday = True))
+        weekday = True
     elif day == 3:
         service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, thursday = True))
+        weekday = True
     elif day == 4:
         service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, friday = True))
+        weekday = True
     elif day == 5:
         service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, saturday = True))
+        weekday = False
     elif day == 6:
         service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, sunday = True))
+        weekday = False
 
     #print(service_list)
     #tuple
@@ -125,7 +152,8 @@ def return_routes(request):
         #print(route_short_name)
 
         # Create a route object that holds all the details for this route
-        temp_route_dict[trip] = Route(start_stop, dest_stop, trip, route_id, route_short_name, trip_headsign, shape_id)
+        # Pass weather, time period etc in here
+        temp_route_dict[trip] = Route(weather, weekday, time_period, start_stop, dest_stop, trip, route_id, route_short_name, trip_headsign, shape_id)
 
         route_dict["route_id"] = temp_route_dict[trip].route_id
         route_dict["trip_id"] = temp_route_dict[trip].trip_id
@@ -153,7 +181,12 @@ class Route():
     Class that represents a route between the two stops
     '''
 
-    def __init__(self, start_stop, dest_stop, trip_id, route_id, route_short_name, trip_headsign, shape_id):
+    def __init__(self, weather, weekday, time_period, start_stop, dest_stop, trip_id, route_id, route_short_name, trip_headsign, shape_id):
+        self.weather = weather
+        self.weekday = weekday
+        self.time_period = time_period
+        #self.direction
+
         self.start_stop_id = start_stop.stop_id
         self.start_stop_id_short = start_stop.stop_id_short
         self.dest_stop_id = dest_stop.stop_id
@@ -165,6 +198,7 @@ class Route():
         self.shape_id = shape_id
         self.start_stop_distance = self.get_stop_distance(self.start_stop_id)
         self.dest_stop_distance = self.get_stop_distance(self.dest_stop_id)
+
         self.all_stops_list = self.get_all_stops()
         self.subroute_stops_list = self.get_subroute_stops()
         self.route_shape_points = self.get_all_shape_points()
@@ -208,7 +242,7 @@ class Route():
             stop_dict["stop_sequence"] = stop[1]
             stop_dict["due_arrival_time"] = stop[2]
 
-            predicted_diff_in_time = predict(self.route_short_name, stop_dict["stop_sequence"], 0)
+            predicted_diff_in_time = predict(self.weather, self.time_period, self.weekday, self.route_short_name, stop_dict["stop_sequence"], 0)
 
             due_time = datetime.datetime.strptime(stop_dict["due_arrival_time"], "%H:%M:%S")
 
@@ -312,6 +346,8 @@ class Route():
 
         return shape_points
 
+
+
     def display_route_details(self):
         '''
         Simple function that prints attributes to terminal, useful for development
@@ -329,12 +365,18 @@ class Route():
         print("************************************")
 
 
-def predict(route_short_name, PROGRNUMBER, direction):
+def predict(weather, time_period, weekday, route_short_name, PROGRNUMBER, direction):
 
-    #Get time
+    #Also take time and date as parameters
+    #Somehow get direction from information
+
+    #time_period = time_period
     time_period = 1
-    #Get weather
+
+    #weather = weather
     rain = 0.5
+    #Get weekday/weekend
+    #weekday = weekday
 
     if direction == 1:
         direction = True
@@ -344,27 +386,14 @@ def predict(route_short_name, PROGRNUMBER, direction):
     dataframe = pd.DataFrame([(PROGRNUMBER, time_period, direction, rain)], columns=('PROGRNUMBER',  'Time_period', 'DIRECTION', 'rain'))
     features = ['PROGRNUMBER', 'Time_period', 'DIRECTION', 'rain']
 
-    if route_short_name == "14":
-
-        file = 'map/pickles/' + str(route_short_name) + '_bus_model.sav'
+    try:
+        file = 'map/pickles/' + str(route_short_name)  + '_bus_model.sav'
         linear_model = pickle.load(open(file, 'rb'))
 
-        time_diff = int((linear_model.predict(dataframe[features]))[0])
+    except FileNotFoundError:
+        file = 'map/pickles/generic_bus_model.sav'
+        linear_model = pickle.load(open(file, 'rb'))
 
-
-    else:
-        time_diff = 10
+    time_diff = int((linear_model.predict(dataframe[features]))[0])
 
     return time_diff
-
-# def predict2(request):
-#
-#     dataframe = pd.DataFrame([(14, 6, True, 0)], columns=('PROGRNUMBER',  'Time_period', 'DIRECTION', 'rain'))
-#     features = ['PROGRNUMBER', 'Time_period', 'DIRECTION', 'rain']
-#
-#     linear_model = pickle.load(open('map/pickles/14_bus_model.sav', 'rb'))
-#
-#     result = linear_model.predict(dataframe[features])
-#
-#     print(result)
-#     return HttpResponse(result)

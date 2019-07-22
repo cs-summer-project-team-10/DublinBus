@@ -69,8 +69,8 @@ def return_routes(request):
     start_stop = "8220DB001069"
     dest_stop = "8220DB000670"
 
-    start_stop = 2007
-    dest_stop = 2017
+    start_stop = 1069
+    dest_stop = 670
 
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
@@ -151,9 +151,9 @@ def return_routes(request):
         route_short_name = Routes.objects.filter(route_id = route_id).values_list('route_short_name', flat = True)[0]
         #print(route_short_name)
 
-        # Create a route object that holds all the details for this route
+        # Create a direct route object that holds all the details for this route
         # Pass weather, time period etc in here
-        temp_route_dict[trip] = Route(weather, weekday, time_period, start_stop, dest_stop, trip, route_id, route_short_name, trip_headsign, shape_id)
+        temp_route_dict[trip] = DirectRoute(weather, weekday, time_period, start_stop, dest_stop, trip, route_id, route_short_name, trip_headsign, shape_id)
 
         route_dict["route_id"] = temp_route_dict[trip].route_id
         route_dict["trip_id"] = temp_route_dict[trip].trip_id
@@ -173,15 +173,52 @@ def return_routes(request):
 
         data.append(route_dict)
 
+    if len(data) == 0:
+        print("No common route found")
+        multi_routing(weather, weekday, time_period, valid_trip_id_list, start_stop, dest_stop, time_range1, time_range2, service_list)
+        # Call multi-routing API
     return JsonResponse({'routes_data': data})
+
+
+
+def multi_routing(weather, weekday, time_period, start_stop_valid_trip_id_list, start_stop, dest_stop, time_range1, time_range2, service_list):
+    #start_stop = start_stop
+    #dest_stop = dest_stop
+
+    start_stop_valid_trips = start_stop_valid_trip_id_list
+    print(start_stop, dest_stop)
+    print("start stop list", start_stop_valid_trips)
+
+    # Get all trips of destination bus stop that are within a time range given either side of what user specified
+    trip_id_list = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = dest_stop, arrival_time__range = (time_range2, time_range1)))
+
+    print("time range", trip_id_list)
+    #print(len(trip_id_list))
+
+    # Narrow the trips to those that have service on todays date
+    dest_stop_valid_trips = list(Trips.objects.values_list('trip_id', flat = True).filter(trip_id__in = trip_id_list, service_id__in = service_list))
+    print("day of service too", dest_stop_valid_trips)
+
+    # Create a multi route object from the two lists of trip IDs
+    route = MultiRoute(weather, weekday, time_period, start_stop, dest_stop, start_stop_valid_trips, dest_stop_valid_trips)
+
+    print("Multi routing")
+    return "multi_routing"
+
+
+
+
+
 
 
 class Route():
     '''
-    Class that represents a route between the two stops
+    A subclass of Route class that is composed of 2 routes to create a multi route
+
+    Some attributes are handled differently due to these routes not sharing common stops on one trip
     '''
 
-    def __init__(self, weather, weekday, time_period, start_stop, dest_stop, trip_id, route_id, route_short_name, trip_headsign, shape_id):
+    def __init__(self, weather, weekday, time_period, start_stop, dest_stop):
         self.weather = weather
         self.weekday = weekday
         self.time_period = time_period
@@ -191,6 +228,64 @@ class Route():
         self.start_stop_id_short = start_stop.stop_id_short
         self.dest_stop_id = dest_stop.stop_id
         self.dest_stop_id_short = dest_stop.stop_id_short
+
+
+
+# dest_trip_dict = {}
+# start_trip_dict = {}
+#
+# for trip in dest_stop_valid_trips:
+#     trips_query_set = Trips.objects.filter(trip_id = trip).values_list('route_id', 'trip_headsign', 'shape_id')
+#
+#     route_id = trips_query_set[0][0]
+#     trip_headsign = trips_query_set[0][1]
+#     shape_id = trips_query_set[0][2]
+#     #print(trips_query_set)
+#     #print(route_id, trip_headsign, shape_id)
+#     route_short_name = Routes.objects.filter(route_id = route_id).values_list('route_short_name', flat = True)[0]
+#     #print(route_short_name)
+#
+#     dest_trip_dict[trip] = MultiRoute(weather, weekday, time_period, start_stop, dest_stop, trip, route_id, route_short_name, trip_headsign, shape_id)
+
+
+
+
+
+
+class MultiRoute(Route):
+    '''
+    '''
+
+    def __init__(self, weather, weekday, time_period, start_stop, dest_stop, start_stop_valid_trips, dest_stop_valid_trips):
+        Route.__init__(self, weather, weekday, time_period, start_stop, dest_stop)
+        self.x = start_stop_valid_trips
+        self.y = dest_stop_valid_trips
+
+        self.display_route_details()
+
+    def display_route_details(self):
+        '''
+        Simple function that prints attributes to terminal, useful for development
+        '''
+
+        print("************************************")
+        print("Route from", self.start_stop_id, "to", self.dest_stop_id)
+        print("Weather:", self.weather, "\nWeekday:", self.weekday, "\nTime Period:", self.time_period)
+        print("Start stops valid:", self.x)
+        print("Dest stops valid:", self.y)
+        print("************************************")
+
+
+
+
+
+class DirectRoute(Route):
+    '''
+    Class that represents a direct route between the two stops
+    '''
+
+    def __init__(self, weather, weekday, time_period, start_stop, dest_stop, trip_id, route_id, route_short_name, trip_headsign, shape_id):
+        Route.__init__(self, weather, weekday, time_period, start_stop, dest_stop)
         self.route_id = route_id
         self.trip_id = trip_id
         self.route_short_name = route_short_name
@@ -206,7 +301,7 @@ class Route():
         self.number_stops = len(self.subroute_stops_list) - 1
         self.departure_time
 
-        #self.display_route_details()
+        self.display_route_details()
 
 
     def get_all_stops(self):
@@ -346,13 +441,13 @@ class Route():
 
         return shape_points
 
-
-
     def display_route_details(self):
         '''
         Simple function that prints attributes to terminal, useful for development
         '''
 
+        print("************************************")
+        print("Weather:", self.weather, "\nWeekday:", self.weekday, "\nTime Period:", self.time_period)
         print("Route from", self.start_stop_id, "to", self.dest_stop_id)
         print("Trip ID:", self.trip_id, "\nRoute ID:", self.route_id)
         print("Route Name:", self.route_short_name, "Headsign:", self.trip_headsign)
@@ -363,6 +458,40 @@ class Route():
         print("ALL SHAPE POINTS:\n", self.route_shape_points)
         print("SUBROUTE SHAPE POINTS:\n", self.subroute_shape_points)
         print("************************************")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def predict(weather, time_period, weekday, route_short_name, PROGRNUMBER, direction):

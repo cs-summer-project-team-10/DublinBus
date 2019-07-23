@@ -69,8 +69,8 @@ def return_routes(request):
     start_stop = "8220DB001069"
     dest_stop = "8220DB000670"
 
-    start_stop = 1069
-    dest_stop = 666
+    start_stop = 1052
+    dest_stop = 7245
 
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
@@ -506,6 +506,8 @@ class MultiRoute(Route):
 
         self.display_route_details()
 
+        self.check_common_stop()
+
     def generate_trips_dict(self, trip_id_list, start_stop):
 
         trip_dict = {}
@@ -523,6 +525,30 @@ class MultiRoute(Route):
             trip_dict[trip] = DirectRoute(self.weather, self.weekday, self.time_period, start_stop, start_stop, trip, route_id, route_short_name, trip_headsign, shape_id)
 
         return trip_dict
+
+    def check_common_stop(self):
+
+        for trip in self.dest_trips:
+            print("Checking", trip, "for common stop")
+
+            for stop in self.dest_trips[trip].subroute_stops_list:
+                check_stop = stop["stop_id"]
+                print("Checking stop", check_stop)
+
+                for trip2 in self.start_trips:
+                    print("Checking against", trip2)
+
+                    for stop in self.start_trips[trip2].subroute_stops_list:
+                        other_stop = stop["stop_id"]
+                        print("Checking against stop", other_stop)
+
+                        if check_stop == other_stop:
+                            print("MATCH", check_stop, "=", other_stop)
+                            return
+        print("NO MATCH")
+        return
+
+
 
     # def get_all_stops(self, trip_id):
     #     '''
@@ -590,10 +616,14 @@ class MultiRoute(Route):
         print("*******************MULTI*****************")
         print("Route from", self.start_stop_id, "to", self.dest_stop_id)
         print("Weather:", self.weather, "\nWeekday:", self.weekday, "\nTime Period:", self.time_period)
-        print("Start stops valid:", self.start_stop_valid_trips)
-        print("Dest stops valid:", self.dest_stop_valid_trips)
-        print("Dest stop dict:", self.dest_trips)
-        print("Start stop dict:", self.start_trips)
+        print("Start stops trips valid:", self.start_stop_valid_trips)
+        print("Dest stops trips valid:", self.dest_stop_valid_trips)
+        print("Dest trips dict:", self.dest_trips)
+        print("Start trips dict:", self.start_trips)
+        for each in self.start_trips:
+            print(self.start_trips[each].subroute_stops_list)
+        for each in self.dest_trips:
+            print(self.dest_trips[each].subroute_stops_list)
         print("************************************")
 
 

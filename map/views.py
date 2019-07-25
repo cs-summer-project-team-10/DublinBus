@@ -80,7 +80,7 @@ def return_routes(request):
     dest_stop = 93
 
     # start_stop = 1069
-    # dest_stop = 22
+    # dest_stop = 6052
 
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
@@ -93,7 +93,7 @@ def return_routes(request):
 
     time_range1 = (datetime.datetime.now() + datetime.timedelta(minutes=80)).strftime('%H:%M:%S')
     time_range2 = (datetime.datetime.now() + datetime.timedelta(minutes=60)).strftime('%H:%M:%S')
-    time_range3 = (datetime.datetime.now() + datetime.timedelta(minutes=120)).strftime('%H:%M:%S')
+    time_range3 = (datetime.datetime.now() + datetime.timedelta(minutes=160)).strftime('%H:%M:%S')
 
     #print(start_stop, dest_stop, time, time_range1, time_range2, todays_date, day)
 
@@ -160,17 +160,85 @@ def return_routes(request):
 
         travel_options = MultiRoute(weather, weekday, time_specified, time_period, start_stop, dest_stop, valid_start_stop_trip_ids, valid_dest_stop_trip_ids)
 
+        for travel_option in travel_options.multi_trips_list:
+
+            route_option_dict = {}
+
+
+            route_option_dict["direct"] = False
+            route_option_dict["start_stop_id"] = travel_option["stage1"].start_stop_id
+            route_option_dict["dest_stop_id"] = travel_option["stage2"].dest_stop_id
+            route_option_dict["start_stop_id_short"] = travel_option["stage1"].start_stop_id_short
+            route_option_dict["dest_stop_id_short"] = travel_option["stage2"].dest_stop_id_short
+
+            route_option_dict["stages"] = travel_option["stages"]
+            route_option_dict["changeover_stop_id"] = travel_option["changeover_stop_id"]
+            route_option_dict["changeover_stop_id_short"] = travel_option["changeover_stop_id_short"]
+            route_option_dict["stage1_time"] = travel_option["stage1_time"]
+            route_option_dict["wait_time"] = travel_option["wait_time"]
+            route_option_dict["stage2_time"] = travel_option["stage2_time"]
+            route_option_dict["total_time"] = travel_option["total_time"]
+
+            #print(route_option_dict)
+
+            stage_dict = {}
+
+            stage_dict["route_id"] = travel_option["stage1"].route_id
+            stage_dict["trip_id"] = travel_option["stage1"].trip_id
+            stage_dict["route_short_name"] = travel_option["stage1"].route_short_name
+            stage_dict["trip_headsign"] = travel_option["stage1"].trip_headsign
+            stage_dict["start_stop_id"] = travel_option["stage1"].start_stop_id
+            stage_dict["dest_stop_id"] = travel_option["changeover_stop_id"]
+            stage_dict["start_stop_id_short"] = travel_option["stage1"].start_stop_id_short
+            stage_dict["dest_stop_id_short"] = travel_option["changeover_stop_id_short"]
+            #stage_dict["number_stops"] = travel_options.multi_trips_dict[option][0].number_stops
+            stage_dict["departure_time"] = travel_option["stage1"].departure_time
+            stage_dict["all_stops_list"] = travel_option["stage1"].all_stops_list
+            stage_dict["stage_subroute_stops"] = travel_option["stage1_subroute_stops"]
+            stage_dict["route_shape_points"] = travel_option["stage1"].route_shape_points
+            stage_dict["stage1_subroute_shape_points"] = travel_option["stage1_subroute_shape_points"]
+
+
+            route_option_dict["stage1"] = stage_dict
+
+            stage_dict = {}
+
+            stage_dict["route_id"] = travel_option["stage2"].route_id
+            stage_dict["trip_id"] = travel_option["stage2"].trip_id
+            stage_dict["route_short_name"] = travel_option["stage2"].route_short_name
+            stage_dict["trip_headsign"] = travel_option["stage2"].trip_headsign
+            stage_dict["start_stop_id"] = travel_option["changeover_stop_id"]
+            stage_dict["dest_stop_id"] = travel_option["stage2"].dest_stop_id
+            stage_dict["start_stop_id_short"] = travel_option["changeover_stop_id_short"]
+            stage_dict["dest_stop_id_short"] = travel_option["stage2"].dest_stop_id_short
+            #stage_dict["number_stops"] = travel_options.multi_trips_dict[option][0].number_stops
+            stage_dict["departure_time"] = travel_option["stage2"].departure_time
+            stage_dict["all_stops_list"] = travel_option["stage2"].all_stops_list
+            stage_dict["stage_subroute_stops"] = travel_option["stage2_subroute_stops"]
+            stage_dict["route_shape_points"] = travel_option["stage2"].route_shape_points
+            stage_dict["stage2_subroute_shape_points"] = travel_option["stage2_subroute_shape_points"]
+
+
+            route_option_dict["stage2"] = stage_dict
+
+
+            data.append(route_option_dict)
+
+            # print(travel_options.multi_trips_dict[item])
+
     else:
         travel_options = DirectRoutes(weather, weekday, time_specified, time_period, start_stop, dest_stop, common_trip_id_list)
-        print(travel_options.common_trips_dict)
+
+        #print(travel_options.common_trips_dict)
 
         for trip in travel_options.common_trips_dict:
 
             # Check trip is valid
             if travel_options.common_trips_dict[trip].valid:
 
-                route_option_dict ={}
+                route_option_dict = {}
 
+                route_option_dict["direct"] = True
                 route_option_dict["route_id"] = travel_options.common_trips_dict[trip].route_id
                 route_option_dict["trip_id"] = travel_options.common_trips_dict[trip].trip_id
                 route_option_dict["route_short_name"] = travel_options.common_trips_dict[trip].route_short_name
@@ -188,90 +256,7 @@ def return_routes(request):
 
                 data.append(route_option_dict)
 
-    # for trip in common_trip_id_list:
-    #     route_dict = {}
-    #
-    #     #print(trip)
-    #     trips_query_set = Trips.objects.filter(trip_id = trip).values_list('route_id', 'trip_headsign', 'shape_id')
-    #
-    #     route_id = trips_query_set[0][0]
-    #     trip_headsign = trips_query_set[0][1]
-    #     shape_id = trips_query_set[0][2]
-    #     #print(trips_query_set)
-    #     #print(route_id, trip_headsign, shape_id)
-    #     route_short_name = Routes.objects.filter(route_id = route_id).values_list('route_short_name', flat = True)[0]
-    #     #print(route_short_name)
-    #
-    #     # Create a direct route object that holds all the details for this route
-    #     # Pass weather, time period etc in here
-    #     temp_route_dict[trip] = DirectRoute(weather, weekday, time_range2, time_period, start_stop, dest_stop, trip, route_id, route_short_name, trip_headsign, shape_id)
-    #
-    #     #Check route is valid
-    #     if temp_route_dict[trip].valid:
-    #
-    #         route_dict["route_id"] = temp_route_dict[trip].route_id
-            # route_dict["trip_id"] = temp_route_dict[trip].trip_id
-            # route_dict["route_short_name"] = temp_route_dict[trip].route_short_name
-            # route_dict["trip_headsign"] = temp_route_dict[trip].trip_headsign
-            # route_dict["start_stop_id"] = temp_route_dict[trip].start_stop_id
-            # route_dict["dest_stop_id"] = temp_route_dict[trip].dest_stop_id
-            # route_dict["start_stop_id_short"] = temp_route_dict[trip].start_stop_id_short
-            # route_dict["dest_stop_id_short"] = temp_route_dict[trip].dest_stop_id_short
-            # route_dict["number_stops"] = temp_route_dict[trip].number_stops
-            # route_dict["departure_time"] = temp_route_dict[trip].departure_time
-            # route_dict["all_stops_list"] = temp_route_dict[trip].all_stops_list
-            # route_dict["subroute_stops_list"] = temp_route_dict[trip].subroute_stops_list
-            # route_dict["route_shape_points"] = temp_route_dict[trip].route_shape_points
-            # route_dict["subroute_shape_points"] = temp_route_dict[trip].subroute_shape_points
-    #
-    #         data.append(route_dict)
-
     return JsonResponse({'routes_data': data})
-    #return HttpResponse("yep")
-
-
-
-# def multi_routing(weather, weekday, time_period, start_stop_valid_trip_id_list, start_stop, dest_stop, time_range1, time_range2, service_list):
-#     #start_stop = start_stop
-#     #dest_stop = dest_stop
-#
-#     start_stop_valid_trips = start_stop_valid_trip_id_list
-#     print(start_stop, dest_stop)
-#     print("start stop list", start_stop_valid_trips)
-#
-#     # Get all trips of destination bus stop that are within a time range given either side of what user specified
-#     # Give more time to this stop??
-#     trip_id_list = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = dest_stop, arrival_time__range = (time_range2, time_range1)))
-#
-#     print("time range", trip_id_list)
-#     #print(len(trip_id_list))
-#
-#     # Narrow the trips to those that have service on todays date
-#     dest_stop_valid_trips = list(Trips.objects.values_list('trip_id', flat = True).filter(trip_id__in = trip_id_list, service_id__in = service_list))
-#     print("day of service too", dest_stop_valid_trips)
-#
-#     # Create a multi route object from the two lists of trip IDs
-#     route = MultiRoute(weather, weekday, time_period, start_stop, dest_stop, start_stop_valid_trips, dest_stop_valid_trips)
-#
-#     print("Multi routing")
-#     return "multi_routing"
-
-# def multi_routing(start_trip_ids, dest_trip_ids, weather, weekday, time, time_period, start_stop, dest_stop):
-#     print("Multi-routing\n")
-#     print("Starting stop trips:",start_trip_ids,"\n")
-#     print("Dest stop trip ids:",dest_trip_ids,"\n")
-#     print()
-#
-#
-#     #dest_stop = "8220DB000670"
-#     #dest_stop = Stops.objects.get(stop_id_short = 670)
-#     #y = Trip('5850.3.60-14-d12-1.127.I', weather, weekday, time, time_period, start_stop, dest_stop)
-#     x = MultiRoute(weather, weekday, time, time_period, start_stop, dest_stop, start_trip_ids, dest_trip_ids)
-#
-#     return HttpResponse("Multi Routing")
-
-
-
 
 
 class Route():
@@ -330,7 +315,7 @@ class MultiRoute(Route):
         self.dest_trips_dict = self.create_dest_trips(self.dest_trip_ids)
 
         self.display_route_details()
-        self.check_for_common_stops()
+        self.multi_trips_list = self.check_for_common_stops()
 
 
     def create_trips_and_check(self):
@@ -358,58 +343,102 @@ class MultiRoute(Route):
 
         return trip_dict
 
+    def reset_flags(self, trip_dict):
+        for key in trip_dict:
+            trip_dict[key].used_trip = False
+
+
     def check_for_common_stops(self):
 
+        multi_trip_list = []
+
         options_count = 0
-        for trip_key in self.dest_trips_dict:
+        self.reset_flags(self.dest_trips_dict)
+
+        for trip_key in self.start_trips_dict:
+            #print("Start Trip:", self.start_trips_dict[trip_key].route_short_name, self.start_trips_dict[trip_key].departure_time, "\n***************************************")
             #print("Dest trip", count)
             #print(self.dest_trips_dict[trip_key].subroute_stops_list)
-            for stop in self.dest_trips_dict[trip_key].subroute_stops_list:
+            for stop_dict in self.start_trips_dict[trip_key].subroute_stops_list:
 
-                used_route = False
+                for trip_key2 in self.dest_trips_dict:
 
-                for trip_key2 in self.start_trips_dict:
+                    if self.dest_trips_dict[trip_key2].used_trip == False:
+                        for stop_dict2 in self.dest_trips_dict[trip_key2].subroute_stops_list:
 
-                    if used_route == True:
-                        break
-                    #print("Start trip", count2)
-                    #print(self.start_trips_dict[trip_key2].predicted_start_arrival_time)
-                    #print("Start stop trip",self.start_trips_dict[trip_key2].subroute_stops_list)
+                            if stop_dict["stop_id"] == stop_dict2["stop_id"]:
+                                # Found a stop common to both trips
+                                #print(self.start_trips_dict[trip_key].trip_id,stop_dict["stop_id"],self.dest_trips_dict[trip_key2].trip_id,stop_dict2["stop_id"])
+                                #print("MATCH!Route:",self.dest_trips_dict[trip_key].route_short_name,"Stop", stop["stop_id_short"], \
+                                #        "VERSUS Route:", self.start_trips_dict[trip_key2].route_short_name,"Stop", stop2["stop_id_short"])
+
+                                first_leg_arrival = stop_dict["predicted_arrival_time"]
+                                first_leg_seconds = (first_leg_arrival.hour * 60 + first_leg_arrival.minute) * 60 + first_leg_arrival.second
+
+                                second_leg_dept = stop_dict2["predicted_arrival_time"]
+                                second_leg_seconds = (second_leg_dept.hour * 60 + second_leg_dept.minute) * 60 + second_leg_dept.second
+
+                                wait_time_seconds = second_leg_seconds - first_leg_seconds
+
+                                # Add in max waiting time
+                                max_wait_time_seconds = 40 * 60
+
+                                if first_leg_seconds < second_leg_seconds and wait_time_seconds < max_wait_time_seconds:
+
+                                    common_stop_id = stop_dict["stop_id"]
+                                    common_stop_id_short = stop_dict["stop_id_short"]
+                                    stage1_stop_sequence = stop_dict["stop_sequence"]
+                                    stage2_stop_sequence = stop_dict2["stop_sequence"]
+
+                                    print("VALID OPTION:", options_count + 1, " \nGet Route ID -",self.start_trips_dict[trip_key].route_short_name,"from", self.start_stop_id,\
+                                            "at",self.start_trips_dict[trip_key].predicted_start_arrival_time,"to", common_stop_id,"arriving at", first_leg_arrival,"wait",wait_time_seconds/60,"mins then get Route",\
+                                            self.dest_trips_dict[trip_key2].route_short_name,"departing at",second_leg_dept,"to",self.dest_stop_id,"arriving at dest at", self.dest_trips_dict[trip_key2].predicted_dest_arrival_time)
+                                    options_count += 1
 
 
-                    for stop2 in self.start_trips_dict[trip_key2].subroute_stops_list:
+                                    second_leg_arrive_dest = self.dest_trips_dict[trip_key2].predicted_dest_arrival_time
+                                    second_leg_arrive_dest_seconds = (second_leg_arrive_dest.hour * 60 + second_leg_arrive_dest.minute) * 60 + second_leg_arrive_dest.second
 
-                        if stop["stop_id"] == stop2["stop_id"]:
-                            #print("MATCH!Route:",self.dest_trips_dict[trip_key].route_short_name,"Stop", stop["stop_id_short"], \
-                            #        "VERSUS Route:", self.start_trips_dict[trip_key2].route_short_name,"Stop", stop2["stop_id_short"])
+                                    first_leg_departure = self.start_trips_dict[trip_key].predicted_start_arrival_time
+                                    first_leg_departure_seconds = (first_leg_departure.hour * 60 + first_leg_departure.minute) * 60 + first_leg_departure.second
 
-                            first_leg_arrival = stop["predicted_arrival_time"]
-                            first_leg_seconds = (first_leg_arrival.hour * 60 + first_leg_arrival.minute) * 60 + first_leg_arrival.second
+                                    total_time = second_leg_arrive_dest_seconds - first_leg_departure_seconds
 
-                            second_leg_dept = stop2["predicted_arrival_time"]
-                            second_leg_seconds = (second_leg_dept.hour * 60 + second_leg_dept.minute) * 60 + second_leg_dept.second
+                                    multi_trip_dict = {}
 
-                            wait_time_seconds = second_leg_seconds - first_leg_seconds
+                                    multi_trip_dict["stages"] = 1
+                                    multi_trip_dict["changeover_stop_id"] = common_stop_id
+                                    multi_trip_dict["changeover_stop_id_short"] = common_stop_id_short
+                                    multi_trip_dict["stage1_time"] = round((first_leg_seconds - first_leg_departure_seconds)/60)
+                                    multi_trip_dict["wait_time"] = round(wait_time_seconds/60)
+                                    multi_trip_dict["stage2_time"] = round((second_leg_arrive_dest_seconds - second_leg_seconds)/60)
+                                    multi_trip_dict["total_time"] = round(total_time/60)
+                                    multi_trip_dict["stage1"] = self.start_trips_dict[trip_key]
+                                    multi_trip_dict["stage2"] = self.dest_trips_dict[trip_key2]
 
-                            # Add in max waiting time
-                            max_wait_time_seconds = 30 * 60
+                                    stop_and_shapes_list_stage1 = self.start_trips_dict[trip_key].get_stage_subroutes_and_shapes(stage1_stop_sequence)
+                                    stop_and_shapes_list_stage2 = self.dest_trips_dict[trip_key2].get_stage_subroutes_and_shapes(stage2_stop_sequence)
 
-                            if first_leg_seconds < second_leg_seconds and wait_time_seconds < max_wait_time_seconds:
+                                    multi_trip_dict["stage1_subroute_stops"] = stop_and_shapes_list_stage1[1]
+                                    multi_trip_dict["stage2_subroute_stops"] = stop_and_shapes_list_stage2[1]
 
-                                common_stop = stop["stop_id"]
-                                #print(second_leg_dept - first_leg_arrival)
-                                #print("VALID!!!******Arrive", first_leg_arrival, "deptarture", second_leg_dept)
-                                print("VALID OPTION:", options_count + 1, " \nRoute ID -",self.start_trips_dict[trip_key2].route_short_name,"from", self.start_stop_id,\
-                                        "to", common_stop,"arrives at", first_leg_arrival,"wait",wait_time_seconds/60,"mins then get Route",\
-                                        self.dest_trips_dict[trip_key].route_short_name,"to",self.dest_stop_id)
-                                options_count += 1
-                                used_route = True
+                                    multi_trip_dict["stage1_subroute_shape_points"] = stop_and_shapes_list_stage1[0]
+                                    multi_trip_dict["stage2_subroute_shape_points"] = stop_and_shapes_list_stage2[0]
 
-                                if options_count >= 500:
-                                    return
-                                else:
+                                    #print(multi_trip_dict)
+                                    multi_trip_list.append(multi_trip_dict)
+
+                                    self.dest_trips_dict[trip_key2].used_trip = True
+
+                                    if options_count >= 8:
+                                        return multi_trip_list
+
                                     break
-        return
+
+            # Reset used flag for all destination trips
+            self.reset_flags(self.dest_trips_dict)
+
+        return multi_trip_list
 
 
     def display_route_details(self):
@@ -427,6 +456,11 @@ class MultiRoute(Route):
         print("Start trip dict:", self.start_trips_dict)
         print("Dest trip dict:", self.dest_trips_dict)
         print("************************************")
+
+
+
+
+
 
 class Trip():
     '''
@@ -569,7 +603,7 @@ class Trip():
 
 
             if hasattr(self, 'dest_stop') and stop[0] == self.dest_stop_id:
-
+                self.predicted_dest_arrival_time = predicted_arrival_time
                 self.dest_stop_sequence = stop[1]
 
                 if stop[3] == None:
@@ -733,6 +767,90 @@ class Trip():
 
         return shape_points
 
+    def get_stage_subroutes_and_shapes(self, common_stop_sequence):
+        '''
+        '''
+
+        stop_and_shapes_list = []
+
+        stops = []
+        # Check which type of stage_subroute is needed
+
+        # Has just start stop ID specfied, start to end subroute
+        if hasattr(self, 'start_stop'):
+            #print("Has start")
+
+            for stop_dict in self.subroute_stops_list:
+                stop_sequence = stop_dict["stop_sequence"]
+                #print(stop_sequence)
+                if stop_sequence == common_stop_sequence:
+                    common_stop_distance = stop_dict["shape_distance_travelled"]
+                    #print("Call function with distance:", common_stop_distance)
+                    shapes = self.get_stage_subroute_shape_points(common_stop_distance)
+                    stop_and_shapes_list.append(shapes)
+
+                if stop_sequence <= common_stop_sequence:
+                    stops.append(stop_dict)
+
+        # Has just dest ID specified, all to dest subroute
+        elif hasattr(self, 'dest_stop'):
+            #print("Has dest")
+
+            for stop_dict in self.subroute_stops_list:
+                stop_sequence = stop_dict["stop_sequence"]
+                #print(stop_sequence)
+                if stop_sequence == common_stop_sequence:
+                    common_stop_distance = stop_dict["shape_distance_travelled"]
+                    #print("Call function with distance:", common_stop_distance)
+                    shapes = self.get_stage_subroute_shape_points(common_stop_distance)
+                    stop_and_shapes_list.append(shapes)
+
+                if stop_sequence >= common_stop_sequence:
+                    stops.append(stop_dict)
+
+        stop_and_shapes_list.append(stops)
+        #print(stops)
+        return stop_and_shapes_list
+
+
+    def get_stage_subroute_shape_points(self, common_stop_distance):
+        '''
+        '''
+
+        shape_points = []
+
+
+        if hasattr(self, 'start_stop'):
+            for point in self.subroute_shape_points:
+
+                if point["shape_dist_travelled"] == common_stop_distance:
+                    seq = point["shape_point_sequence"]
+                    break
+
+            for point in self.subroute_shape_points:
+                shape_seq = point["shape_point_sequence"]
+
+                if shape_seq <= seq:
+                    #print(point)
+                    shape_points.append(point)
+
+
+        elif hasattr(self, 'dest_stop'):
+            for point in self.subroute_shape_points:
+
+                if point["shape_dist_travelled"] == common_stop_distance:
+                    seq = point["shape_point_sequence"]
+                    break
+
+            for point in self.subroute_shape_points:
+                shape_seq = point["shape_point_sequence"]
+
+                if shape_seq >= seq:
+                    #print(point)
+                    shape_points.append(point)
+
+        #print(shape_points)
+        return shape_points
 
 
     def display_route_details(self):

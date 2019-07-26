@@ -285,8 +285,7 @@ class Route():
         '''
 
         shape_distance_travelled = MapTripStopTimes.objects.filter(trip_id = self.trip_id, stop_id = stop_id).values_list('shape_dist_traveled', flat = True)[0]
-        r
-        eturn shape_distance_travelled
+        return shape_distance_travelled
 
 
     def get_all_shape_points(self):

@@ -66,15 +66,15 @@ def return_routes(request):
     time_specified = (datetime.datetime.now()+ datetime.timedelta(minutes=60)).strftime('%H:%M:%S')
     #print(time_specified)
     # Convert date to week or weekend
-
-    start_stop = 1069
-    dest_stop = 670
+    #
+    # start_stop = 1069
+    # dest_stop = 670
 
     # start_stop = 1052
     # dest_stop = 7245
 
-    #start_stop = 1069
-    # dest_stop = 93
+    start_stop = 1069
+    dest_stop = 93
 
     # start_stop = 1069
     # dest_stop = 6052
@@ -159,7 +159,9 @@ def return_routes(request):
                 route_option_dict["changeover_stop_id"] = travel_option["changeover_stop_id"]
                 route_option_dict["changeover_stop_id_short"] = travel_option["changeover_stop_id_short"]
                 route_option_dict["start_stop_predicted_arrival_time"] = travel_option["start_stop_predicted_arrival_time"]
+                route_option_dict["start_stop_predicted_arrival_timestamp"] = change_to_timestamp(route_option_dict["start_stop_predicted_arrival_time"])
                 route_option_dict["changeover_stop_predicted_arrival_time"] = travel_option["changeover_stop_predicted_arrival_time"]
+                route_option_dict["changeover_stop_predicted_arrival_timestamp"] = change_to_timestamp(route_option_dict["changeover_stop_predicted_arrival_time"])
                 route_option_dict["stage1_time"] = travel_option["stage1_time"]
                 route_option_dict["wait_time"] = travel_option["wait_time"]
                 route_option_dict["stage2_time"] = travel_option["stage2_time"]
@@ -233,6 +235,7 @@ def return_routes(request):
                 route_option_dict["start_stop_id_short"] = travel_options.common_trips_dict[trip].start_stop_id_short
                 route_option_dict["dest_stop_id_short"] = travel_options.common_trips_dict[trip].dest_stop_id_short
                 route_option_dict["start_stop_predicted_arrival_time"] = travel_options.common_trips_dict[trip].predicted_start_arrival_time
+                route_option_dict["start_stop_predicted_arrival_timestamp"] = change_to_timestamp(route_option_dict["start_stop_predicted_arrival_time"])
                 route_option_dict["number_stops"] = travel_options.common_trips_dict[trip].number_stops
                 route_option_dict["total_travel_time"] = travel_options.common_trips_dict[trip].total_travel_time
                 route_option_dict["departure_time"] = travel_options.common_trips_dict[trip].departure_time
@@ -245,6 +248,18 @@ def return_routes(request):
 
     return JsonResponse({'routes_data': data})
 
+
+def change_to_timestamp(datetime_time_object):
+    '''
+    '''
+    t = datetime_time_object
+    seconds = (t.hour * 60 + t.minute) * 60 + t.second
+    today = datetime.datetime.now()
+    today = today.replace(hour=0, minute=0, second=0, microsecond=0)
+    timestamp = datetime.datetime.timestamp(today)
+    arrival_timestamp = timestamp + seconds
+
+    return int(arrival_timestamp * 1000)
 
 class Route():
     '''
@@ -598,7 +613,6 @@ class Trip():
 
         if all(hasattr(self, attr) for attr in ["start_stop", "dest_stop"]):
 
-            print(type(self.predicted_start_arrival_time), type(self.predicted_dest_arrival_time))
 
             predicted_start_arrival_time_seconds = (self.predicted_start_arrival_time.hour * 60 + self.predicted_start_arrival_time.minute) * 60 + self.predicted_start_arrival_time.second
 

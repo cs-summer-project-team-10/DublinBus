@@ -68,14 +68,14 @@ def return_routes(request):
     #print(time_specified)
     # Convert date to week or weekend
     #
-    # start_stop = 1069
-    # dest_stop = 670
+    start_stop = 1069
+    dest_stop = 670
 
     # start_stop = 1052
     # dest_stop = 7245
 
-    start_stop = 1069
-    dest_stop = 93
+    # start_stop = 1069
+    # dest_stop = 93
 
     # start_stop = 1069
     # dest_stop = 6052

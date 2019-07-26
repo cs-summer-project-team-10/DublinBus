@@ -11,7 +11,7 @@
 <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
  <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
    <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
-   <link rel="stylesheet" href="{% static "css/main.css" %}" >
+   <link rel="stylesheet" href="{% static "css/main.css" %}">
 
 <!--
 {#      <script src="static/js/jquery-3.4.1.min.js"></script>#}
@@ -20,7 +20,7 @@
 </head>
 
 <body><!-- the template of search block was referenced from Colorlib (https://colorlib.com) -->
-<div id="map"></div>       
+<div id="map"></div>
 <nav> <a href="" class="menuToggle" id="menuToggleIcon" title="Go Back" style="display: none"> <span class="navClosed"><i>Go Back</i></span></a>
 
     <div class="s011">
@@ -111,7 +111,7 @@
                 <div class="incidents">
                     <div class="incident1" style="height: 25%; width: 100%; text-align: center"></div>
                     <div class="incident1" style="height: 25%; width: 100%; text-align: center"></div>
-                    
+
         <div class="incident1" style="height: 25%; width: 100%; text-align: center; vertical-align: middle"><object data="{% static "images/evaent.svg" %}" type="image/svg+xml" height="40%"></object></div>
         <div class="incident1" style="height: 25%; width: 100%; text-align: center; vertical-align: middle"><object data="{% static "images/coanstruction.svg" %}" type="image/svg+xml" height="40%"></object></div>
 
@@ -142,7 +142,7 @@
      // Menu functions
      $(document).ready(function () {
          $('.menuToggle').click(function (e) {
-             $('#menuToggleIcon').css('display','block'); 
+             $('#menuToggleIcon').css('display','block');
              var $parent = $('.menuToggle').parent('nav');
              $parent.toggleClass("open");
              $(this).attr("Go Back");
@@ -151,8 +151,8 @@
          });
      });
  })(jQuery);
-    
-    
+
+
  (function ($) {
      // Menu functions
      $(document).ready(function () {
@@ -163,7 +163,7 @@
      });
  })(jQuery);
 
-    
+
  (function ($) {
      // Menu functions
      $(document).ready(function () {
@@ -228,12 +228,12 @@
         })
     }
 </script>
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
 <script>
     // Get the local URL
     var getUrl = window.location;
@@ -326,10 +326,10 @@ $('.searchInformation').click(function() {
     var latlngbounds = new google.maps.LatLngBounds();
     var markers = {{JSONdata | safe}};
     var informationTable = "<table border=0>";
-    
-    informationTable += "<tr><th style = 'width: 20%'>Arrivals In</th><th style = 'width: 20%'>Time</th><th style = 'width: 40%'>Route</th><th style = 'width: 20%'>Fare</th></tr>";                        
 
-    
+    informationTable += "<tr><th style = 'width: 20%'>Arrivals In</th><th style = 'width: 20%'>Time</th><th style = 'width: 40%'>Route</th><th style = 'width: 20%'>Fare</th></tr>";
+
+
 //Ajax, get information from the specific url
     $.ajax({
         url: map_Url + "routes",
@@ -383,9 +383,9 @@ $('.searchInformation').click(function() {
                     latlngbounds.extend(marker.position);
                 }
 
-                
-                    
-                
+
+
+
                     //Calculate the fare of different routes based on number of stops
                     if (commonroutes[i].number_stops >= 1 && commonroutes[i].number_stops <= 3) {
                         var Adult_Cash = "€2.15";
@@ -411,17 +411,17 @@ $('.searchInformation').click(function() {
                         var Child_Cash_19 = "€1.00";
                         var Child_Cash_16_school = "€1.00";
                         var Child_Cash_19_school = "€0.80";
-                    }   
-                
-                
-                
+                    }
+
+
+
                 informationTable += "<tr><td style = 'width: 20%'>" + "TBD" + "</td><td style = 'width: 20%'>" + "TBD" + "</td><td style = 'width: 40%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%'>" + Adult_Cash +"</td></tr>";
-                
+
                 for (var k = 0; k < commonroutes[i].subroute_shape_points.length; k++) {
                     var shapeLat = commonroutes[i].subroute_shape_points[k].shape_point_lat;
                     var shapeLng = commonroutes[i].subroute_shape_points[k].shape_point_lng;
                     var shapeLatLng = {
-                        lat: shapeLat, 
+                        lat: shapeLat,
                         lng: shapeLng
                     };
                     pathArray[k] = shapeLatLng;
@@ -488,8 +488,8 @@ $('.searchInformation').click(function() {
                 alert("Adult Cash: €" + "3.30" + "\n" + "Adult with Leap Card: €" + "2.50" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
             }
         }
-}) 
-  })   
+})
+  })
 </script>
 -->
 

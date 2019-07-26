@@ -74,30 +74,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'website.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-#Edit below for own local DB
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'dub_bus',
-#         'USER': 'student',
-#         'PASSWORD': 'group10bus',
-#         'HOST': '127.0.0.1',
-#         'PORT': '3333',
-#     }
-# }
-
+#Database
+#https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+#dit below for own local DB
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'new_models',
-        'USER': 'stephen',
-        'PASSWORD': '1993',
+        'NAME': 'dub_bus',
+        'USER': 'student',
+        'PASSWORD': 'group10bus',
         'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
+        'PORT': '3333',
+     }
 }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

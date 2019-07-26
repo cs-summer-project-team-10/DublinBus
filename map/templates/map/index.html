@@ -118,10 +118,14 @@
 -->
                 <div class="routes">
                     <div class="icons">
-                        <div class="icon0" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static "images/clock.gif" %}" height="100%"></object></div>
-                        <div class="icon1" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static "images/time.gif" %}" height="100%"></object></div>
-                        <div class="icon2" style="height: 100%; width: 40%; float: left; text-align: center"><object data="{% static "images/bus.gif" %}" height="100%"></object></div>
-                        <div class="icon3" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static "images/euro.gif" %}" height="100%"></object></div>
+                       <table>
+                       <tr>
+                        <th class="icon0" style="height: 100%; width: 20%; float: left; text-align: center"><object style="text-align: center" data="{% static "images/clock.gif" %}" height="65%"></object></th>
+                        <th class="icon1" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static "images/time.gif" %}" height="65%"></object></th>
+                        <th class="icon2" style="height: 100%; width: 40%; float: left; text-align: center"><object data="{% static "images/bus.gif" %}" height="65%"></object></th>
+                        <th class="icon3" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static "images/euro.gif" %}" height="65%"></object></th>
+                        </tr>
+                       </table>
                     </div>
                     <div class="details">
                     </div>
@@ -324,9 +328,10 @@ $('.searchInformation').click(function() {
     var infoWindow = new google.maps.InfoWindow();
     var latlngbounds = new google.maps.LatLngBounds();
     var markers = {{JSONdata | safe}};
-    var informationTable = "<table border=0>";
+    var informationTable = "<table>";
 
-    informationTable += "<tr><th style = 'width: 20%'>Arrivals In</th><th style = 'width: 20%'>Time</th><th style = 'width: 40%'>Route</th><th style = 'width: 20%'>Fare</th></tr>";
+    informationTable += "<tr><th style = 'width: 20%; color: #e67600'>Arrivals In</th><th style = 'width: 20%; color: #e67600'>Time</th><th style = 'width: 40%; color: #e67600'>Route</th><th style = 'width: 20%; color: #e67600'>Fare</th></tr>";
+    
 
 
 //Ajax, get information from the specific url
@@ -356,6 +361,8 @@ $('.searchInformation').click(function() {
             var map2 = new google.maps.Map(document.getElementById('map'), MapOption);
             var commonroutes = result.routes_data;
             var pathArray = [];
+            var myDate = new Date();
+            var mytime= myDate.getTime();
             for (var i = 0; i < commonroutes.length; i++) {
                 for (var j = 0; j < commonroutes[i].subroute_stops_list.length; j++) {
                     var get_all_stops_list = commonroutes[i].subroute_stops_list[j];
@@ -414,7 +421,7 @@ $('.searchInformation').click(function() {
 
 
 
-                informationTable += "<tr><td style = 'width: 20%'>" + "TBD" + "</td><td style = 'width: 20%'>" + "TBD" + "</td><td style = 'width: 40%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%'>" + Adult_Cash +"</td></tr>";
+                informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'>" + Math.round((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + " mins" + "</td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(commonroutes[i].total_travel_time) + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%; padding-top: 5%'>" + Adult_Cash +"</td></tr>";
 
                 for (var k = 0; k < commonroutes[i].subroute_shape_points.length; k++) {
                     var shapeLat = commonroutes[i].subroute_shape_points[k].shape_point_lat;

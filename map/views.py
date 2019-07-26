@@ -35,8 +35,8 @@ def return_routes(request):
     '''
 
 
-    #start_stop = request.GET['startstop']
-    #dest_stop = request.GET['endstop']
+    # start_stop = request.GET['startstop']
+    # dest_stop = request.GET['endstop']
     #time_specified = request.GET['time_specified']
     #date_specified = request.GET['date_specified']
 
@@ -63,7 +63,8 @@ def return_routes(request):
     #     return 1
 
     time_period =  "dummy"
-    time_specified = (datetime.datetime.now()+ datetime.timedelta(minutes=60)).strftime('%H:%M:%S')
+    time_specified = (datetime.datetime.now()+ datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
+
     #print(time_specified)
     # Convert date to week or weekend
 
@@ -89,9 +90,9 @@ def return_routes(request):
     # Monday is 0
     day = datetime.datetime.today().weekday()
 
-    time_range1 = (datetime.datetime.now() + datetime.timedelta(minutes=80)).strftime('%H:%M:%S')
-    time_range2 = (datetime.datetime.now() + datetime.timedelta(minutes=60)).strftime('%H:%M:%S')
-    time_range3 = (datetime.datetime.now() + datetime.timedelta(minutes=160)).strftime('%H:%M:%S')
+    time_range1 = (datetime.datetime.now() + datetime.timedelta(minutes=20)).strftime('%H:%M:%S')
+    time_range2 = (datetime.datetime.now() + datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
+    time_range3 = (datetime.datetime.now() + datetime.timedelta(minutes=100)).strftime('%H:%M:%S')
 
 
     #Get service IDs for todays dates
@@ -233,6 +234,15 @@ def return_routes(request):
                 route_option_dict["start_stop_id_short"] = travel_options.common_trips_dict[trip].start_stop_id_short
                 route_option_dict["dest_stop_id_short"] = travel_options.common_trips_dict[trip].dest_stop_id_short
                 route_option_dict["start_stop_predicted_arrival_time"] = travel_options.common_trips_dict[trip].predicted_start_arrival_time
+
+                t = route_option_dict["start_stop_predicted_arrival_time"]
+                seconds = (t.hour * 60 + t.minute) * 60 + t.second
+                today = datetime.datetime.now()
+                today = today.replace(hour=0, minute=0, second=0, microsecond=0)
+                timestamp = datetime.datetime.timestamp(today)
+                arrival_timestamp = timestamp + seconds
+
+                route_option_dict["start_stop_predicted_arrival_timestamp"] = int(arrival_timestamp * 1000)
                 route_option_dict["number_stops"] = travel_options.common_trips_dict[trip].number_stops
                 route_option_dict["total_travel_time"] = travel_options.common_trips_dict[trip].total_travel_time
                 route_option_dict["departure_time"] = travel_options.common_trips_dict[trip].departure_time

@@ -76,11 +76,11 @@ def return_routes(request):
     # start_stop = 1052
     # dest_stop = 7245
 
-    # start_stop = 1069
-    # dest_stop = 93
-
     start_stop = 1069
-    dest_stop = 6052
+    dest_stop = 93
+
+    # start_stop = 1069
+    # dest_stop = 6052
 
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
@@ -158,7 +158,7 @@ def return_routes(request):
         valid_dest_stop_trip_ids = list(Trips.objects.values_list('trip_id', flat = True).filter(trip_id__in = dest_stop_trip_ids, service_id__in = service_list))
 
 
-        travel_options = MultiRoute(weather, weekday, time_specified, time_period, start_stop, dest_stop, valid_start_stop_trip_ids, valid_dest_stop_trip_ids)
+        travel_options = MultiRoutes(weather, weekday, time_specified, time_period, start_stop, dest_stop, valid_start_stop_trip_ids, valid_dest_stop_trip_ids)
 
         if len(travel_options.multi_trips_list) != 0:
             for travel_option in travel_options.multi_trips_list:
@@ -175,6 +175,8 @@ def return_routes(request):
                 route_option_dict["stages"] = travel_option["stages"]
                 route_option_dict["changeover_stop_id"] = travel_option["changeover_stop_id"]
                 route_option_dict["changeover_stop_id_short"] = travel_option["changeover_stop_id_short"]
+                route_option_dict["start_stop_predicted_arrival_time"] = travel_option["start_stop_predicted_arrival_time"]
+                route_option_dict["changeover_stop_predicted_arrival_time"] = travel_option["changeover_stop_predicted_arrival_time"]
                 route_option_dict["stage1_time"] = travel_option["stage1_time"]
                 route_option_dict["wait_time"] = travel_option["wait_time"]
                 route_option_dict["stage2_time"] = travel_option["stage2_time"]
@@ -247,7 +249,9 @@ def return_routes(request):
                 route_option_dict["dest_stop_id"] = travel_options.common_trips_dict[trip].dest_stop_id
                 route_option_dict["start_stop_id_short"] = travel_options.common_trips_dict[trip].start_stop_id_short
                 route_option_dict["dest_stop_id_short"] = travel_options.common_trips_dict[trip].dest_stop_id_short
+                route_option_dict["start_stop_predicted_arrival_time"] = travel_options.common_trips_dict[trip].predicted_start_arrival_time
                 route_option_dict["number_stops"] = travel_options.common_trips_dict[trip].number_stops
+                route_option_dict["total_travel_time"] = travel_options.common_trips_dict[trip].total_travel_time
                 route_option_dict["departure_time"] = travel_options.common_trips_dict[trip].departure_time
                 route_option_dict["all_stops_list"] = travel_options.common_trips_dict[trip].all_stops_list
                 route_option_dict["subroute_stops_list"] = travel_options.common_trips_dict[trip].subroute_stops_list
@@ -303,7 +307,7 @@ class DirectRoutes(Route):
         return trip_dict
 
 
-class MultiRoute(Route):
+class MultiRoutes(Route):
     '''
     '''
 
@@ -405,6 +409,9 @@ class MultiRoute(Route):
                                     multi_trip_dict["stages"] = 1
                                     multi_trip_dict["changeover_stop_id"] = common_stop_id
                                     multi_trip_dict["changeover_stop_id_short"] = common_stop_id_short
+                                    multi_trip_dict["start_stop_predicted_arrival_time"] = self.start_trips_dict[trip_key].predicted_start_arrival_time
+                                    multi_trip_dict["changeover_stop_predicted_arrival_time"] = second_leg_dept
+
                                     multi_trip_dict["stage1_time"] = round((first_leg_seconds - first_leg_departure_seconds)/60)
                                     multi_trip_dict["wait_time"] = round(wait_time_seconds/60)
                                     multi_trip_dict["stage2_time"] = round((second_leg_arrive_dest_seconds - second_leg_seconds)/60)
@@ -611,6 +618,17 @@ class Trip():
             #print(stop_dict)
             stops.append(stop_dict)
 
+        if all(hasattr(self, attr) for attr in ["start_stop", "dest_stop"]):
+
+            print(type(self.predicted_start_arrival_time), type(self.predicted_dest_arrival_time))
+
+            predicted_start_arrival_time_seconds = (self.predicted_start_arrival_time.hour * 60 + self.predicted_start_arrival_time.minute) * 60 + self.predicted_start_arrival_time.second
+
+            predicted_dest_arrival_time_seconds = (self.predicted_dest_arrival_time.hour * 60 + self.predicted_dest_arrival_time.minute) * 60 + self.predicted_dest_arrival_time.second
+
+            total_travel_time = (predicted_dest_arrival_time_seconds - predicted_start_arrival_time_seconds)/60
+
+            self.total_travel_time = total_travel_time
         #print(stops)
         return stops
 

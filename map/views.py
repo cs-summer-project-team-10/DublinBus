@@ -1,15 +1,16 @@
+
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import HttpResponse, render, redirect
 import json
+import requests
 import datetime
 import pickle
 import pandas as pd
+
 from datetime import date
+
 from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
-import requests
-from bs4 import BeautifulSoup
-import urllib
 
 
 def home_page(request):
@@ -34,9 +35,8 @@ def return_routes(request):
     It will then call a predictive model on this route per stop etc.
     '''
 
-
-    # start_stop = request.GET['startstop']
-    # dest_stop = request.GET['endstop']
+    start_stop = request.GET['startstop']
+    dest_stop = request.GET['endstop']
     #time_specified = request.GET['time_specified']
     #date_specified = request.GET['date_specified']
 
@@ -63,13 +63,15 @@ def return_routes(request):
     #     return 1
 
     time_period =  "dummy"
-    time_specified = (datetime.datetime.now()+ datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
-
+    time_specified = (datetime.datetime.now()+ datetime.timedelta(minutes=60)).strftime('%H:%M:%S')
     #print(time_specified)
     # Convert date to week or weekend
-    #
-    start_stop = 1069
-    dest_stop = 670
+
+    # start_stop = "8220DB001069"
+    # dest_stop = "8220DB000670"
+
+    # start_stop = 1069
+    # dest_stop = 670
 
     # start_stop = 1052
     # dest_stop = 7245
@@ -80,7 +82,9 @@ def return_routes(request):
     # start_stop = 1069
     # dest_stop = 6052
 
-
+    # 1320
+    # 1324
+    #
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
 
@@ -90,10 +94,11 @@ def return_routes(request):
     # Monday is 0
     day = datetime.datetime.today().weekday()
 
-    time_range1 = (datetime.datetime.now() + datetime.timedelta(minutes=20)).strftime('%H:%M:%S')
-    time_range2 = (datetime.datetime.now() + datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
-    time_range3 = (datetime.datetime.now() + datetime.timedelta(minutes=100)).strftime('%H:%M:%S')
+    time_range1 = (datetime.datetime.now() + datetime.timedelta(minutes=80)).strftime('%H:%M:%S')
+    time_range2 = (datetime.datetime.now() + datetime.timedelta(minutes=60)).strftime('%H:%M:%S')
+    time_range3 = (datetime.datetime.now() + datetime.timedelta(minutes=160)).strftime('%H:%M:%S')
 
+    #print(start_stop, dest_stop, time, time_range1, time_range2, todays_date, day)
 
     #Get service IDs for todays dates
     if day == 0:
@@ -118,15 +123,29 @@ def return_routes(request):
         service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, sunday = True))
         weekday = False
 
+    #print(service_list)
+    #tuple
+    #print((service_list)[0][0])
+
     # Get all trips of starting bus stop that are within a time range given either side of what user specified
     trip_id_list = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = start_stop, arrival_time__range = (time_range2, time_range1)))
 
+    #print(trip_id_list)
+    #print(len(trip_id_list))
 
     # Narrow the trips to those that have service on todays date
     valid_trip_id_list = list(Trips.objects.values_list('trip_id', flat = True).filter(trip_id__in = trip_id_list, service_id__in = service_list))
 
+    #print(valid_trip_id_list)
+    #print(len(valid_trip_id_list))
+    #for trip in trip_id_list:
+    #    valid_trip_id_list.append(trip)
+
+
     # Get trips that are also specfic to destiantion stop
     common_trip_id_list = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(trip_id__in = valid_trip_id_list, stop_id = dest_stop))
+    #print(common_trip_id_list)
+    #print("Common trips:",len(common_trip_id_list))
 
     # Create dictionary of routes possible between stops
     data = []
@@ -251,16 +270,16 @@ def return_routes(request):
 
 
 def change_to_timestamp(datetime_time_object):
-    '''
-    '''
-    t = datetime_time_object
-    seconds = (t.hour * 60 + t.minute) * 60 + t.second
-    today = datetime.datetime.now()
-    today = today.replace(hour=0, minute=0, second=0, microsecond=0)
-    timestamp = datetime.datetime.timestamp(today)
-    arrival_timestamp = timestamp + seconds
+   '''
+   '''
+   t = datetime_time_object
+   seconds = (t.hour * 60 + t.minute) * 60 + t.second
+   today = datetime.datetime.now()
+   today = today.replace(hour=0, minute=0, second=0, microsecond=0)
+   timestamp = datetime.datetime.timestamp(today)
+   arrival_timestamp = timestamp + seconds
+   return int(arrival_timestamp * 1000)
 
-    return int(arrival_timestamp * 1000)
 
 class Route():
     '''
@@ -504,6 +523,8 @@ class Trip():
         self.route_short_name = Routes.objects.filter(route_id = self.route_id).values_list('route_short_name', flat = True)[0]
 
         self.all_stops_list = self.get_all_stops()
+        # Check if valid, maybe terminate if not
+        self.check_valid()
         self.subroute_stops_list = self.get_subroute_stops()
         self.number_stops = len(self.subroute_stops_list) - 1
 
@@ -531,6 +552,8 @@ class Trip():
         stop_sequence_list = list(MapTripStopTimes.objects.filter(trip_id = self.trip_id).values_list('stop_sequence', flat = True))
 
         self.departure_time = stop_ids[0][2]
+        #print(self.departure_time)
+        #print(stops)
 
         # Use self. in time
         weather_temp = 20
@@ -546,9 +569,11 @@ class Trip():
 
 
         for stop in stop_ids:
-
+            #print(stop)
+            #print(stop[0])
             stop_dict = {}
             stops_query_set = Stops.objects.filter(stop_id = stop[0]).values_list('stop_name', 'stop_lat', 'stop_lng', 'stop_id_short')
+            #print(stops_query_set)
 
 
 
@@ -577,8 +602,7 @@ class Trip():
                 self.predicted_start_arrival_time = predicted_arrival_time
                 #print(self.predicted_start_arrival_time)
 
-                # Check if valid, maybe terminate if not
-                self.check_valid()
+
                 #print(start_seq)
 
 
@@ -610,10 +634,12 @@ class Trip():
                     self.dest_stop_distance = stop[3]
 
             previous_dist_travelled = stop_dict["shape_distance_travelled"]
+            #print(stop_dict)
             stops.append(stop_dict)
 
         if all(hasattr(self, attr) for attr in ["start_stop", "dest_stop"]):
 
+            print(type(self.predicted_start_arrival_time), type(self.predicted_dest_arrival_time))
 
             predicted_start_arrival_time_seconds = (self.predicted_start_arrival_time.hour * 60 + self.predicted_start_arrival_time.minute) * 60 + self.predicted_start_arrival_time.second
 
@@ -679,13 +705,13 @@ class Trip():
         '''
         '''
 
-        if self.predicted_start_arrival_time < self.time_specified:
+        if self.predicted_start_arrival_time > self.time_specified and self.start_stop_sequence < self.dest_stop_sequence:
 
             #print("yes, delete me")
-            self.valid = False
+            self.valid = True
 
         else:
-            self.valid = True
+            self.valid = False
 
 
     def get_all_shape_points(self):
@@ -694,6 +720,7 @@ class Trip():
         '''
 
         shape_points = list(Shapes.objects.filter(shape_id = self.shape_id).values('shape_point_sequence', 'shape_point_lat', 'shape_point_lng', 'shape_dist_travelled'))
+        #print(shape_points)
 
         return shape_points
 

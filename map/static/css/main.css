@@ -37,18 +37,45 @@ body {
     box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
 }
 
-
-.incidents {
-    height: 100%;
-    width: 20%;
-    float: left;
+#loading {
+width: 20%;
+height: 40%;
+border: 0;
+position:absolute;
+top: 30%;
+left: 40%; 
+z-index:10000; 
+text-align: center;
+background-color: transparent;
+vertical-align: middle;
+font-size: 20px;
+font-weight: 700;
+display:none;
 }
+
+
+table {
+    border-collapse: collapse;
+    text-align: center;
+    color: white;
+    width: 100%;
+    font-weight: 700;
+}
+
+table,
+th,
+td {
+    border: 0;
+    height: 20%;
+}
+
+
 
 
 
 .routes {
     height: 100%;
-    width: 80%;
+    width: 100%;
     float: left;
 }
 
@@ -66,6 +93,7 @@ body {
     height: 250px;
     overflow-y: scroll;
     overflow-x: hidden;
+    z-index: 999;
 }
 
 /**
@@ -2084,7 +2112,8 @@ span.flatpickr-weekday {
 
 
     
-    
+
+   
 
 
 
@@ -2112,7 +2141,13 @@ span.flatpickr-weekday {
     }   
     
     
-    
+.ui-autocomplete {
+    height: 250px;
+    width: 25%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    z-index: 999;
+}  
     
     
   .s011 form #searchButtonforBigScreen {
@@ -2244,7 +2279,7 @@ span.flatpickr-weekday {
         -webkit-transition: right 0.2s linear;
         transition: right 0.2s linear;
         width: 83%;
-        z-index: 9001;
+        z-index: 900;
         /* IT'S OVER 9000! */
     }
 
@@ -2379,6 +2414,16 @@ span.flatpickr-weekday {
 }
 
 @media screen and (max-width: 516px) {
+    .ui-autocomplete {
+    height: 250px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    z-index: 9999;
+}
+    
+    
+    
+    
     .s011 form .inner-form header {
         overflow: hidden;
     }
@@ -2556,7 +2601,7 @@ span.flatpickr-weekday {
         -webkit-transition: right 0.2s linear;
         transition: right 0.2s linear;
         width: 83%;
-        z-index: 9001;
+        z-index: 900;
         /* IT'S OVER 9000! */
     }
 

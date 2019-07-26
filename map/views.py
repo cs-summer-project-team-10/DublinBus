@@ -1,19 +1,11 @@
-
 from django.shortcuts import render, get_object_or_404
-
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import HttpResponse, render, redirect
 import json
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import HttpResponse, render, redirect
-import json
-import requests
 import datetime
 import pickle
 import pandas as pd
-
 from datetime import date
-
 from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
 import requests
 from bs4 import BeautifulSoup
@@ -78,8 +70,11 @@ def return_routes(request):
     # start_stop = "8220DB000018"
     # dest_stop =  "8220DB000007"
 
-    start_stop = 2007
-    dest_stop = 2017
+    #start_stop = 18
+    #dest_stop = 14
+
+    start_stop = request.GET['startstop']
+    dest_stop = request.GET['endstop']
 
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
@@ -285,8 +280,7 @@ class Route():
         '''
 
         shape_distance_travelled = MapTripStopTimes.objects.filter(trip_id = self.trip_id, stop_id = stop_id).values_list('shape_dist_traveled', flat = True)[0]
-        r
-        eturn shape_distance_travelled
+        return shape_distance_travelled
 
 
     def get_all_shape_points(self):
@@ -346,7 +340,7 @@ class Route():
 # Below is the test code from James about getting price of trips on buses
 
 def return_prices(request):
-    route_number = request.GET['LineID']
+    route_number = str(request.GET['LineID'])
     direction = "O"
     board = "0"
     alight = str(request.GET['Number'])

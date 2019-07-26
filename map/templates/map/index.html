@@ -4,14 +4,14 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <meta name="viewport" content="width=device-width, initial-scale=1" />
-   <link rel="icon" href="data:;base64,=">
+   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
    <meta name="author" content="colorlib.com">
    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900%7CPoppins:700" rel="stylesheet" />
-   <link rel="stylesheet" href="{% static "css/main.css" %}" >
-     <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
  <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
    <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
+   <link rel="stylesheet" href="{% static "css/main.css" %}" >
 
 <!--
 {#      <script src="static/js/jquery-3.4.1.min.js"></script>#}
@@ -100,25 +100,29 @@
                         </div>
                     </div>
                     <div class="row last">
+<!--                        Do not forget to add menuToggle here-->
                         <button type="button" id="searchButtonforSmallScreen" class="searchInformation menuToggle">Search</button>
                         <button type="button" id="searchButtonforBigScreen" class="searchInformation">Search</button>
                     </div>
                 </div>
             </div>
             <div class="information">
+<!--
                 <div class="incidents">
                     <div class="incident1" style="height: 25%; width: 100%; text-align: center"></div>
                     <div class="incident1" style="height: 25%; width: 100%; text-align: center"></div>
-                    <!--
+                    
         <div class="incident1" style="height: 25%; width: 100%; text-align: center; vertical-align: middle"><object data="{% static "images/evaent.svg" %}" type="image/svg+xml" height="40%"></object></div>
         <div class="incident1" style="height: 25%; width: 100%; text-align: center; vertical-align: middle"><object data="{% static "images/coanstruction.svg" %}" type="image/svg+xml" height="40%"></object></div>
--->
+
                 </div>
+-->
                 <div class="routes">
                     <div class="icons">
-                        <div class="icon1" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static "images/clock.svg" %}" type="image/svg+xml" height="80%"></object></div>
-                        <div class="icon2" style="height: 100%; width: 60%; float: left; text-align: center"><object data="{% static "images/bus.svg" %}" type="image/svg+xml" height="80%"></object></div>
-                        <div class="icon3" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static "images/euro.svg" %}" type="image/svg+xml" height="80%"></object></div>
+                        <div class="icon0" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static "images/clock.gif" %}" height="100%"></object></div>
+                        <div class="icon1" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static "images/time.gif" %}" height="100%"></object></div>
+                        <div class="icon2" style="height: 100%; width: 40%; float: left; text-align: center"><object data="{% static "images/bus.gif" %}" height="100%"></object></div>
+                        <div class="icon3" style="height: 100%; width: 20%; float: left; text-align: center"><object data="{% static "images/euro.gif" %}" height="100%"></object></div>
                     </div>
                     <div class="details">
                     </div>
@@ -128,7 +132,9 @@
     </div>
 </nav>
 <button class="menuToggle" id="startjourney">Start Journey</button>
-
+<div id="loading"><img src="{% static "images/loading.gif" %}" alt=""/>
+    <h1 style="position: relative; left: 2%">Loading...</h1>
+</div>
 
 <!--JavaScript Part-->
 <script>
@@ -251,8 +257,8 @@
         for (var i = 0; i < 30; i++) {
             var busstop = markers[i];
             var myLatlng = {
-                lat: busstop[2],
-                lng: busstop[3]
+                lat: busstop[3],
+                lng: busstop[4]
             };
             var marker = new google.maps.Marker({
                 position: myLatlng,
@@ -265,7 +271,7 @@
             //A function that shows the information of a bus stop when users click on a marker
             (function(marker, busstop) {
                 google.maps.event.addListener(marker, "click", function(e) {
-                    infoWindow.setContent("<div style = 'width: 200px; min-height: 40px; font-style: italic; font-weight: 800'>" + "Stop ID: " + busstop[0] + "<br>" + "Address: " + busstop[1] + "</div>");
+                    infoWindow.setContent("<div style = 'width: 200px; min-height: 40px; font-style: italic; font-weight: 800'>" + "Stop ID: " + busstop[1] + "<br>" + "Address: " + busstop[2] + "</div>");
                     infoWindow.open(map, marker);
                 });
             })(marker, busstop);
@@ -277,19 +283,7 @@
             var stopset = [];
 //            var start_stop_id;
             for (var i = 0; i < markers.length; i++) {
-//            if (markers[i][0].substring(markers[i][0].length-4)[0] == 0 && markers[i][0].substring(markers[i][0].length-4)[1] != 0) {
-//              start_stop_id = markers[i][0].substring(markers[i][0].length-4)[1] + markers[i][0].substring(markers[i][0].length-4)[2] + markers[i][0].substring(markers[i][0].length-4)[3];
-//            }
-//            else if (markers[i][0].substring(markers[i][0].length-4)[0] == 0 && markers[i][0].substring(markers[i][0].length-4)[1] == 0 && markers[i][0].substring(markers[i][0].length-4)[2] != 0) {
-//              start_stop_id = markers[i][0].substring(markers[i][0].length-4)[2] + markers[i][0].substring(markers[i][0].length-4)[3];
-//            }
-//            else if (markers[i][0].substring(markers[i][0].length-4)[0] == 0 && markers[i][0].substring(markers[i][0].length-4)[1] == 0 && markers[i][0].substring(markers[i][0].length-4)[2] == 0 && markers[i][0].substring(markers[i][0].length-4)[3] != 0) {
-//              start_stop_id = markers[i][0].substring(markers[i][0].length-4)[3];
-//            }
-//            else if (markers[i][0].substring(markers[i][0].length-4)[0] != 0) {
-//              start_stop_id = markers[i][0].substring(markers[i][0].length-4)[0] + markers[i][0].substring(markers[i][0].length-4)[1] + markers[i][0].substring(markers[i][0].length-4)[2] + markers[i][0].substring(markers[i][0].length-4)[3];
-//            }
-            stopset[i] = markers[i][1] + " (Stop " + markers[i][0] + ")";
+            stopset[i] = markers[i][2] + " (Stop " + markers[i][1] + ")";
             }
             $(".locationInput").autocomplete({
                 source: deleteDuplicatedStops(stopset)
@@ -326,48 +320,27 @@ function hideTimeAndDataPicker() {
 $('.searchInformation').click(function() {
     var start_stop_code = $('#startInput').val().substring($('#startInput').val().indexOf("(Stop") + 6, $('#startInput').val().length - 1);
     var end_stop_code = $('#destitationInput').val().substring($('#destitationInput').val().indexOf("(Stop") + 6, $('#destitationInput').val().length - 1);
-//    var start_code_pass_to_backend;
-//    var end_code_pass_to_backend;
-//    if (start_stop_code.length == 1) {
-//       start_code_pass_to_backend = "8220DB00000" + String(start_stop_code);
-//    }
-//    else if (start_stop_code.length == 2) {
-//       start_code_pass_to_backend = "8220DB0000" + String(start_stop_code);
-//    }
-//    else if (start_stop_code.length == 3) {
-//       start_code_pass_to_backend = "8220DB000" + String(start_stop_code);
-//    }
-//    else if (start_stop_code.length == 4) {
-//       start_code_pass_to_backend = "8220DB00" + String(start_stop_code);
-//    }
-//    
-//    if (end_stop_code.length == 1) {
-//       end_code_pass_to_backend = "8220DB00000" + String(end_stop_code);
-//    }
-//    else if (end_stop_code.length == 2) {
-//       end_code_pass_to_backend = "8220DB0000" + String(end_stop_code);
-//    }
-//    else if (end_stop_code.length == 3) {
-//       end_code_pass_to_backend = "8220DB000" + String(end_stop_code);
-//    }
-//    else if (end_stop_code.length == 4) {
-//       end_code_pass_to_backend = "8220DB00" + String(end_stop_code);
-//    }
-//    var startstop = parseInt($('#startInput').val().substring($('#startInput').val().indexOf("(") + 6, $('#startInput').val().indexOf(")")));
-//    var endstop = parseInt($('#destitationInput').val().substring($('#destitationInput').val().indexOf("(") + 6, $('#destitationInput').val().indexOf(")")));
     var startstop = parseInt(start_stop_code);
     var endstop = parseInt(end_stop_code);
     var infoWindow = new google.maps.InfoWindow();
     var latlngbounds = new google.maps.LatLngBounds();
     var markers = {{JSONdata | safe}};
-    for (var i = 0; i < markers.length; i++) {
-        var busstop = markers[i];
-    }
-//    alert(startstop.length);
+    var informationTable = "<table border=0>";
+    
+    informationTable += "<tr><th style = 'width: 20%'>Arrivals In</th><th style = 'width: 20%'>Time</th><th style = 'width: 40%'>Route</th><th style = 'width: 20%'>Fare</th></tr>";                        
+
+    
 //Ajax, get information from the specific url
     $.ajax({
         url: map_Url + "routes",
-        async: false,
+//        async: false,
+        async: true,
+        beforeSend: function () {
+            ShowDiv();
+        },
+        complete: function () {
+            HiddenDiv();
+        },
         data: {
             startstop: startstop,
             endstop: endstop
@@ -383,51 +356,104 @@ $('.searchInformation').click(function() {
             };
             var map2 = new google.maps.Map(document.getElementById('map'), MapOption);
             var commonroutes = result.routes_data;
-            var pathArray = new Array();
+            var pathArray = [];
             for (var i = 0; i < commonroutes.length; i++) {
-                for (var j = 0; j < commonroutes[i].all_stops_list.length; j++) {
-                    var routeLat = commonroutes[i].all_stops_list[j].stop_lat;
-                    var routeLng = commonroutes[i].all_stops_list[j].stop_lng;
+                for (var j = 0; j < commonroutes[i].subroute_stops_list.length; j++) {
+                    var get_all_stops_list = commonroutes[i].subroute_stops_list[j];
+                    var routeLat = get_all_stops_list.stop_lat;
+                    var routeLng = get_all_stops_list.stop_lng;
                     var myLatlng = {
-                        lat: parseFloat(routeLat),
-                        lng: parseFloat(routeLng)
+                        lat: routeLat,
+                        lng: routeLng
                     };
                     //            var firststop = {lat: parseFloat(commonroutes[i].stops[0].latitude), lng: parseFloat(commonroutes[i].stops[0].longitude)};
                     //            var laststop = {lat: parseFloat(commonroutes[i].stops[commonroutes[i].stops.length - 1].latitude), lng: parseFloat(commonroutes[i].stops[commonroutes[i].stops.length - 1].longitude)};
-                    pathArray.push(myLatlng)
                     var marker = new google.maps.Marker({
                         position: myLatlng,
                         map: map2,
                         animation: google.maps.Animation.DROP,
                         icon: "https://img.icons8.com/color/48/000000/map-pin.png"
                     });
-                    (function(marker, busstop) {
+                    (function(marker,get_all_stops_list) {
                         google.maps.event.addListener(marker, "click", function(e) {
-                            infoWindow.setContent("<div style = 'width: 200px; min-height: 40px; font-style: italic; font-weight: 800'>" + "Stop ID: " + busstop[0] + "<br>" + "Address: " + busstop[1] + "</div>");
+                            infoWindow.setContent("<div style = 'width: 200px; min-height: 40px; font-style: italic; font-weight: 800'>" + "Stop ID: " + get_all_stops_list.stop_id_short + "<br>" + "Address: " + get_all_stops_list.stop_name + "<br>" + "Sequence Number: " + get_all_stops_list.stop_sequence + "</div>");
                             infoWindow.open(map2, marker);
                         });
-                    })(marker, busstop);
+                    })(marker,get_all_stops_list);
                     latlngbounds.extend(marker.position);
                 }
+
+                
+                    
+                
+                    //Calculate the fare of different routes based on number of stops
+                    if (commonroutes[i].number_stops >= 1 && commonroutes[i].number_stops <= 3) {
+                        var Adult_Cash = "€2.15";
+                        var Adult_Leap = "€1.55";
+                        var Child_Cash_16 = "€1.30";
+                        var Child_Cash_19 = "€1.00";
+                        var Child_Cash_16_school = "€1.00";
+                        var Child_Cash_19_school = "€0.80";
+                    }
+                    else if (commonroutes[i].number_stops > 3 && commonroutes[i].number_stops <= 13) {
+                        var Adult_Cash = "€2.25";
+                        var Adult_Leap = "€2.00";
+                        var Child_Cash_16 = "€1.30";
+                        var Child_Cash_19 = "€1.00";
+                        var Child_Cash_16_school = "€1.00";
+                        var Child_Cash_19_school = "€0.80";
+
+                    }
+                    else {
+                        var Adult_Cash = "€2.50";
+                        var Adult_Leap = "€3.30";
+                        var Child_Cash_16 = "€1.30";
+                        var Child_Cash_19 = "€1.00";
+                        var Child_Cash_16_school = "€1.00";
+                        var Child_Cash_19_school = "€0.80";
+                    }   
+                
+                
+                
+                informationTable += "<tr><td style = 'width: 20%'>" + "TBD" + "</td><td style = 'width: 20%'>" + "TBD" + "</td><td style = 'width: 40%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%'>" + Adult_Cash +"</td></tr>";
+                
+                for (var k = 0; k < commonroutes[i].subroute_shape_points.length; k++) {
+                    var shapeLat = commonroutes[i].subroute_shape_points[k].shape_point_lat;
+                    var shapeLng = commonroutes[i].subroute_shape_points[k].shape_point_lng;
+                    var shapeLatLng = {
+                        lat: shapeLat, 
+                        lng: shapeLng
+                    };
+                    pathArray[k] = shapeLatLng;
+                }
+                //Draw polylines between bus stops based on their order
+                var BusPath = new google.maps.Polyline({
+                    path: pathArray,
+                    geodesic: true,
+                    strokeColor: '#d7f542',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 4
+                });
+                    BusPath.setMap(map2);
             }
-            //Draw polylines between bus stops based on their order
-            var flightPath = new google.maps.Polyline({
-                path: pathArray,
-                geodesic: true,
-                strokeColor: '#d7f542',
-                strokeOpacity: 1.0,
-                strokeWeight: 4
-            });
-//                    flightPath.setMap(map2);
-//                    map2.removeOverlay(deleteArray);
+    informationTable += "</table>";
+    $(".details").html(informationTable);
+// Here
         }
     });
 })
 </script>
 
+<script>
+function ShowDiv() {
+$("#loading").show();
+}
 
-
-
+//隐藏加载数据
+function HiddenDiv() {
+$("#loading").hide();
+}
+</script>
 <!--
 <script>
 //Fare calculator
@@ -435,8 +461,8 @@ $('.searchInformation').click(function() {
  $.ajax({
         url: map_Url + "prices",
         data: {
-            LineID: "4",   //Route
-            Number: 9  //Number of stops a user has travelled
+            LineID: 4,   //Route
+            Number: 7  //Number of stops a user has travelled
         },
         async: false,
         Datatype:'json',
@@ -449,17 +475,17 @@ $('.searchInformation').click(function() {
         var Child_Cash_19 = price[0]['Child_Cash_19'];
         var School_Hours_Cash = price[0]['School_Hours_Cash'];
         var School_Hours_Leap = price[0]['School_Hours_Leap'];
-//        alert("Adult Cash: €" + Adult_Cash + "\n" + "Adult with Leap Card: €" + Adult_Leap + "\n" + "Child Cash(Under 16): €" + Child_Cash_16 + "\n" + "Child with Leap Card(Under 19): €" + Child_Cash_19)
+        alert("Adult Cash: €" + Adult_Cash + "\n" + "Adult with Leap Card: €" + Adult_Leap + "\n" + "Child Cash(Under 16): €" + Child_Cash_16 + "\n" + "Child with Leap Card(Under 19): €" + Child_Cash_19)
     },
         error: function(result) {
             if (Number >= 1 && Number <= 3) {
-//                alert("Adult Cash: €" + "2.15" + "\n" + "Adult with Leap Card: €" + "1.55" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
+                alert("Adult Cash: €" + "2.15" + "\n" + "Adult with Leap Card: €" + "1.55" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
             }
             else if (Number > 3 && Number <= 13) {
-//                alert("Adult Cash: €" + "3.00" + "\n" + "Adult with Leap Card: €" + "2.25" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
+                alert("Adult Cash: €" + "3.00" + "\n" + "Adult with Leap Card: €" + "2.25" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
             }
             else {
-//                alert("Adult Cash: €" + "3.30" + "\n" + "Adult with Leap Card: €" + "2.50" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
+                alert("Adult Cash: €" + "3.30" + "\n" + "Adult with Leap Card: €" + "2.50" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
             }
         }
 }) 
@@ -500,6 +526,6 @@ $('.searchInformation').click(function() {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 -->
- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAR48jLtATZO3aZWwS9CICs4Q8CDGpzVm8&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAR48jLtATZO3aZWwS9CICs4Q8CDGpzVm8&callback=initMap" async defer></script>
 </body>
 </html>

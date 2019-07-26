@@ -7,5 +7,4 @@ urlpatterns = [
     path('routes/', views.return_routes, name='return_routes'),
     path('prices/', views.return_prices, name='return_prices'),
     path('predict/', views.predict, name='predict')
-
 ]

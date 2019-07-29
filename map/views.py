@@ -37,6 +37,7 @@ def return_routes(request):
 
     start_stop = request.GET['startstop']
     dest_stop = request.GET['endstop']
+
     #time_specified = request.GET['time_specified']
     #date_specified = request.GET['date_specified']
 
@@ -130,13 +131,13 @@ def return_routes(request):
     # Get all trips of starting bus stop that are within a time range given either side of what user specified
     trip_id_list = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = start_stop, arrival_time__range = (time_range2, time_range1)))
 
-    #print(trip_id_list)
+    print(trip_id_list)
     #print(len(trip_id_list))
 
     # Narrow the trips to those that have service on todays date
     valid_trip_id_list = list(Trips.objects.values_list('trip_id', flat = True).filter(trip_id__in = trip_id_list, service_id__in = service_list))
 
-    #print(valid_trip_id_list)
+    print(valid_trip_id_list)
     #print(len(valid_trip_id_list))
     #for trip in trip_id_list:
     #    valid_trip_id_list.append(trip)
@@ -523,8 +524,14 @@ class Trip():
         self.route_short_name = Routes.objects.filter(route_id = self.route_id).values_list('route_short_name', flat = True)[0]
 
         self.all_stops_list = self.get_all_stops()
+
         # Check if valid, maybe terminate if not
-        self.check_valid()
+        if hasattr(self, 'start_stop') :
+            self.check_valid_arrival_time()
+
+        if all(hasattr(self, attr) for attr in ["start_stop", "dest_stop"]):
+            self.check_valid_stop_sequence()
+
         self.subroute_stops_list = self.get_subroute_stops()
         self.number_stops = len(self.subroute_stops_list) - 1
 
@@ -701,18 +708,22 @@ class Trip():
 
 
 
-    def check_valid(self):
+    def check_valid_arrival_time(self):
         '''
         '''
 
-        if self.predicted_start_arrival_time > self.time_specified and self.start_stop_sequence < self.dest_stop_sequence:
-
-            #print("yes, delete me")
+        if self.predicted_start_arrival_time > self.time_specified:
             self.valid = True
 
         else:
             self.valid = False
 
+    def check_valid_stop_sequence(self):
+        if self.start_stop_sequence < self.dest_stop_sequence:
+            self.valid = True
+
+        else:
+            self.valid = False
 
     def get_all_shape_points(self):
         '''

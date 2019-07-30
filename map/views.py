@@ -38,14 +38,14 @@ def return_routes(request):
     start_stop = request.GET['startstop']
     dest_stop = request.GET['endstop']
 
-    #time_specified = request.GET['time_specified']
+    time_specified = request.GET['time_specified']
     #date_specified = request.GET['date_specified']
 
     #Get weather
     #response = requests.get("http://api.openweathermap.org/data/2.5/weather?id=7778677&APPID=0927fd5dff272fdbd486187e54283310")
     #weather_data = json.loads(response.content.decode('utf-8'))
     #print(weather_data)
-    weather = "dummy"
+    weather = "weather"
 
     # Convert time to time period
     # if seconds >= 0 and seconds < 25200:
@@ -63,9 +63,27 @@ def return_routes(request):
     # elif seconds >= 79200:
     #     return 1
 
-    time_period =  "dummy"
-    time_specified = (datetime.datetime.now()+ datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
-    #print(time_specified)
+    time_period =  "time_period"
+
+    if time_specified == '':
+        time_specified = (datetime.datetime.now()).strftime('%H:%M:%S')
+        date_time = datetime.datetime.now()
+        #time_specified = date_time.strftime('%H:%M:%S')
+        print(date_time)
+        print("2", type(date_time))
+
+    else:
+        time_specified = time_specified + ":00"
+        today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        #print(today_date)
+        date_time = datetime.datetime.strptime(today_date + "-" + time_specified, '%Y-%m-%d-%H:%M:%S')
+        print("1",date_time)
+        print("2", type(date_time))
+
+    #time_specified
+
+    #time_specified = (datetime.datetime.now()+ datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
+
     # Convert date to week or weekend
 
     # start_stop = "8220DB001069"
@@ -89,16 +107,21 @@ def return_routes(request):
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
 
-    date_time = datetime.datetime.now()
-    time = datetime.datetime.now().strftime('%H:%M:%S')
+    #date_time = datetime.datetime.now()
+
     todays_date = datetime.datetime.now().strftime('%Y-%m-%d')
     # Monday is 0
     day = datetime.datetime.today().weekday()
 
-    time_range1 = (datetime.datetime.now() + datetime.timedelta(minutes=20)).strftime('%H:%M:%S')
-    time_range2 = (datetime.datetime.now() + datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
-    time_range3 = (datetime.datetime.now() + datetime.timedelta(minutes=100)).strftime('%H:%M:%S')
+    time_range1 = (date_time + datetime.timedelta(minutes=20)).strftime('%H:%M:%S')
+    #time_range1 = (datetime.datetime.now() + datetime.timedelta(minutes=20)).strftime('%H:%M:%S')
+    time_range2 = (date_time + datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
+    #time_range2 = (datetime.datetime.now() + datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
+    time_range3 = (date_time + datetime.timedelta(minutes=100)).strftime('%H:%M:%S')
+    #time_range3 = (datetime.datetime.now() + datetime.timedelta(minutes=100)).strftime('%H:%M:%S')
 
+    #x = datetime.datetime.now()
+    #print(type(x))
     #print(start_stop, dest_stop, time, time_range1, time_range2, todays_date, day)
 
     #Get service IDs for todays dates
@@ -131,13 +154,13 @@ def return_routes(request):
     # Get all trips of starting bus stop that are within a time range given either side of what user specified
     trip_id_list = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = start_stop, arrival_time__range = (time_range2, time_range1)))
 
-    print(trip_id_list)
+    #print(trip_id_list)
     #print(len(trip_id_list))
 
     # Narrow the trips to those that have service on todays date
     valid_trip_id_list = list(Trips.objects.values_list('trip_id', flat = True).filter(trip_id__in = trip_id_list, service_id__in = service_list))
 
-    print(valid_trip_id_list)
+    #print(valid_trip_id_list)
     #print(len(valid_trip_id_list))
     #for trip in trip_id_list:
     #    valid_trip_id_list.append(trip)
@@ -337,7 +360,7 @@ class MultiRoutes(Route):
         self.start_trips_dict = self.create_start_trips(self.start_trip_ids)
         self.dest_trips_dict = self.create_dest_trips(self.dest_trip_ids)
 
-        self.display_route_details()
+        #self.display_route_details()
         self.multi_trips_list = self.check_for_common_stops()
 
 
@@ -646,7 +669,7 @@ class Trip():
 
         if all(hasattr(self, attr) for attr in ["start_stop", "dest_stop"]):
 
-            print(type(self.predicted_start_arrival_time), type(self.predicted_dest_arrival_time))
+            #print(type(self.predicted_start_arrival_time), type(self.predicted_dest_arrival_time))
 
             predicted_start_arrival_time_seconds = (self.predicted_start_arrival_time.hour * 60 + self.predicted_start_arrival_time.minute) * 60 + self.predicted_start_arrival_time.second
 

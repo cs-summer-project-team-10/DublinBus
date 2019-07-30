@@ -64,21 +64,21 @@ def return_routes(request):
     #     return 1
 
     time_period =  "dummy"
-    time_specified = (datetime.datetime.now()+ datetime.timedelta(minutes=60)).strftime('%H:%M:%S')
+    time_specified = (datetime.datetime.now()+ datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
     #print(time_specified)
     # Convert date to week or weekend
 
     # start_stop = "8220DB001069"
     # dest_stop = "8220DB000670"
 
-    # start_stop = 1069
-    # dest_stop = 670
+    #start_stop = 1069
+    #dest_stop = 93
 
     # start_stop = 1052
     # dest_stop = 7245
 
-    # start_stop = 1069
-    # dest_stop = 93
+    #start_stop = 181
+    #dest_stop = 315
 
     # start_stop = 1069
     # dest_stop = 6052
@@ -95,9 +95,9 @@ def return_routes(request):
     # Monday is 0
     day = datetime.datetime.today().weekday()
 
-    time_range1 = (datetime.datetime.now() + datetime.timedelta(minutes=80)).strftime('%H:%M:%S')
-    time_range2 = (datetime.datetime.now() + datetime.timedelta(minutes=60)).strftime('%H:%M:%S')
-    time_range3 = (datetime.datetime.now() + datetime.timedelta(minutes=160)).strftime('%H:%M:%S')
+    time_range1 = (datetime.datetime.now() + datetime.timedelta(minutes=20)).strftime('%H:%M:%S')
+    time_range2 = (datetime.datetime.now() + datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
+    time_range3 = (datetime.datetime.now() + datetime.timedelta(minutes=100)).strftime('%H:%M:%S')
 
     #print(start_stop, dest_stop, time, time_range1, time_range2, todays_date, day)
 

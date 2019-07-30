@@ -326,7 +326,7 @@ $('.searchInformation').click(function() {
     var startstop = parseInt(start_stop_code);
     var endstop = parseInt(end_stop_code);
     var time_specified = $(".timepicker").val();
-    var date_specified = $(".datepicker").val();    
+    var date_specified = $(".datepicker").val();
     var infoWindow = new google.maps.InfoWindow();
     var latlngbounds = new google.maps.LatLngBounds();
     var markers = {{JSONdata | safe}};
@@ -448,11 +448,10 @@ $('.searchInformation').click(function() {
                         strokeWeight: 4
                     });
                         BusPath.setMap(map2);
-                        alert($(".datepicker").val())
                 } //无换乘if终止
-                
-                
-              else {  
+
+
+              else {
                     for (var j = 0; j < commonroutes[i].stage1.stage_subroute_stops.length; j++) {
                         var get_all_stops_list = commonroutes[i].stage1.stage_subroute_stops[j];
                         var routeLat = get_all_stops_list.stop_lat;
@@ -476,8 +475,8 @@ $('.searchInformation').click(function() {
                             });
                         })(marker,get_all_stops_list);
                         latlngbounds.extend(marker.position);
-                    } 
-                  
+                    }
+
                         //Calculate the fare of different routes based on number of stops
                         if (commonroutes[i].stage1.number_stops >= 1 && commonroutes[i].stage1.number_stops <= 3) {
                             var Adult_Cash_1 = 2.15;
@@ -526,8 +525,8 @@ $('.searchInformation').click(function() {
                     });
                         BusPath.setMap(map2);
 
-                  
-                  
+
+
                   for (var j = 0; j < commonroutes[i].stage2.stage_subroute_stops.length; j++) {
                         var get_all_stops_list = commonroutes[i].stage2.stage_subroute_stops[j];
                         var routeLat = get_all_stops_list.stop_lat;
@@ -549,7 +548,7 @@ $('.searchInformation').click(function() {
                             });
                         })(marker,get_all_stops_list);
                         latlngbounds.extend(marker.position);
-                    } 
+                    }
                      //Calculate the fare of different routes based on number of stops
                     if (commonroutes[i].stage2.number_stops >= 1 && commonroutes[i].stage2.number_stops <= 3) {
                         var Adult_Cash_2 = 2.15;
@@ -598,7 +597,7 @@ $('.searchInformation').click(function() {
                         strokeOpacity: 1.0,
                         strokeWeight: 4
                     });
-                        BusPath.setMap(map2);  
+                        BusPath.setMap(map2);
               }   //有换乘if终止
             }  //外for 终止
     informationTable += "</table>";

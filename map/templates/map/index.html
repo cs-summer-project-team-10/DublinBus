@@ -352,8 +352,8 @@ $('.searchInformation').click(function() {
         data: {
             startstop: startstop,
             endstop: endstop,
-            time_specified: time_specified
-//            date_specified: $(".datepicker").val()
+            time_specified: time_specified,
+            date_specified: date_specified
         },
         success: function(result) {
             var MapOption = {
@@ -371,6 +371,7 @@ $('.searchInformation').click(function() {
             var pathArray2 = [];
             var myDate = new Date();
             var mytime= myDate.getTime();
+            console.log(mytime);
             for (var i = 0; i < commonroutes.length; i++) {
                 if (commonroutes[i].direct == true) {
                     for (var j = 0; j < commonroutes[i].subroute_stops_list.length; j++) {

@@ -34,164 +34,104 @@ def return_routes(request):
 
     It will then call a predictive model on this route per stop etc.
     '''
-
-    start_stop = request.GET['startstop']
-    dest_stop = request.GET['endstop']
-
-    time_specified = request.GET['time_specified']
-    #date_specified = request.GET['date_specified']
-
     #Get weather
     #response = requests.get("http://api.openweathermap.org/data/2.5/weather?id=7778677&APPID=0927fd5dff272fdbd486187e54283310")
     #weather_data = json.loads(response.content.decode('utf-8'))
     #print(weather_data)
     weather = "weather"
 
-    # Convert time to time period
-    # if seconds >= 0 and seconds < 25200:
-    #     return 0
-    # elif seconds >= 25200 and seconds < 36000:
-    #     return 5
-    # elif seconds >= 36000 and seconds < 54000:
-    #     return 3
-    # elif seconds >= 54000 and seconds < 61200:
-    #     return 4
-    # elif seconds >= 61200 and seconds < 68400:
-    #     return 6
-    # elif seconds >= 68400 and seconds < 79200:
-    #     return 2
-    # elif seconds >= 79200:
-    #     return 1
-
-    time_period =  "time_period"
-
-    if time_specified == '':
-        time_specified = (datetime.datetime.now()).strftime('%H:%M:%S')
-        date_time = datetime.datetime.now()
-        #time_specified = date_time.strftime('%H:%M:%S')
-        print(date_time)
-        print("2", type(date_time))
-
-    else:
-        time_specified = time_specified + ":00"
-        today_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        #print(today_date)
-        date_time = datetime.datetime.strptime(today_date + "-" + time_specified, '%Y-%m-%d-%H:%M:%S')
-        print("1",date_time)
-        print("2", type(date_time))
-
-    #time_specified
-
-    #time_specified = (datetime.datetime.now()+ datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
-
-    # Convert date to week or weekend
-
-    # start_stop = "8220DB001069"
-    # dest_stop = "8220DB000670"
-
+    start_stop = request.GET['startstop']
+    dest_stop = request.GET['endstop']
     #start_stop = 1069
-    #dest_stop = 93
+    #dest_stop = 670
 
-    # start_stop = 1052
-    # dest_stop = 7245
-
-    #start_stop = 181
-    #dest_stop = 315
-
-    # start_stop = 1069
-    # dest_stop = 6052
-
-    # 1320
-    # 1324
-    #
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
 
-    #date_time = datetime.datetime.now()
+    time_specified = request.GET['time_specified']
+    #time_specified = ''
+    date_specified = request.GET['date_specified']
 
-    todays_date = datetime.datetime.now().strftime('%Y-%m-%d')
+    # Now option and an empty later option
+    if time_specified == '' and date_specified == '':
+        time_specified = (datetime.datetime.now()).strftime('%H:%M:%S')
+        specified_date_time = datetime.datetime.now()
+
+    elif date_specified == '':
+        time_specified = time_specified + ":00"
+        today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        specified_date_time = datetime.datetime.strptime(today_date + "-" + time_specified, '%Y-%m-%d-%H:%M:%S')
+
+    elif time_specified == '':
+        time_specified = (datetime.datetime.now()).strftime('%H:%M:%S')
+        specified_date_time = datetime.datetime.strptime(date_specified + "-" + time_specified, '%m/%d/%y-%H:%M:%S')
+
+    else:
+        time_specified = time_specified + ":00"
+        specified_date_time = datetime.datetime.strptime(date_specified + "-" + time_specified, '%m/%d/%y-%H:%M:%S')
+
+    # Convert time to time period
+    time_period =  "time_period"
+
     # Monday is 0
-    day = datetime.datetime.today().weekday()
+    day = specified_date_time.weekday()
 
-    time_range1 = (date_time + datetime.timedelta(minutes=20)).strftime('%H:%M:%S')
-    #time_range1 = (datetime.datetime.now() + datetime.timedelta(minutes=20)).strftime('%H:%M:%S')
-    time_range2 = (date_time + datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
-    #time_range2 = (datetime.datetime.now() + datetime.timedelta(minutes=0)).strftime('%H:%M:%S')
-    time_range3 = (date_time + datetime.timedelta(minutes=100)).strftime('%H:%M:%S')
-    #time_range3 = (datetime.datetime.now() + datetime.timedelta(minutes=100)).strftime('%H:%M:%S')
-
-    #x = datetime.datetime.now()
-    #print(type(x))
-    #print(start_stop, dest_stop, time, time_range1, time_range2, todays_date, day)
+    # Set time ranges for range of trips to return
+    start_range = (specified_date_time + datetime.timedelta(minutes=-10)).strftime('%H:%M:%S')
+    end_range = (specified_date_time + datetime.timedelta(minutes=20)).strftime('%H:%M:%S')
+    changeover_range = (specified_date_time + datetime.timedelta(minutes=100)).strftime('%H:%M:%S')
 
     #Get service IDs for todays dates
     if day == 0:
-        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, monday = True))
+        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = specified_date_time, end_date__gte = specified_date_time, monday = True))
         weekday = True
     elif day == 1:
-        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, tuesday = True))
+        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = specified_date_time, end_date__gte = specified_date_time, tuesday = True))
         weekday = True
     elif day == 2:
-        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, wednesday = True))
+        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = specified_date_time, end_date__gte = specified_date_time, wednesday = True))
         weekday = True
     elif day == 3:
-        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, thursday = True))
+        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = specified_date_time, end_date__gte = specified_date_time, thursday = True))
         weekday = True
     elif day == 4:
-        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, friday = True))
+        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = specified_date_time, end_date__gte = specified_date_time, friday = True))
         weekday = True
     elif day == 5:
-        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, saturday = True))
+        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = specified_date_time, end_date__gte = specified_date_time, saturday = True))
         weekday = False
     elif day == 6:
-        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = todays_date, end_date__gte = todays_date, sunday = True))
+        service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = specified_date_time, end_date__gte = specified_date_time, sunday = True))
         weekday = False
 
-    #print(service_list)
-    #tuple
-    #print((service_list)[0][0])
-
-    # Get all trips of starting bus stop that are within a time range given either side of what user specified
-    trip_id_list = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = start_stop, arrival_time__range = (time_range2, time_range1)))
-
-    #print(trip_id_list)
-    #print(len(trip_id_list))
+    # Get all trips of starting bus stop that are within a time range specified by user
+    trip_id_list = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = start_stop, arrival_time__range = (start_range, end_range)))
 
     # Narrow the trips to those that have service on todays date
     valid_trip_id_list = list(Trips.objects.values_list('trip_id', flat = True).filter(trip_id__in = trip_id_list, service_id__in = service_list))
 
-    #print(valid_trip_id_list)
-    #print(len(valid_trip_id_list))
-    #for trip in trip_id_list:
-    #    valid_trip_id_list.append(trip)
-
-
-    # Get trips that are also specfic to destiantion stop
+    # Get trips that are also specfic to destination stop
     common_trip_id_list = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(trip_id__in = valid_trip_id_list, stop_id = dest_stop))
-    #print(common_trip_id_list)
-    #print("Common trips:",len(common_trip_id_list))
 
     # Create dictionary of routes possible between stops
     data = []
 
     # If no common trips between stops
     if len(common_trip_id_list) == 0:
-        print("No common route found")
 
         valid_start_stop_trip_ids = valid_trip_id_list
 
         # Dest stop trip ids within a larger time frame
-        dest_stop_trip_ids = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = dest_stop, arrival_time__range = (time_range2, time_range3)))
+        dest_stop_trip_ids = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = dest_stop, arrival_time__range = (start_range, changeover_range)))
         valid_dest_stop_trip_ids = list(Trips.objects.values_list('trip_id', flat = True).filter(trip_id__in = dest_stop_trip_ids, service_id__in = service_list))
-
 
         travel_options = MultiRoutes(weather, weekday, time_specified, time_period, start_stop, dest_stop, valid_start_stop_trip_ids, valid_dest_stop_trip_ids)
 
+        # If valid travel options using multi-route
         if len(travel_options.multi_trips_list) != 0:
             for travel_option in travel_options.multi_trips_list:
 
                 route_option_dict = {}
-
 
                 route_option_dict["direct"] = False
                 route_option_dict["start_stop_id"] = travel_option["stage1"].start_stop_id
@@ -256,8 +196,6 @@ def return_routes(request):
 
                 data.append(route_option_dict)
 
-        else:
-            print("No route possible")
 
     else:
         travel_options = DirectRoutes(weather, weekday, time_specified, time_period, start_stop, dest_stop, common_trip_id_list)
@@ -290,6 +228,7 @@ def return_routes(request):
 
                 data.append(route_option_dict)
 
+
     return JsonResponse({'routes_data': data})
 
 
@@ -297,10 +236,10 @@ def change_to_timestamp(datetime_time_object):
    '''
    '''
    t = datetime_time_object
-   seconds = (t.hour * 60 + t.minute) * 60 + t.second
-   today = datetime.datetime.now()
-   today = today.replace(hour=0, minute=0, second=0, microsecond=0)
-   timestamp = datetime.datetime.timestamp(today)
+   seconds = (((t.hour * 60) + t.minute) * 60) + t.second
+   date_specified = datetime.datetime.now()
+   date_specified = date_specified.replace(hour=0, minute=0, second=0, microsecond=0)
+   timestamp = datetime.datetime.timestamp(date_specified)
    arrival_timestamp = timestamp + seconds
    return int(arrival_timestamp * 1000)
 
@@ -322,6 +261,7 @@ class Route():
         min = int(time[1])
         sec = int(time[2])
         self.time_specified = datetime.time(hour, min, sec)
+
 
         self.start_stop = start_stop
         self.dest_stop = dest_stop
@@ -363,10 +303,6 @@ class MultiRoutes(Route):
         #self.display_route_details()
         self.multi_trips_list = self.check_for_common_stops()
 
-
-    def create_trips_and_check(self):
-
-        return True
 
     def create_start_trips(self, trip_id_list):
         trip_dict = {}
@@ -448,7 +384,7 @@ class MultiRoutes(Route):
 
                                     multi_trip_dict = {}
 
-                                    multi_trip_dict["stages"] = 1
+                                    multi_trip_dict["stages"] = 2
                                     multi_trip_dict["changeover_stop_id"] = common_stop_id
                                     multi_trip_dict["changeover_stop_id_short"] = common_stop_id_short
                                     multi_trip_dict["start_stop_predicted_arrival_time"] = self.start_trips_dict[trip_key].predicted_start_arrival_time
@@ -548,12 +484,14 @@ class Trip():
 
         self.all_stops_list = self.get_all_stops()
 
+        if all(hasattr(self, attr) for attr in ["start_stop", "dest_stop"]):
+            self.check_valid_stop_sequence()
+
         # Check if valid, maybe terminate if not
         if hasattr(self, 'start_stop') :
             self.check_valid_arrival_time()
 
-        if all(hasattr(self, attr) for attr in ["start_stop", "dest_stop"]):
-            self.check_valid_stop_sequence()
+
 
         self.subroute_stops_list = self.get_subroute_stops()
         self.number_stops = len(self.subroute_stops_list) - 1
@@ -622,18 +560,14 @@ class Trip():
 
             due_time = datetime.datetime.strptime(stop_dict["due_arrival_time"], "%H:%M:%S")
 
-            #print(due_time)
+
             predicted_arrival_time = (due_time + datetime.timedelta(seconds=predicted_diff_in_time)).time()
-            #print(predicted_arrival_time)
+
             stop_dict["predicted_arrival_time"] = predicted_arrival_time
 
 
             if hasattr(self, 'start_stop') and stop[0] == self.start_stop_id:
                 self.predicted_start_arrival_time = predicted_arrival_time
-                #print(self.predicted_start_arrival_time)
-
-
-                #print(start_seq)
 
 
             if stop[3] == None:
@@ -729,24 +663,23 @@ class Trip():
         #print(stops)
         return stops
 
-
-
-    def check_valid_arrival_time(self):
-        '''
-        '''
-
-        if self.predicted_start_arrival_time > self.time_specified:
-            self.valid = True
-
-        else:
-            self.valid = False
-
     def check_valid_stop_sequence(self):
         if self.start_stop_sequence < self.dest_stop_sequence:
             self.valid = True
 
         else:
             self.valid = False
+
+
+    def check_valid_arrival_time(self):
+        '''
+        '''
+        if self.predicted_start_arrival_time > self.time_specified:
+            self.valid = True
+
+        else:
+            self.valid = False
+
 
     def get_all_shape_points(self):
         '''

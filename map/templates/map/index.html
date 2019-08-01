@@ -235,14 +235,33 @@
 
 
 <script>
-function getLocalTime(timeStamp) {  
+ //Convert the timestamp to normal time and only show hour and minute     
+ function getLocalTime(timeStamp) {  
  var minuteFormat = function(minuteNumber){return minuteNumber < 10 ? '0' + minuteNumber : minuteNumber};
  return minuteFormat(new Date(parseInt(timeStamp)).getHours()) + ":" + minuteFormat(new Date(parseInt(timeStamp)).getMinutes());  
 }
 </script>
 
+
+
+
+
 <script>
-    // Get the local URL
+//Show loading
+function ShowDiv() {
+    $("#loading").show();
+}
+//Hide loading
+function HiddenDiv() {
+    $("#loading").hide();
+}
+</script>
+
+
+
+
+<script>
+    //Get the local URL
     var getUrl = window.location;
     //Set the format of URL
     var map_Url = getUrl.protocol + "//" + getUrl.host + "/";
@@ -323,7 +342,8 @@ function hideTimeAndDataPicker() {
         $(".datepicker").val("");
     }
 }
-
+    
+    
 
 //Submit the location of start and destination based on stopID and then the routes will be shown on the map
 $('.searchInformation').click(function() {
@@ -354,15 +374,11 @@ $('.searchInformation').click(function() {
     }                          
                               
     if (timeToGo != 'Later') {                         
-
-    informationTable += "<thead><tr><th style = 'width: 20%'>Arrives In</th><th style = 'width: 20%'>Time</th><th style = 'width: 40%'>Route</th><th style = 'width: 20%'>Fare</th></tr></thead>";
-
+        informationTable += "<thead><tr><th style = 'width: 20%'>Arrives In</th><th style = 'width: 20%'>Time</th><th style = 'width: 40%'>Route</th><th style = 'width: 20%'>Fare</th></tr></thead>";
     }
     
     else {
-    
-    informationTable += "<thead><tr><th style = 'width: 20%'>Arrives At</th><th style = 'width: 20%'>Time</th><th style = 'width: 40%'>Route</th><th style = 'width: 20%'>Fare</th></tr></thead>";
-        
+        informationTable += "<thead><tr><th style = 'width: 20%'>Arrives At</th><th style = 'width: 20%'>Time</th><th style = 'width: 40%'>Route</th><th style = 'width: 20%'>Fare</th></tr></thead>";   
     }
 
     //Ajax, get information from the specific url
@@ -398,8 +414,18 @@ $('.searchInformation').click(function() {
             var pathArray2 = [];
             var myDate = new Date();
             var mytime= myDate.getTime();
+            
+            
+            
+            
+            if (commonroutes.length == 0) {
+                alert("Sorry, there is no possible route!");
+                return false
+            }
+            
+
             for (var i = 0; i < commonroutes.length; i++) {
-                if (commonroutes[i].direct == true) {
+                        if (commonroutes[i].direct == true) {
                     for (var j = 0; j < commonroutes[i].subroute_stops_list.length; j++) {
                         var get_all_stops_list = commonroutes[i].subroute_stops_list[j];
                         var routeLat = get_all_stops_list.stop_lat;
@@ -454,16 +480,12 @@ $('.searchInformation').click(function() {
                         }
 
                     if (timeToGo != 'Later') {
-
-                    informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'><a>" + Math.round((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + " mins" + "</a></td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + commonroutes[i].total_travel_time) + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): " + Adult_Cash + "\\nAdult (Leap Card): " + Adult_Leap + "\\nChild Under 16 (Cash): " + Child_Cash_16 + "\\nChild Under 19 (Leap Card): " + Child_Leap_19 + "\\nChild Under 16 During School Hour(Cash): " + Child_Cash_16_school + "\\nChild Under 19 During School Hour(Leap Card): " + Child_Leap_19_school + "')\">Show</a></td></tr>";
-                        
-                    
+                        informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'><a>" + Math.round((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + " mins" + "</a></td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + commonroutes[i].total_travel_time) + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): " + Adult_Cash + "\\nAdult (Leap Card): " + Adult_Leap + "\\nChild Under 16 (Cash): " + Child_Cash_16 + "\\nChild Under 19 (Leap Card): " + Child_Leap_19 + "\\nChild Under 16 During School Hour (Cash): " + Child_Cash_16_school + "\\nChild Under 19 During School Hour (Leap Card): " + Child_Leap_19_school + "')\">Show</a></td></tr>";
                     }
                     
                     
                     else {
-                        
-                   informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'><a>" + getLocalTime(commonroutes[i].start_stop_predicted_arrival_timestamp) + "</a></td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + commonroutes[i].total_travel_time) + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): " + Adult_Cash + "\\nAdult (Leap Card): " + Adult_Leap + "\\nChild Under 16 (Cash): " + Child_Cash_16 + "\\nChild Under 19 (Leap Card): " + Child_Leap_19 + "\\nChild Under 16 During School Hour(Cash): " + Child_Cash_16_school + "\\nChild Under 19 During School Hour(Leap Card): " + Child_Leap_19_school + "')\">Show</a></td></tr>";       
+                        informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'><a>" + getLocalTime(commonroutes[i].start_stop_predicted_arrival_timestamp) + "</a></td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(commonroutes[i].total_travel_time) + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): " + Adult_Cash + "\\nAdult (Leap Card): " + Adult_Leap + "\\nChild Under 16 (Cash): " + Child_Cash_16 + "\\nChild Under 19 (Leap Card): " + Child_Leap_19 + "\\nChild Under 16 During School Hour (Cash): " + Child_Cash_16_school + "\\nChild Under 19 During School Hour (Leap Card): " + Child_Leap_19_school + "')\">Show</a></td></tr>";       
                     }
                     
                     for (var k = 0; k < commonroutes[i].subroute_shape_points.length; k++) {
@@ -618,8 +640,18 @@ $('.searchInformation').click(function() {
                     var Child_Cash_16_school_Together = (Child_Cash_16_school_1 + Child_Cash_16_school_2).toFixed(2);
                     var Child_Leap_19_school_Together = (Child_Leap_19_school_1 + Child_Leap_19_school_2).toFixed(2);
                   
-
-                    informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'>" + Math.round((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + " mins" + "</td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + commonroutes[i].total_time)  + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].stage1.route_short_name + " → " + commonroutes[i].stage2.route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): " + Adult_Cash_Together + "\\nAdult (Leap Card): " + Adult_Leap_Together + "\\nChild Under 16 (Cash): " + Child_Cash_16_Together + "\\nChild Under 19 (Leap Card): " + Child_Leap_19_Together + "\\nChild Under 16 During School Hour(Cash): " + Child_Cash_16_school_Together + "\\nChild Under 19 During School Hour(Leap Card): " + Child_Leap_19_school_Together + "')\">Show</a></td></tr>";
+                  
+                  
+                    if (timeToGo != 'Later') {
+                    informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'>" + Math.round((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + " mins" + "</td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + commonroutes[i].total_time)  + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].stage1.route_short_name + " → " + commonroutes[i].stage2.route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): €" + Adult_Cash_Together + "\\nAdult (Leap Card): €" + Adult_Leap_Together + "\\nChild Under 16 (Cash): €" + Child_Cash_16_Together + "\\nChild Under 19 (Leap Card): €" + Child_Leap_19_Together + "\\nChild Under 16 During School Hour (Cash): €" + Child_Cash_16_school_Together + "\\nChild Under 19 During School Hour (Leap Card): €" + Child_Leap_19_school_Together + "')\">Show</a></td></tr>";
+                    }
+                    
+                    
+                    else {
+                    informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'>" + getLocalTime(commonroutes[i].start_stop_predicted_arrival_timestamp) + "</td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(commonroutes[i].total_time)  + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].stage1.route_short_name + " → " + commonroutes[i].stage2.route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): €" + Adult_Cash_Together + "\\nAdult (Leap Card): €" + Adult_Leap_Together + "\\nChild Under 16 (Cash): €" + Child_Cash_16_Together + "\\nChild Under 19 (Leap Card): €" + Child_Leap_19_Together + "\\nChild Under 16 During School Hour (Cash): €" + Child_Cash_16_school_Together + "\\nChild Under 19 During School Hour (Leap Card): €" + Child_Leap_19_school_Together + "')\">Show</a></td></tr>";
+                    }
+                  
+                  
 
                     for (var k = 0; k < commonroutes[i].stage2.stage2_subroute_shape_points.length; k++) {
                         var shapeLat = commonroutes[i].stage2.stage2_subroute_shape_points[k].shape_point_lat;
@@ -646,143 +678,36 @@ $('.searchInformation').click(function() {
 
     informationTable += "</table>";
     $(".details").html(informationTable);
-          var table, rows, switching, i, x, y, shouldSwitch;
+  
+  var table, rows, switching, i, x, y, shouldSwitch;
   table = document.getElementById("myTable");
   switching = true;
-  /*Make a loop that will continue until
-  no switching has been done:*/
   while (switching) {
-    //start by saying: no switching is done:
-    switching = false;
-    rows = table.rows;
-    /*Loop through all table rows (except the
-    first, which contains table headers):*/
-    for (i = 1; i < (rows.length - 1); i++) {
-      //start by saying there should be no switching:
+  switching = false;
+  rows = table.rows;
+  for (i = 1; i < (rows.length - 1); i++) {
       shouldSwitch = false;
-      /*Get the two elements you want to compare,
-      one from current row and one from the next:*/
       x = rows[i].getElementsByTagName("TD")[1];
       y = rows[i + 1].getElementsByTagName("TD")[1];
-      //check if the two rows should switch place:
       if (Number(x.innerHTML.slice(0,-5)) > Number(y.innerHTML.slice(0,-5))) {
-        //if so, mark as a switch and break the loop:
         shouldSwitch = true;
         break;
       }
     }
-    if (shouldSwitch) {
-      /*If a switch has been marked, make the switch
-      and mark that a switch has been done:*/
+  if (shouldSwitch) {
       rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
       switching = true;
     }
   }  
 // Here
-        }
+        },
+    
+    error: function(){
+        alert("Sorry, there is no possible route!");
+    }
     });
 })
 </script>
-
-<script>
-function ShowDiv() {
-$("#loading").show();
-}
-
-//Hide loading
-function HiddenDiv() {
-$("#loading").hide();
-}
-</script>
-
-
-
-
-<!--
-<script>
-    
-function sortTable() {
-  var table, rows, switching, i, x, y, shouldSwitch;
-  table = document.getElementById("myTable");
-  switching = true;
-  /*Make a loop that will continue until
-  no switching has been done:*/
-  while (switching) {
-    //start by saying: no switching is done:
-    switching = false;
-    rows = table.rows;
-    /*Loop through all table rows (except the
-    first, which contains table headers):*/
-    for (i = 1; i < (rows.length - 1); i++) {
-      //start by saying there should be no switching:
-      shouldSwitch = false;
-      /*Get the two elements you want to compare,
-      one from current row and one from the next:*/
-      x = rows[i].getElementsByTagName("TD")[1];
-      y = rows[i + 1].getElementsByTagName("TD")[1];
-      //check if the two rows should switch place:
-      if (Number(x.innerHTML.slice(0,-5)) > Number(y.innerHTML.slice(0,-5))) {
-        //if so, mark as a switch and break the loop:
-        shouldSwitch = true;
-        break;
-      }
-    }
-    if (shouldSwitch) {
-      /*If a switch has been marked, make the switch
-      and mark that a switch has been done:*/
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-    }
-  }
-}
-</script>
--->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAR48jLtATZO3aZWwS9CICs4Q8CDGpzVm8&callback=initMap" async defer></script>

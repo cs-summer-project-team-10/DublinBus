@@ -235,9 +235,9 @@
 
 
 <script>
-function getLocalTime(timeStamp) {  
+function getLocalTime(timeStamp) {
  var minuteFormat = function(minuteNumber){return minuteNumber < 10 ? '0' + minuteNumber : minuteNumber};
- return minuteFormat(new Date(parseInt(timeStamp)).getHours()) + ":" + minuteFormat(new Date(parseInt(timeStamp)).getMinutes());  
+ return minuteFormat(new Date(parseInt(timeStamp)).getHours()) + ":" + minuteFormat(new Date(parseInt(timeStamp)).getMinutes());
 }
 </script>
 
@@ -327,14 +327,14 @@ function hideTimeAndDataPicker() {
 
 //Submit the location of start and destination based on stopID and then the routes will be shown on the map
 $('.searchInformation').click(function() {
-    
+
     var start_stop_code = $('#startInput').val().substring($('#startInput').val().indexOf("(Stop") + 6, $('#startInput').val().length - 1);
     var end_stop_code = $('#destitationInput').val().substring($('#destitationInput').val().indexOf("(Stop") + 6, $('#destitationInput').val().length - 1);
     var startstop = parseInt(start_stop_code);
     var endstop = parseInt(end_stop_code);
     var time_specified = $(".timepicker").val();
     var date_specified = $(".datepicker").val();
-    var timeToGo = $(".nowOrLater").val(); 
+    var timeToGo = $(".nowOrLater").val();
     var infoWindow = new google.maps.InfoWindow();
     var latlngbounds = new google.maps.LatLngBounds();
     var markers = {{JSONdata | safe}};
@@ -345,24 +345,24 @@ $('.searchInformation').click(function() {
         alert("Start or destination can not be empty!")
         return false
     }
-    
-                
+
+
     // Check if the timepicker is empty
     if (timeToGo == 'Later' && (time_specified == '' || time_specified == undefined || time_specified == null)) {
         alert("Time can not be empty!")
         return false
-    }                          
-                              
-    if (timeToGo != 'Later') {                         
+    }
+
+    if (timeToGo != 'Later') {
 
     informationTable += "<thead><tr><th style = 'width: 20%'>Arrives In</th><th style = 'width: 20%'>Time</th><th style = 'width: 40%'>Route</th><th style = 'width: 20%'>Fare</th></tr></thead>";
 
     }
-    
+
     else {
-    
+
     informationTable += "<thead><tr><th style = 'width: 20%'>Arrives At</th><th style = 'width: 20%'>Time</th><th style = 'width: 40%'>Route</th><th style = 'width: 20%'>Fare</th></tr></thead>";
-        
+
     }
 
     //Ajax, get information from the specific url
@@ -398,6 +398,7 @@ $('.searchInformation').click(function() {
             var pathArray2 = [];
             var myDate = new Date();
             var mytime= myDate.getTime();
+            console.log(mytime);
             for (var i = 0; i < commonroutes.length; i++) {
                 if (commonroutes[i].direct == true) {
                     for (var j = 0; j < commonroutes[i].subroute_stops_list.length; j++) {
@@ -456,16 +457,16 @@ $('.searchInformation').click(function() {
                     if (timeToGo != 'Later') {
 
                     informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'><a>" + Math.round((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + " mins" + "</a></td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + commonroutes[i].total_travel_time) + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): " + Adult_Cash + "\\nAdult (Leap Card): " + Adult_Leap + "\\nChild Under 16 (Cash): " + Child_Cash_16 + "\\nChild Under 19 (Leap Card): " + Child_Leap_19 + "\\nChild Under 16 During School Hour(Cash): " + Child_Cash_16_school + "\\nChild Under 19 During School Hour(Leap Card): " + Child_Leap_19_school + "')\">Show</a></td></tr>";
-                        
-                    
+
+
                     }
-                    
-                    
+
+
                     else {
-                        
-                   informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'><a>" + getLocalTime(commonroutes[i].start_stop_predicted_arrival_timestamp) + "</a></td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + commonroutes[i].total_travel_time) + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): " + Adult_Cash + "\\nAdult (Leap Card): " + Adult_Leap + "\\nChild Under 16 (Cash): " + Child_Cash_16 + "\\nChild Under 19 (Leap Card): " + Child_Leap_19 + "\\nChild Under 16 During School Hour(Cash): " + Child_Cash_16_school + "\\nChild Under 19 During School Hour(Leap Card): " + Child_Leap_19_school + "')\">Show</a></td></tr>";       
+
+                   informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'><a>" + getLocalTime(commonroutes[i].start_stop_predicted_arrival_timestamp) + "</a></td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + commonroutes[i].total_travel_time) + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): " + Adult_Cash + "\\nAdult (Leap Card): " + Adult_Leap + "\\nChild Under 16 (Cash): " + Child_Cash_16 + "\\nChild Under 19 (Leap Card): " + Child_Leap_19 + "\\nChild Under 16 During School Hour(Cash): " + Child_Cash_16_school + "\\nChild Under 19 During School Hour(Leap Card): " + Child_Leap_19_school + "')\">Show</a></td></tr>";
                     }
-                    
+
                     for (var k = 0; k < commonroutes[i].subroute_shape_points.length; k++) {
                         var shapeLat = commonroutes[i].subroute_shape_points[k].shape_point_lat;
                         var shapeLng = commonroutes[i].subroute_shape_points[k].shape_point_lng;
@@ -485,9 +486,9 @@ $('.searchInformation').click(function() {
                     });
                         BusPath.setMap(map2);
                 } //endif loop without transfer
-                
-                
-              else {  
+
+
+              else {
                     for (var j = 0; j < commonroutes[i].stage1.stage_subroute_stops.length; j++) {
                         var get_all_stops_list = commonroutes[i].stage1.stage_subroute_stops[j];
                         var routeLat = get_all_stops_list.stop_lat;
@@ -510,8 +511,8 @@ $('.searchInformation').click(function() {
                             });
                         })(marker,get_all_stops_list);
                         latlngbounds.extend(marker.position);
-                    } 
-                  
+                    }
+
                     //Calculate the fare of different routes based on number of stops
                     if (commonroutes[i].stage1.number_stops >= 1 && commonroutes[i].stage1.number_stops <= 3) {
                         var Adult_Cash_1 = 2.15;
@@ -560,8 +561,8 @@ $('.searchInformation').click(function() {
                     });
                         BusPath.setMap(map2);
 
-                  
-                  
+
+
                    for (var j = 0; j < commonroutes[i].stage2.stage_subroute_stops.length; j++) {
                         var get_all_stops_list = commonroutes[i].stage2.stage_subroute_stops[j];
                         var routeLat = get_all_stops_list.stop_lat;
@@ -583,7 +584,7 @@ $('.searchInformation').click(function() {
                             });
                         })(marker,get_all_stops_list);
                         latlngbounds.extend(marker.position);
-                    } 
+                    }
                      //Calculate the fare of different routes based on number of stops
                     if (commonroutes[i].stage2.number_stops >= 1 && commonroutes[i].stage2.number_stops <= 3) {
                         var Adult_Cash_2 = 2.15;
@@ -617,7 +618,7 @@ $('.searchInformation').click(function() {
                     var Child_Leap_19_Together = (Child_Leap_19_1 + Child_Leap_19_2).toFixed(2);
                     var Child_Cash_16_school_Together = (Child_Cash_16_school_1 + Child_Cash_16_school_2).toFixed(2);
                     var Child_Leap_19_school_Together = (Child_Leap_19_school_1 + Child_Leap_19_school_2).toFixed(2);
-                  
+
 
                     informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'>" + Math.round((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + " mins" + "</td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + commonroutes[i].total_time)  + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].stage1.route_short_name + " → " + commonroutes[i].stage2.route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): " + Adult_Cash_Together + "\\nAdult (Leap Card): " + Adult_Leap_Together + "\\nChild Under 16 (Cash): " + Child_Cash_16_Together + "\\nChild Under 19 (Leap Card): " + Child_Leap_19_Together + "\\nChild Under 16 During School Hour(Cash): " + Child_Cash_16_school_Together + "\\nChild Under 19 During School Hour(Leap Card): " + Child_Leap_19_school_Together + "')\">Show</a></td></tr>";
 
@@ -630,7 +631,7 @@ $('.searchInformation').click(function() {
                         };
                         pathArray2[k] = shapeLatLng;
                     }
-                  
+
                     //Draw polylines between bus stops based on their order
                     var BusPath = new google.maps.Polyline({
                         path: pathArray2,
@@ -639,10 +640,10 @@ $('.searchInformation').click(function() {
                         strokeOpacity: 1.0,
                         strokeWeight: 4
                     });
-                        BusPath.setMap(map2);  
+                        BusPath.setMap(map2);
               }   //endif loop with transfer
             }  //outside endfor loop
-            
+
 
     informationTable += "</table>";
     $(".details").html(informationTable);
@@ -677,7 +678,7 @@ $('.searchInformation').click(function() {
       rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
       switching = true;
     }
-  }  
+  }
 // Here
         }
     });
@@ -700,7 +701,7 @@ $("#loading").hide();
 
 <!--
 <script>
-    
+
 function sortTable() {
   var table, rows, switching, i, x, y, shouldSwitch;
   table = document.getElementById("myTable");

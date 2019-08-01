@@ -142,7 +142,6 @@
 <!--JavaScript Part-->
 <script>
  (function ($) {
-     // Menu functions
      $(document).ready(function () {
          $('.menuToggle').click(function (e) {
              $('#menuToggleIcon').css('display','block');
@@ -157,7 +156,6 @@
 
 
  (function ($) {
-     // Menu functions
      $(document).ready(function () {
          $('#menuToggleIcon').click(function (e) {
             $('#menuToggleIcon').css('display','none');
@@ -168,7 +166,6 @@
 
 
  (function ($) {
-     // Menu functions
      $(document).ready(function () {
          $('#searchButtonforSmallScreen').click(function (e) {
             $('#menuToggleIcon').css('display','none');
@@ -193,6 +190,7 @@
 <script src="{% static "js/flatpickr.js" %}"></script>
 
 <script>
+    //Settings for datepicker
     flatpickr(".datepicker", {
         dateFormat: "m/d/y",
         minDate: "today"
@@ -211,7 +209,10 @@
     }
 </script>
 
+
+
 <script>
+    //Setings for timepicker
     flatpickr(".timepicker", {
         enableTime: true,
         noCalendar: true,
@@ -233,9 +234,12 @@
 </script>
 
 
-
-
-
+<script>
+function getLocalTime(timeStamp) {  
+ var minuteFormat = function(minuteNumber){return minuteNumber < 10 ? '0' + minuteNumber : minuteNumber};
+ return minuteFormat(new Date(parseInt(timeStamp)).getHours()) + ":" + minuteFormat(new Date(parseInt(timeStamp)).getMinutes());  
+}
+</script>
 
 <script>
     // Get the local URL
@@ -255,7 +259,7 @@
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         var map = new google.maps.Map(document.getElementById('map'), MapOption);
-        //Using Jinja2, loading JSON file about bus stop information when the page is loaded instead of requesting JSON data later
+        //Load JSON file about bus stop information when the page is loaded instead of requesting JSON data later
         var markers = {{JSONdata | safe}};
         for (var i = 0; i < 30; i++) {
             var busstop = markers[i];
@@ -315,26 +319,53 @@ function hideTimeAndDataPicker() {
     } else {
         $("#timediv").hide();
         $("#datediv").hide();
+        $(".timepicker").val("");
+        $(".datepicker").val("");
     }
 }
 
 
 //Submit the location of start and destination based on stopID and then the routes will be shown on the map
 $('.searchInformation').click(function() {
+    
     var start_stop_code = $('#startInput').val().substring($('#startInput').val().indexOf("(Stop") + 6, $('#startInput').val().length - 1);
     var end_stop_code = $('#destitationInput').val().substring($('#destitationInput').val().indexOf("(Stop") + 6, $('#destitationInput').val().length - 1);
     var startstop = parseInt(start_stop_code);
     var endstop = parseInt(end_stop_code);
+    var time_specified = $(".timepicker").val();
+    var date_specified = $(".datepicker").val();
+    var timeToGo = $(".nowOrLater").val(); 
     var infoWindow = new google.maps.InfoWindow();
     var latlngbounds = new google.maps.LatLngBounds();
     var markers = {{JSONdata | safe}};
-    var informationTable = "<table>";
+    var informationTable = "<table id='myTable'>";
 
-    informationTable += "<tr><th style = 'width: 20%; color: #e67600'>Arrives In</th><th style = 'width: 20%; color: #e67600'>Time</th><th style = 'width: 40%; color: #e67600'>Route</th><th style = 'width: 20%; color: #e67600'>Fare</th></tr>";
+    // Check if the search bar is empty
+    if ($("#startInput").val() == '' || $("#startInput").val() == undefined || $("#startInput").val() == null || $("#destitationInput").val() == '' || $("#destitationInput").val() == undefined || $("#destitationInput").val() == null) {
+        alert("Start or destination can not be empty!")
+        return false
+    }
+    
+                
+    // Check if the timepicker is empty
+    if (timeToGo == 'Later' && (time_specified == '' || time_specified == undefined || time_specified == null)) {
+        alert("Time can not be empty!")
+        return false
+    }                          
+                              
+    if (timeToGo != 'Later') {                         
 
+    informationTable += "<thead><tr><th style = 'width: 20%'>Arrives In</th><th style = 'width: 20%'>Time</th><th style = 'width: 40%'>Route</th><th style = 'width: 20%'>Fare</th></tr></thead>";
 
+    }
+    
+    else {
+    
+    informationTable += "<thead><tr><th style = 'width: 20%'>Arrives At</th><th style = 'width: 20%'>Time</th><th style = 'width: 40%'>Route</th><th style = 'width: 20%'>Fare</th></tr></thead>";
+        
+    }
 
-//Ajax, get information from the specific url
+    //Ajax, get information from the specific url
     $.ajax({
         url: map_Url + "routes",
 //        async: false,
@@ -347,7 +378,9 @@ $('.searchInformation').click(function() {
         },
         data: {
             startstop: startstop,
-            endstop: endstop
+            endstop: endstop,
+            time_specified: time_specified,
+            date_specified: date_specified
         },
         success: function(result) {
             var MapOption = {
@@ -361,89 +394,290 @@ $('.searchInformation').click(function() {
             var map2 = new google.maps.Map(document.getElementById('map'), MapOption);
             var commonroutes = result.routes_data;
             var pathArray = [];
+            var pathArray1 = [];
+            var pathArray2 = [];
             var myDate = new Date();
             var mytime= myDate.getTime();
             for (var i = 0; i < commonroutes.length; i++) {
-                for (var j = 0; j < commonroutes[i].subroute_stops_list.length; j++) {
-                    var get_all_stops_list = commonroutes[i].subroute_stops_list[j];
-                    var routeLat = get_all_stops_list.stop_lat;
-                    var routeLng = get_all_stops_list.stop_lng;
-                    var myLatlng = {
-                        lat: routeLat,
-                        lng: routeLng
-                    };
-                    //            var firststop = {lat: parseFloat(commonroutes[i].stops[0].latitude), lng: parseFloat(commonroutes[i].stops[0].longitude)};
-                    //            var laststop = {lat: parseFloat(commonroutes[i].stops[commonroutes[i].stops.length - 1].latitude), lng: parseFloat(commonroutes[i].stops[commonroutes[i].stops.length - 1].longitude)};
-                    var marker = new google.maps.Marker({
-                        position: myLatlng,
-                        map: map2,
-                        animation: google.maps.Animation.DROP,
-                        icon: "https://img.icons8.com/color/48/000000/map-pin.png"
-                    });
-                    (function(marker,get_all_stops_list) {
-                        google.maps.event.addListener(marker, "click", function(e) {
-                            infoWindow.setContent("<div style = 'width: 200px; min-height: 40px; font-style: italic; font-weight: 800'>" + "Stop ID: " + get_all_stops_list.stop_id_short + "<br>" + "Address: " + get_all_stops_list.stop_name + "<br>" + "Sequence Number: " + get_all_stops_list.stop_sequence + "</div>");
-                            infoWindow.open(map2, marker);
+                if (commonroutes[i].direct == true) {
+                    for (var j = 0; j < commonroutes[i].subroute_stops_list.length; j++) {
+                        var get_all_stops_list = commonroutes[i].subroute_stops_list[j];
+                        var routeLat = get_all_stops_list.stop_lat;
+                        var routeLng = get_all_stops_list.stop_lng;
+                        var myLatlng = {
+                            lat: routeLat,
+                            lng: routeLng
+                        };
+
+                        var marker = new google.maps.Marker({
+                            position: myLatlng,
+                            map: map2,
+                            animation: google.maps.Animation.DROP,
+                            icon: "https://img.icons8.com/color/48/000000/map-pin.png"
                         });
-                    })(marker,get_all_stops_list);
-                    latlngbounds.extend(marker.position);
-                }
-
-
-
-
-                    //Calculate the fare of different routes based on number of stops
-                    if (commonroutes[i].number_stops >= 1 && commonroutes[i].number_stops <= 3) {
-                        var Adult_Cash = "€2.15";
-                        var Adult_Leap = "€1.55";
-                        var Child_Cash_16 = "€1.30";
-                        var Child_Cash_19 = "€1.00";
-                        var Child_Cash_16_school = "€1.00";
-                        var Child_Cash_19_school = "€0.80";
+                        (function(marker,get_all_stops_list) {
+                            google.maps.event.addListener(marker, "click", function(e) {
+                                infoWindow.setContent("<div style = 'width: 200px; min-height: 40px; font-style: italic; font-weight: 800'>" + "Stop ID: " + get_all_stops_list.stop_id_short + "<br>" + "Address: " + get_all_stops_list.stop_name + "<br>" + "Sequence Number: " + get_all_stops_list.stop_sequence + "</div>");
+                                infoWindow.open(map2, marker);
+                            });
+                        })(marker,get_all_stops_list);
+                        latlngbounds.extend(marker.position);
                     }
-                    else if (commonroutes[i].number_stops > 3 && commonroutes[i].number_stops <= 13) {
-                        var Adult_Cash = "€2.25";
-                        var Adult_Leap = "€2.00";
-                        var Child_Cash_16 = "€1.30";
-                        var Child_Cash_19 = "€1.00";
-                        var Child_Cash_16_school = "€1.00";
-                        var Child_Cash_19_school = "€0.80";
+
+
+
+                        //Calculate the fare of different routes based on number of stops
+                        if (commonroutes[i].number_stops >= 1 && commonroutes[i].number_stops <= 3) {
+                            var Adult_Cash = "€2.15";
+                            var Adult_Leap = "€1.55";
+                            var Child_Cash_16 = "€1.30";
+                            var Child_Leap_19 = "€1.00";
+                            var Child_Cash_16_school = "€1.00";
+                            var Child_Leap_19_school = "€0.80";
+                        }
+                        else if (commonroutes[i].number_stops > 3 && commonroutes[i].number_stops <= 13) {
+                            var Adult_Cash = "€2.25";
+                            var Adult_Leap = "€2.00";
+                            var Child_Cash_16 = "€1.30";
+                            var Child_Leap_19 = "€1.00";
+                            var Child_Cash_16_school = "€1.00";
+                            var Child_Leap_19_school = "€0.80";
+
+                        }
+                        else {
+                            var Adult_Cash = "€2.50";
+                            var Adult_Leap = "€3.30";
+                            var Child_Cash_16 = "€1.30";
+                            var Child_Leap_19 = "€1.00";
+                            var Child_Cash_16_school = "€1.00";
+                            var Child_Leap_19_school = "€0.80";
+                        }
+
+                    if (timeToGo != 'Later') {
+
+                    informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'><a>" + Math.round((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + " mins" + "</a></td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + commonroutes[i].total_travel_time) + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): " + Adult_Cash + "\\nAdult (Leap Card): " + Adult_Leap + "\\nChild Under 16 (Cash): " + Child_Cash_16 + "\\nChild Under 19 (Leap Card): " + Child_Leap_19 + "\\nChild Under 16 During School Hour(Cash): " + Child_Cash_16_school + "\\nChild Under 19 During School Hour(Leap Card): " + Child_Leap_19_school + "')\">Show</a></td></tr>";
+                        
+                    
+                    }
+                    
+                    
+                    else {
+                        
+                   informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'><a>" + getLocalTime(commonroutes[i].start_stop_predicted_arrival_timestamp) + "</a></td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + commonroutes[i].total_travel_time) + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): " + Adult_Cash + "\\nAdult (Leap Card): " + Adult_Leap + "\\nChild Under 16 (Cash): " + Child_Cash_16 + "\\nChild Under 19 (Leap Card): " + Child_Leap_19 + "\\nChild Under 16 During School Hour(Cash): " + Child_Cash_16_school + "\\nChild Under 19 During School Hour(Leap Card): " + Child_Leap_19_school + "')\">Show</a></td></tr>";       
+                    }
+                    
+                    for (var k = 0; k < commonroutes[i].subroute_shape_points.length; k++) {
+                        var shapeLat = commonroutes[i].subroute_shape_points[k].shape_point_lat;
+                        var shapeLng = commonroutes[i].subroute_shape_points[k].shape_point_lng;
+                        var shapeLatLng = {
+                            lat: shapeLat,
+                            lng: shapeLng
+                        };
+                        pathArray[k] = shapeLatLng;
+                    }
+                    //Draw polylines between bus stops based on their order
+                    var BusPath = new google.maps.Polyline({
+                        path: pathArray,
+                        geodesic: true,
+                        strokeColor: '#d7f542',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 4
+                    });
+                        BusPath.setMap(map2);
+                } //endif loop without transfer
+                
+                
+              else {  
+                    for (var j = 0; j < commonroutes[i].stage1.stage_subroute_stops.length; j++) {
+                        var get_all_stops_list = commonroutes[i].stage1.stage_subroute_stops[j];
+                        var routeLat = get_all_stops_list.stop_lat;
+                        var routeLng = get_all_stops_list.stop_lng;
+                        var myLatlng = {
+                            lat: routeLat,
+                            lng: routeLng
+                        };
+
+                        var marker = new google.maps.Marker({
+                            position: myLatlng,
+                            map: map2,
+                            animation: google.maps.Animation.DROP,
+                            icon: "https://img.icons8.com/color/48/000000/map-pin.png"
+                        });
+                        (function(marker,get_all_stops_list) {
+                            google.maps.event.addListener(marker, "click", function(e) {
+                                infoWindow.setContent("<div style = 'width: 200px; min-height: 40px; font-style: italic; font-weight: 800'>" + "Stop ID: " + get_all_stops_list.stop_id_short + "<br>" + "Address: " + get_all_stops_list.stop_name + "<br>" + "Sequence Number: " + get_all_stops_list.stop_sequence + "</div>");
+                                infoWindow.open(map2, marker);
+                            });
+                        })(marker,get_all_stops_list);
+                        latlngbounds.extend(marker.position);
+                    } 
+                  
+                    //Calculate the fare of different routes based on number of stops
+                    if (commonroutes[i].stage1.number_stops >= 1 && commonroutes[i].stage1.number_stops <= 3) {
+                        var Adult_Cash_1 = 2.15;
+                        var Adult_Leap_1 = 1.55;
+                        var Child_Cash_16_1 = 1.30;
+                        var Child_Leap_19_1 = 1.00;
+                        var Child_Cash_16_school_1 = 1.00;
+                        var Child_Leap_19_school_1 = 0.80;
+                    }
+                    else if (commonroutes[i].stage1.number_stops > 3 && commonroutes[i].stage1.number_stops <= 13) {
+                        var Adult_Cash_1 = 2.25;
+                        var Adult_Leap_1 = 2.00;
+                        var Child_Cash_16_1 = 1.30;
+                        var Child_Leap_19_1 = 1.00;
+                        var Child_Cash_16_school_1 = 1.00;
+                        var Child_Leap_19_school_1 = 0.80;
 
                     }
                     else {
-                        var Adult_Cash = "€2.50";
-                        var Adult_Leap = "€3.30";
-                        var Child_Cash_16 = "€1.30";
-                        var Child_Cash_19 = "€1.00";
-                        var Child_Cash_16_school = "€1.00";
-                        var Child_Cash_19_school = "€0.80";
+                        var Adult_Cash_1 = 2.50;
+                        var Adult_Leap_1 = 3.30;
+                        var Child_Cash_16_1 = 1.30;
+                        var Child_Leap_19_1 = 1.00;
+                        var Child_Cash_16_school_1 = 1.00;
+                        var Child_Leap_19_school_1 = 0.80;
                     }
 
 
 
-                informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'>" + Math.round((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + " mins" + "</td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(commonroutes[i].total_travel_time) + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].route_short_name + "</td><td style = 'width: 20%; padding-top: 5%'>" + Adult_Cash +"</td></tr>";
+                    for (var k = 0; k < commonroutes[i].stage1.stage1_subroute_shape_points.length; k++) {
+                        var shapeLat = commonroutes[i].stage1.stage1_subroute_shape_points[k].shape_point_lat;
+                        var shapeLng = commonroutes[i].stage1.stage1_subroute_shape_points[k].shape_point_lng;
+                        var shapeLatLng = {
+                            lat: shapeLat,
+                            lng: shapeLng
+                        };
+                        pathArray1[k] = shapeLatLng;
+                    }
+                    //Draw polylines between bus stops based on their order
+                    var BusPath = new google.maps.Polyline({
+                        path: pathArray1,
+                        geodesic: true,
+                        strokeColor: '#d7f542',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 4
+                    });
+                        BusPath.setMap(map2);
 
-                for (var k = 0; k < commonroutes[i].subroute_shape_points.length; k++) {
-                    var shapeLat = commonroutes[i].subroute_shape_points[k].shape_point_lat;
-                    var shapeLng = commonroutes[i].subroute_shape_points[k].shape_point_lng;
-                    var shapeLatLng = {
-                        lat: shapeLat,
-                        lng: shapeLng
-                    };
-                    pathArray[k] = shapeLatLng;
-                }
-                //Draw polylines between bus stops based on their order
-                var BusPath = new google.maps.Polyline({
-                    path: pathArray,
-                    geodesic: true,
-                    strokeColor: '#d7f542',
-                    strokeOpacity: 1.0,
-                    strokeWeight: 4
-                });
-                    BusPath.setMap(map2);
-            }
+                  
+                  
+                   for (var j = 0; j < commonroutes[i].stage2.stage_subroute_stops.length; j++) {
+                        var get_all_stops_list = commonroutes[i].stage2.stage_subroute_stops[j];
+                        var routeLat = get_all_stops_list.stop_lat;
+                        var routeLng = get_all_stops_list.stop_lng;
+                        var myLatlng = {
+                            lat: routeLat,
+                            lng: routeLng
+                        };
+                        var marker = new google.maps.Marker({
+                            position: myLatlng,
+                            map: map2,
+                            animation: google.maps.Animation.DROP,
+                            icon: "https://img.icons8.com/color/48/000000/map-pin.png"
+                        });
+                        (function(marker,get_all_stops_list) {
+                            google.maps.event.addListener(marker, "click", function(e) {
+                                infoWindow.setContent("<div style = 'width: 200px; min-height: 40px; font-style: italic; font-weight: 800'>" + "Stop ID: " + get_all_stops_list.stop_id_short + "<br>" + "Address: " + get_all_stops_list.stop_name + "<br>" + "Sequence Number: " + get_all_stops_list.stop_sequence + "</div>");
+                                infoWindow.open(map2, marker);
+                            });
+                        })(marker,get_all_stops_list);
+                        latlngbounds.extend(marker.position);
+                    } 
+                     //Calculate the fare of different routes based on number of stops
+                    if (commonroutes[i].stage2.number_stops >= 1 && commonroutes[i].stage2.number_stops <= 3) {
+                        var Adult_Cash_2 = 2.15;
+                        var Adult_Leap_2 = 1.55;
+                        var Child_Cash_16_2 = 1.30;
+                        var Child_Leap_19_2 = 1.00;
+                        var Child_Cash_16_school_2 = 1.00;
+                        var Child_Leap_19_school_2 = 0.80;
+                    }
+                    else if (commonroutes[i].stage2.number_stops > 3 && commonroutes[i].stage2.number_stops <= 13) {
+                        var Adult_Cash_2 = 2.25;
+                        var Adult_Leap_2 = 2.00;
+                        var Child_Cash_16_2 = 1.30;
+                        var Child_Leap_19_2 = 1.00;
+                        var Child_Cash_16_school_2 = 1.00;
+                        var Child_Leap_19_school_2 = 0.80;
+
+                    }
+                    else {
+                        var Adult_Cash_2 = 2.50;
+                        var Adult_Leap_2 = 3.30;
+                        var Child_Cash_16_2 = 1.30;
+                        var Child_Leap_19_2 = 1.00;
+                        var Child_Cash_16_school_2 = 1.00;
+                        var Child_Leap_19_school_2 = 0.80;
+                    }
+
+                    var Adult_Cash_Together = (Adult_Cash_1 + Adult_Cash_2).toFixed(2);
+                    var Adult_Leap_Together = (Adult_Leap_1 + Adult_Leap_2).toFixed(2);
+                    var Child_Cash_16_Together = (Child_Cash_16_1 + Child_Cash_16_2).toFixed(2);
+                    var Child_Leap_19_Together = (Child_Leap_19_1 + Child_Leap_19_2).toFixed(2);
+                    var Child_Cash_16_school_Together = (Child_Cash_16_school_1 + Child_Cash_16_school_2).toFixed(2);
+                    var Child_Leap_19_school_Together = (Child_Leap_19_school_1 + Child_Leap_19_school_2).toFixed(2);
+                  
+
+                    informationTable += "<tr><td style = 'width: 20%; padding-top: 5%'>" + Math.round((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + " mins" + "</td><td style = 'width: 20%; padding-top: 5%'>" + Math.round(((commonroutes[i].start_stop_predicted_arrival_timestamp - mytime)/1000/60) + commonroutes[i].total_time)  + " mins" + "</td><td style = 'width: 40%; padding-top: 5%'>" + commonroutes[i].stage1.route_short_name + " → " + commonroutes[i].stage2.route_short_name + "</td><td style = 'width: 20%; padding-top: 5%; color:#5af542'><a style='cursor:hand' onclick=\"alert('Adult (Cash): " + Adult_Cash_Together + "\\nAdult (Leap Card): " + Adult_Leap_Together + "\\nChild Under 16 (Cash): " + Child_Cash_16_Together + "\\nChild Under 19 (Leap Card): " + Child_Leap_19_Together + "\\nChild Under 16 During School Hour(Cash): " + Child_Cash_16_school_Together + "\\nChild Under 19 During School Hour(Leap Card): " + Child_Leap_19_school_Together + "')\">Show</a></td></tr>";
+
+                    for (var k = 0; k < commonroutes[i].stage2.stage2_subroute_shape_points.length; k++) {
+                        var shapeLat = commonroutes[i].stage2.stage2_subroute_shape_points[k].shape_point_lat;
+                        var shapeLng = commonroutes[i].stage2.stage2_subroute_shape_points[k].shape_point_lng;
+                        var shapeLatLng = {
+                            lat: shapeLat,
+                            lng: shapeLng
+                        };
+                        pathArray2[k] = shapeLatLng;
+                    }
+                  
+                    //Draw polylines between bus stops based on their order
+                    var BusPath = new google.maps.Polyline({
+                        path: pathArray2,
+                        geodesic: true,
+                        strokeColor: '#e642f5',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 4
+                    });
+                        BusPath.setMap(map2);  
+              }   //endif loop with transfer
+            }  //outside endfor loop
+            
+
     informationTable += "</table>";
     $(".details").html(informationTable);
+          var table, rows, switching, i, x, y, shouldSwitch;
+  table = document.getElementById("myTable");
+  switching = true;
+  /*Make a loop that will continue until
+  no switching has been done:*/
+  while (switching) {
+    //start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /*Loop through all table rows (except the
+    first, which contains table headers):*/
+    for (i = 1; i < (rows.length - 1); i++) {
+      //start by saying there should be no switching:
+      shouldSwitch = false;
+      /*Get the two elements you want to compare,
+      one from current row and one from the next:*/
+      x = rows[i].getElementsByTagName("TD")[1];
+      y = rows[i + 1].getElementsByTagName("TD")[1];
+      //check if the two rows should switch place:
+      if (Number(x.innerHTML.slice(0,-5)) > Number(y.innerHTML.slice(0,-5))) {
+        //if so, mark as a switch and break the loop:
+        shouldSwitch = true;
+        break;
+      }
+    }
+    if (shouldSwitch) {
+      /*If a switch has been marked, make the switch
+      and mark that a switch has been done:*/
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+    }
+  }  
 // Here
         }
     });
@@ -455,47 +689,52 @@ function ShowDiv() {
 $("#loading").show();
 }
 
-//隐藏加载数据
+//Hide loading
 function HiddenDiv() {
 $("#loading").hide();
 }
 </script>
+
+
+
+
 <!--
 <script>
-//Fare calculator
-$('.searchInformation').click(function() {
- $.ajax({
-        url: map_Url + "prices",
-        data: {
-            LineID: 4,   //Route
-            Number: 7  //Number of stops a user has travelled
-        },
-        async: false,
-        Datatype:'json',
-        type:'GET',
-        success: function(result) {
-        var price = result.prices;
-        var Adult_Cash = price[0]['Adult_Cash'];
-        var Adult_Leap = price[0]['Adult_Leap'];
-        var Child_Cash_16 = price[0]['Child_Cash_16'];
-        var Child_Cash_19 = price[0]['Child_Cash_19'];
-        var School_Hours_Cash = price[0]['School_Hours_Cash'];
-        var School_Hours_Leap = price[0]['School_Hours_Leap'];
-        alert("Adult Cash: €" + Adult_Cash + "\n" + "Adult with Leap Card: €" + Adult_Leap + "\n" + "Child Cash(Under 16): €" + Child_Cash_16 + "\n" + "Child with Leap Card(Under 19): €" + Child_Cash_19)
-    },
-        error: function(result) {
-            if (Number >= 1 && Number <= 3) {
-                alert("Adult Cash: €" + "2.15" + "\n" + "Adult with Leap Card: €" + "1.55" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
-            }
-            else if (Number > 3 && Number <= 13) {
-                alert("Adult Cash: €" + "3.00" + "\n" + "Adult with Leap Card: €" + "2.25" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
-            }
-            else {
-                alert("Adult Cash: €" + "3.30" + "\n" + "Adult with Leap Card: €" + "2.50" + "\n" + "Child Cash(Under 16): €" + "1.30" + "\n" + "Child with Leap Card(Under 19): €" + "1.00")
-            }
-        }
-})
-  })
+    
+function sortTable() {
+  var table, rows, switching, i, x, y, shouldSwitch;
+  table = document.getElementById("myTable");
+  switching = true;
+  /*Make a loop that will continue until
+  no switching has been done:*/
+  while (switching) {
+    //start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /*Loop through all table rows (except the
+    first, which contains table headers):*/
+    for (i = 1; i < (rows.length - 1); i++) {
+      //start by saying there should be no switching:
+      shouldSwitch = false;
+      /*Get the two elements you want to compare,
+      one from current row and one from the next:*/
+      x = rows[i].getElementsByTagName("TD")[1];
+      y = rows[i + 1].getElementsByTagName("TD")[1];
+      //check if the two rows should switch place:
+      if (Number(x.innerHTML.slice(0,-5)) > Number(y.innerHTML.slice(0,-5))) {
+        //if so, mark as a switch and break the loop:
+        shouldSwitch = true;
+        break;
+      }
+    }
+    if (shouldSwitch) {
+      /*If a switch has been marked, make the switch
+      and mark that a switch has been done:*/
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+    }
+  }
+}
 </script>
 -->
 
@@ -528,10 +767,24 @@ $('.searchInformation').click(function() {
 
 
 
-<!--
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
--->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAR48jLtATZO3aZWwS9CICs4Q8CDGpzVm8&callback=initMap" async defer></script>
 </body>
 </html>

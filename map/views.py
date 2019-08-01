@@ -71,14 +71,14 @@ def return_routes(request):
     # start_stop = "8220DB001069"
     # dest_stop = "8220DB000670"
 
-    # start_stop = 1069
-    # dest_stop = 670
+    #start_stop = 1069
+    #dest_stop = 93
 
     # start_stop = 1052
     # dest_stop = 7245
 
-    # start_stop = 1069
-    # dest_stop = 93
+    #start_stop = 181
+    #dest_stop = 315
 
     # start_stop = 1069
     # dest_stop = 6052

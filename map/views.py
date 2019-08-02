@@ -5,9 +5,9 @@ from django.shortcuts import HttpResponse, render, redirect
 import json
 import requests
 import datetime
-import pickle
 import pandas as pd
-
+import psycopg2
+from sklearn.externals import joblib
 from datetime import date
 
 from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
@@ -34,11 +34,7 @@ def return_routes(request):
 
     It will then call a predictive model on this route per stop etc.
     '''
-    #Get weather
-    #response = requests.get("http://api.openweathermap.org/data/2.5/weather?id=7778677&APPID=0927fd5dff272fdbd486187e54283310")
-    #weather_data = json.loads(response.content.decode('utf-8'))
-    #print(weather_data)
-    weather = "weather"
+
 
     start_stop = request.GET['startstop']
     dest_stop = request.GET['endstop']
@@ -49,29 +45,49 @@ def return_routes(request):
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
 
     time_specified = request.GET['time_specified']
-    #time_specified = ''
     date_specified = request.GET['date_specified']
+
 
     # Now option and an empty later option
     if time_specified == '' and date_specified == '':
         time_specified = (datetime.datetime.now()).strftime('%H:%M:%S')
         specified_date_time = datetime.datetime.now()
 
+        weather = get_current_weather()
+        weather_temp = weather[0]
+        weather_rain = weather[1]
+        weather_humidity = weather[2]
+
     elif date_specified == '':
         time_specified = time_specified + ":00"
         today_date = datetime.datetime.now().strftime("%Y-%m-%d")
         specified_date_time = datetime.datetime.strptime(today_date + "-" + time_specified, '%Y-%m-%d-%H:%M:%S')
 
+        weather = get_weather_forecast(specified_date_time)
+        weather_temp = weather[0]
+        weather_rain = weather[1]
+        weather_humidity = weather[2]
+
     elif time_specified == '':
         time_specified = (datetime.datetime.now()).strftime('%H:%M:%S')
         specified_date_time = datetime.datetime.strptime(date_specified + "-" + time_specified, '%m/%d/%y-%H:%M:%S')
+
+        weather = get_weather_forecast(specified_date_time)
+        weather_temp = weather[0]
+        weather_rain = weather[1]
+        weather_humidity = weather[2]
 
     else:
         time_specified = time_specified + ":00"
         specified_date_time = datetime.datetime.strptime(date_specified + "-" + time_specified, '%m/%d/%y-%H:%M:%S')
 
+        weather = get_weather_forecast(specified_date_time)
+        weather_temp = weather[0]
+        weather_rain = weather[1]
+        weather_humidity = weather[2]
+
     # Convert time to time period
-    time_period =  "time_period"
+    time_period =  "dumy"
 
     # Monday is 0
     day = specified_date_time.weekday()
@@ -125,7 +141,7 @@ def return_routes(request):
         dest_stop_trip_ids = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = dest_stop, arrival_time__range = (start_range, changeover_range)))
         valid_dest_stop_trip_ids = list(Trips.objects.values_list('trip_id', flat = True).filter(trip_id__in = dest_stop_trip_ids, service_id__in = service_list))
 
-        travel_options = MultiRoutes(weather, weekday, time_specified, time_period, start_stop, dest_stop, valid_start_stop_trip_ids, valid_dest_stop_trip_ids)
+        travel_options = MultiRoutes(weather_temp, weather_rain, weather_humidity, weekday, time_specified, time_period, start_stop, dest_stop, valid_start_stop_trip_ids, valid_dest_stop_trip_ids)
 
         # If valid travel options using multi-route
         if len(travel_options.multi_trips_list) != 0:
@@ -190,15 +206,13 @@ def return_routes(request):
                 stage_dict["route_shape_points"] = travel_option["stage2"].route_shape_points
                 stage_dict["stage2_subroute_shape_points"] = travel_option["stage2_subroute_shape_points"]
 
-
                 route_option_dict["stage2"] = stage_dict
-
 
                 data.append(route_option_dict)
 
 
     else:
-        travel_options = DirectRoutes(weather, weekday, time_specified, time_period, start_stop, dest_stop, common_trip_id_list)
+        travel_options = DirectRoutes(weather_temp, weather_rain, weather_humidity, weekday, time_specified, time_period, start_stop, dest_stop, common_trip_id_list)
 
         for trip in travel_options.common_trips_dict:
 
@@ -249,8 +263,10 @@ class Route():
 
     '''
 
-    def __init__(self, weather, weekday, time, time_period, start_stop, dest_stop):
-        self.weather = weather
+    def __init__(self, weather_temp, weather_rain, weather_humidity, weekday, time, time_period, start_stop, dest_stop):
+        self.weather_temp = weather_temp
+        self.weather_rain = weather_rain
+        self.weather_humidity = weather_humidity
         self.weekday = weekday
         self.time_period = time_period
         #self.direction
@@ -275,8 +291,8 @@ class DirectRoutes(Route):
     '''
     '''
 
-    def __init__(self, weather, weekday, time, time_period, start_stop, dest_stop, common_trip_ids):
-        Route.__init__(self, weather, weekday, time, time_period, start_stop, dest_stop)
+    def __init__(self, weather_temp, weather_rain, weather_humidity, weekday, time, time_period, start_stop, dest_stop, common_trip_ids):
+        Route.__init__(self, weather_temp, weather_rain, weather_humidity, weekday, time, time_period, start_stop, dest_stop)
         self.common_trip_ids = common_trip_ids
         self.common_trips_dict = self.create_trips(self.common_trip_ids)
 
@@ -284,7 +300,7 @@ class DirectRoutes(Route):
         trip_dict = {}
 
         for trip in common_trip_ids:
-            trip_dict[trip] = Trip(trip, self.weather, self.weekday, self.time, self.time_period, self.start_stop, self.dest_stop)
+            trip_dict[trip] = Trip(trip, self.weather_temp, self.weather_rain, self.weather_humidity, self.weekday, self.time, self.time_period, self.start_stop, self.dest_stop)
 
         return trip_dict
 
@@ -293,8 +309,8 @@ class MultiRoutes(Route):
     '''
     '''
 
-    def __init__(self, weather, weekday, time, time_period, start_stop, dest_stop, start_trip_ids, dest_trip_ids):
-        Route.__init__(self, weather, weekday, time, time_period, start_stop, dest_stop)
+    def __init__(self, weather_temp, weather_rain, weather_humidity, weekday, time, time_period, start_stop, dest_stop, start_trip_ids, dest_trip_ids):
+        Route.__init__(self, weather_temp, weather_rain, weather_humidity, weekday, time, time_period, start_stop, dest_stop)
         self.start_trip_ids = start_trip_ids
         self.dest_trip_ids = dest_trip_ids
         self.start_trips_dict = self.create_start_trips(self.start_trip_ids)
@@ -308,7 +324,7 @@ class MultiRoutes(Route):
         trip_dict = {}
 
         for trip in trip_id_list:
-            trip_dict[trip] = Trip(trip, self.weather, self.weekday, self.time, self.time_period, self.start_stop, None)
+            trip_dict[trip] = Trip(trip, self.weather_temp, self.weather_rain, self.weather_humidity, self.weekday, self.time, self.time_period, self.start_stop, None)
 
             # If arrival time is before time specified then delete
             if trip_dict[trip].valid == False:
@@ -321,7 +337,7 @@ class MultiRoutes(Route):
         trip_dict = {}
 
         for trip in trip_id_list:
-            trip_dict[trip] = Trip(trip, self.weather, self.weekday, self.time, self.time_period, None, self.dest_stop)
+            trip_dict[trip] = Trip(trip, self.weather_temp, self.weather_rain, self.weather_humidity, self.weekday, self.time, self.time_period, None, self.dest_stop)
 
         return trip_dict
 
@@ -447,10 +463,12 @@ class Trip():
     '''
     '''
 
-    def __init__(self, trip_id, weather, weekday, time, time_period, start_stop = None, dest_stop = None):
+    def __init__(self, trip_id, weather_temp, weather_rain, weather_humidity, weekday, time, time_period, start_stop = None, dest_stop = None):
 
         self.trip_id = trip_id
-        self.weather = weather
+        self.weather_temp = weather_temp
+        self.weather_rain = weather_rain
+        self.weather_humidity = weather_humidity
         self.weekday = weekday
         self.time_period = time_period
         #self.direction
@@ -523,16 +541,10 @@ class Trip():
         #print(self.departure_time)
         #print(stops)
 
-        # Use self. in time
-        weather_temp = 20
-        weather_rain = 0
-        time_period = 1
-        weekday = 1
         route_short_name = self.route_short_name
         stop_sequence_list = stop_sequence_list
-        direction = 1
 
-        stop_seq_time_diff_dict = predict(weather_temp, weather_rain, time_period, weekday, route_short_name, stop_sequence_list, direction)
+        stop_seq_time_diff_dict = predict(self.weather_temp, self.weather_rain, self.weather_humidity, self.time_period, self.weekday, route_short_name, stop_sequence_list)
 
 
 
@@ -561,7 +573,7 @@ class Trip():
             due_time = datetime.datetime.strptime(stop_dict["due_arrival_time"], "%H:%M:%S")
 
 
-            predicted_arrival_time = (due_time + datetime.timedelta(seconds=predicted_diff_in_time)).time()
+            predicted_arrival_time = (due_time + datetime.timedelta(minutes=predicted_diff_in_time)).time()
 
             stop_dict["predicted_arrival_time"] = predicted_arrival_time
 
@@ -882,33 +894,141 @@ class Trip():
 
 
 
-def predict(weather_temp, weather_rain, time_period, weekday, route_short_name, stop_sequence_list, direction = 1):
-    weather_temp = 20
-    weather_rain = 0.4
-    time_period = 1
-    weekday = 1
-    direction = 1
+# def predict(weather_temp, weather_rain, weather_humidity, time_period, weekday, route_short_name, stop_sequence_list):
+#     #progr_number,rain,temp,rhum,Delay,Time_period,weekday
+#
+#     weather_temp = weather_temp
+#     weather_rain = weather_rain
+#     weather_humidity = weather_humidity
+#     time_period = time_period
+#     weekday = weekday
+#     route_short_name = route_short_name
+#     print("predict temp:", weather_temp, "rain:", weather_rain, "hum", weather_humidity, "weekday", weekday, "time period", time_period)
+#     stop_stop_sequence_list = stop_sequence_list
+#     sequence_time_diff_dict = {}
+#
+#     try:
+#         file = 'map/pickles/' + str(route_short_name)  + '_bus_model.sav'
+#         linear_model = pickle.load(open(file, 'rb'))
+#
+#     except FileNotFoundError:
+#         file = 'map/pickles/generic_bus_model.sav'
+#         linear_model = pickle.load(open(file, 'rb'))
+#
+#     dataframe = pd.DataFrame(columns=('PROGRNUMBER',  'Time_period', 'DIRECTION', 'rain'))
+#     features = ['PROGRNUMBER', 'Time_period', 'DIRECTION', 'rain']
+#
+#     for i in range(len(stop_stop_sequence_list)):
+#         dataframe.loc[i] = [stop_stop_sequence_list[i], 1, 1, weather_rain]
+#
+#     time_dif_list = linear_model.predict(dataframe[features])
+#
+#     for i in range(len(time_dif_list)):
+#         sequence_time_diff_dict[stop_stop_sequence_list[i]] = time_dif_list[i]
+#
+#     return sequence_time_diff_dict
+
+
+def predict(weather_temp, weather_rain, weather_humidity, time_period, weekday, route_short_name, stop_sequence_list):
+
     route_short_name = route_short_name
     stop_stop_sequence_list = stop_sequence_list
     sequence_time_diff_dict = {}
 
-    try:
-        file = 'map/pickles/' + str(route_short_name)  + '_bus_model.sav'
-        linear_model = pickle.load(open(file, 'rb'))
+    file = 'map/pickles/line16model.sav'
+    da_model = joblib.load(file)
 
-    except FileNotFoundError:
-        file = 'map/pickles/generic_bus_model.sav'
-        linear_model = pickle.load(open(file, 'rb'))
+    dataframe = pd.DataFrame(columns=('progr_number',  'rain', 'temp', 'rhum', 'Time_period', 'weekday'))
+    features = ['progr_number',  'rain', 'temp', 'rhum', 'Time_period', 'weekday']
 
-    dataframe = pd.DataFrame(columns=('PROGRNUMBER',  'Time_period', 'DIRECTION', 'rain'))
-    features = ['PROGRNUMBER', 'Time_period', 'DIRECTION', 'rain']
+    print("predict temp:", weather_temp, "rain:", weather_rain, "hum", weather_humidity, "weekday", weekday, "time period", time_period)
 
     for i in range(len(stop_stop_sequence_list)):
-        dataframe.loc[i] = [stop_stop_sequence_list[i], time_period, direction, weather_rain]
+        dataframe.loc[i] = [stop_stop_sequence_list[i], weather_rain, weather_temp, weather_humidity, 2, weekday]
 
-    time_dif_list = linear_model.predict(dataframe[features])
+    time_dif_list = da_model.predict(dataframe[features])
 
     for i in range(len(time_dif_list)):
         sequence_time_diff_dict[stop_stop_sequence_list[i]] = time_dif_list[i]
 
     return sequence_time_diff_dict
+
+
+
+def get_current_weather():
+    try:
+        params = {
+            'database': 'weather',
+            'user': 'student',
+            'password': 'group10bus',
+            'host': 'localhost',
+            'port': 3333
+            }
+
+        conn = psycopg2.connect(**params)
+        curs = conn.cursor()
+
+        curs.execute("SELECT weather_temp, weather_rain, weather_humidity from current_weather;")
+        rows = curs.fetchall()
+
+        weather_temp = rows[0][0]
+        weather_rain = rows[0][1]
+        weather_humidity = rows[0][2]
+
+        if(conn):
+            curs.close()
+            conn.close()
+
+        #print("used current weather", weather_temp, weather_rain, weather_humidity)
+
+    except:
+        #Backup weather
+        #print("Backup")
+        weather_temp = 10
+        weather_rain = 0.3
+        weather_humidity = 70
+
+    return [weather_temp, weather_rain, weather_humidity]
+
+
+
+def get_weather_forecast(datetime_object):
+
+    params = {
+        'database': 'weather',
+        'user': 'student',
+        'password': 'group10bus',
+        'host': 'localhost',
+        'port': 3333
+        }
+
+    conn = psycopg2.connect(**params)
+    curs = conn.cursor()
+    date_string = datetime_object.strftime("%Y-%m-%d %H:%M:%S")
+    date_timestamp = datetime_object.timestamp()
+
+    query = "SELECT  weather_temp, weather_rain, weather_humidity, timestamp FROM weather_forecast ORDER BY abs(extract(epoch from (timestamp - timestamp '" + date_string + "'))) LIMIT 1;"
+    curs.execute(query)
+    rows = curs.fetchall()
+
+    latest_data_timestamp = (rows[0][3]).timestamp()
+
+    # If latest weather is less than 3 hours then use it
+    if abs(latest_data_timestamp - date_timestamp) < 10800:
+        weather_temp = rows[0][0]
+        weather_rain = rows[0][1]
+        weather_humidity = rows[0][2]
+        #print("used", rows[0][3], "actual time", date_string, "weather", weather_temp, weather_rain, weather_humidity)
+
+    #Backup weather
+    else:
+        weather_temp = 10
+        weather_rain = 0.3
+        weather_humidity = 70
+        #print("Backup future", date_string, "weather", weather_temp, weather_rain, weather_humidity)
+
+    if(conn):
+        curs.close()
+        conn.close()
+
+    return [weather_temp, weather_rain, weather_humidity]

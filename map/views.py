@@ -87,7 +87,7 @@ def return_routes(request):
         weather_humidity = weather[2]
 
     # Convert time to time period
-    time_period =  "dumy"
+    time_period = get_time_period(specified_date_time)
 
     # Monday is 0
     day = specified_date_time.weekday()
@@ -894,41 +894,6 @@ class Trip():
 
 
 
-# def predict(weather_temp, weather_rain, weather_humidity, time_period, weekday, route_short_name, stop_sequence_list):
-#     #progr_number,rain,temp,rhum,Delay,Time_period,weekday
-#
-#     weather_temp = weather_temp
-#     weather_rain = weather_rain
-#     weather_humidity = weather_humidity
-#     time_period = time_period
-#     weekday = weekday
-#     route_short_name = route_short_name
-#     print("predict temp:", weather_temp, "rain:", weather_rain, "hum", weather_humidity, "weekday", weekday, "time period", time_period)
-#     stop_stop_sequence_list = stop_sequence_list
-#     sequence_time_diff_dict = {}
-#
-#     try:
-#         file = 'map/pickles/' + str(route_short_name)  + '_bus_model.sav'
-#         linear_model = pickle.load(open(file, 'rb'))
-#
-#     except FileNotFoundError:
-#         file = 'map/pickles/generic_bus_model.sav'
-#         linear_model = pickle.load(open(file, 'rb'))
-#
-#     dataframe = pd.DataFrame(columns=('PROGRNUMBER',  'Time_period', 'DIRECTION', 'rain'))
-#     features = ['PROGRNUMBER', 'Time_period', 'DIRECTION', 'rain']
-#
-#     for i in range(len(stop_stop_sequence_list)):
-#         dataframe.loc[i] = [stop_stop_sequence_list[i], 1, 1, weather_rain]
-#
-#     time_dif_list = linear_model.predict(dataframe[features])
-#
-#     for i in range(len(time_dif_list)):
-#         sequence_time_diff_dict[stop_stop_sequence_list[i]] = time_dif_list[i]
-#
-#     return sequence_time_diff_dict
-
-
 def predict(weather_temp, weather_rain, weather_humidity, time_period, weekday, route_short_name, stop_sequence_list):
 
     route_short_name = route_short_name
@@ -1032,3 +997,23 @@ def get_weather_forecast(datetime_object):
         conn.close()
 
     return [weather_temp, weather_rain, weather_humidity]
+
+
+def get_time_period(specified_date_time):
+
+    seconds =(specified_date_time.hour * 60 + specified_date_time.minute) * 60 + specified_date_time.second
+
+    if seconds >= 0 and seconds < 25200:
+        return 0
+    elif seconds >= 25200 and seconds < 36000:
+        return 5
+    elif seconds >= 36000 and seconds < 54000:
+        return 3
+    elif seconds >= 54000 and seconds < 61200:
+        return 4
+    elif seconds >= 61200 and seconds < 68400:
+        return 6
+    elif seconds >= 68400 and seconds < 79200:
+        return 2
+    elif seconds >= 79200:
+        return 1

@@ -92,7 +92,7 @@ def return_routes(request):
         weather_rain = weather[1]
         weather_humidity = weather[2]
 
-    print("here",time_specified)
+    #print("here",time_specified)
 
     # Convert time to time period
     time_period = get_time_period(specified_date_time)
@@ -908,7 +908,7 @@ def predict(weather_temp, weather_rain, weather_humidity, time_period, weekday, 
     stop_stop_sequence_list = stop_sequence_list
     sequence_time_diff_dict = {}
 
-    file = 'map/pickles/line16model.sav'
+    file = '/home/student/application/DublinBus/map/pickles/line16model.sav'
     da_model = joblib.load(file)
 
     dataframe = pd.DataFrame(columns=('progr_number',  'rain', 'temp', 'rhum', 'Time_period', 'weekday'))

@@ -38,8 +38,6 @@ def return_routes(request):
 
     start_stop = request.GET['startstop']
     dest_stop = request.GET['endstop']
-    #start_stop = 1069
-    #dest_stop = 670
 
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
@@ -167,8 +165,6 @@ def return_routes(request):
                 route_option_dict["stage2_time"] = travel_option["stage2_time"]
                 route_option_dict["total_time"] = travel_option["total_time"]
 
-                #print(route_option_dict)
-
                 stage_dict = {}
 
                 stage_dict["route_id"] = travel_option["stage1"].route_id
@@ -269,7 +265,6 @@ class Route():
         self.weather_humidity = weather_humidity
         self.weekday = weekday
         self.time_period = time_period
-        #self.direction
 
         self.time = time
         time = time.split(":")

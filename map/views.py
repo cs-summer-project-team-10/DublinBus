@@ -165,6 +165,8 @@ def return_routes(request):
                 route_option_dict["stage2_time"] = travel_option["stage2_time"]
                 route_option_dict["total_time"] = travel_option["total_time"]
 
+                #print(route_option_dict)
+
                 stage_dict = {}
 
                 stage_dict["route_id"] = travel_option["stage1"].route_id
@@ -265,6 +267,7 @@ class Route():
         self.weather_humidity = weather_humidity
         self.weekday = weekday
         self.time_period = time_period
+        #self.direction
 
         self.time = time
         time = time.split(":")
@@ -895,49 +898,23 @@ def predict(weather_temp, weather_rain, weather_humidity, time_period, weekday, 
     stop_stop_sequence_list = stop_sequence_list
     sequence_time_diff_dict = {}
 
-    line_list= ['75', '68X', '13', '41A', '46E', '104', '7A', '18', '32', '25A', '38A', '76',
-                '33B', '14C', '37', '33E', '9', '4', '70D', '15B', '56A', '65B', '140', '67X',
-                '68A', '66', '61', '33X', '31', '11', '114', '43', '41D', '130', '51X', '49',
-                 '69', '41X', '7', '15', '122', '40', '31D', '27A', '40D', '111', '25D', '54A',
-                 '116', '145', '7D', '76A', '17', '15A', '38B', '185', '120', '45A', '83A',
-                 '25B', '38D', '84', '63', '17A', '16D', '70', '15D', '32X', '41B', '39',
-                 '84X', '25', '14', '31B', '77A', '79', '66X', '33A', '31A', '38', '84A',
-                 '238', '68', '236', '16C', '220', '161', '27X', '46A', '33', '102', '41C',
-                 '53', '27', '151', '66B', '42', '67', '142', '40E', '150', '47', '270', '44B',
-                 '65', '239', '40B', '44', '59', '7B', '79A', '77X', '33D', '184', '39X', '1',
-                 '51D', '42D', '29A', '83', '69X', '39A', '41', '27B', '66A', '16', '25X', '26',
-                 '118', '123']
-
-    file = 'map/pickles/SGD_original_model.sav'
+    file = 'map/pickles/line16model.sav'
     da_model = joblib.load(file)
 
-    try:
-        # Make line equal to any of the lines in line_list
-        binary="{0:08b}".format(line_list.index(route_short_name))
-        numbers=list(binary)
-        numbers = [ int(x) for x in numbers ]
+    dataframe = pd.DataFrame(columns=('progr_number',  'rain', 'temp', 'rhum', 'Time_period', 'weekday'))
+    features = ['progr_number',  'rain', 'temp', 'rhum', 'Time_period', 'weekday']
 
-        dataframe = pd.DataFrame(columns=('progr_number',  'rain', 'temp', 'rhum', 'Time_period', 'weekday', 'Col_1', 'Col_2', 'Col_3', 'Col_4', 'Col_5', 'Col_6', 'Col_7', 'Col_8'))
-        features = ['progr_number',  'rain', 'temp', 'rhum', 'Time_period', 'weekday', 'Col_1', 'Col_2', 'Col_3', 'Col_4', 'Col_5', 'Col_6', 'Col_7', 'Col_8']
+    print("predict temp:", weather_temp, "rain:", weather_rain, "hum", weather_humidity, "weekday", weekday, "time period", time_period)
 
-        for i in range(len(stop_stop_sequence_list)):
-            dataframe.loc[i] = [stop_stop_sequence_list[i], weather_rain, weather_temp, weather_humidity, 2, weekday, numbers[0], numbers[1], numbers[2], numbers[3], numbers[4], numbers[5], numbers[6], numbers[7]]
-    except:
-        # Backup Model
-        dataframe = pd.DataFrame(columns=('progr_number',  'rain', 'temp', 'rhum', 'Time_period', 'weekday', 'Col_1', 'Col_2', 'Col_3', 'Col_4', 'Col_5', 'Col_6', 'Col_7', 'Col_8'))
-        features = ['progr_number',  'rain', 'temp', 'rhum', 'Time_period', 'weekday', 'Col_1', 'Col_2', 'Col_3', 'Col_4', 'Col_5', 'Col_6', 'Col_7', 'Col_8']
+    for i in range(len(stop_stop_sequence_list)):
+        dataframe.loc[i] = [stop_stop_sequence_list[i], weather_rain, weather_temp, weather_humidity, 2, weekday]
 
-        for i in range(len(stop_stop_sequence_list)):
-            dataframe.loc[i] = [stop_stop_sequence_list[i], weather_rain, weather_temp, weather_humidity, 2, weekday, 0, 0, 0, 0, 0, 0, 0, 0]
+    time_dif_list = da_model.predict(dataframe[features])
 
+    for i in range(len(time_dif_list)):
+        sequence_time_diff_dict[stop_stop_sequence_list[i]] = time_dif_list[i]
 
-    finally:
-        time_dif_list = da_model.predict(dataframe[features])
-
-        for i in range(len(time_dif_list)):
-            sequence_time_diff_dict[stop_stop_sequence_list[i]] = time_dif_list[i]
-
-        return sequence_time_diff_dict
+    return sequence_time_diff_dict
 
 
 

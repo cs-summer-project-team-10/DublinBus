@@ -1,25 +1,19 @@
 html {
     line-height: 1.15;
-    /* 1 */
     -ms-text-size-adjust: 100%;
     2 -webkit-text-size-adjust: 100%;
-    /* 2 */
-        height: 100%;
-    width: 100%;
-        margin: 0;
-    padding: 0;
-}
-
-/* Sections
-   ========================================================================== */
-/**
- * Remove the margin in all browsers (opinionated).
- */
-body {
-    height: 100%;
-    width: 100%;
     margin: 0;
     padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
 }
 
 #map {
@@ -37,21 +31,147 @@ body {
     box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
 }
 
+#noResult {
+    display: none;
+    position: fixed;
+    width: 30%;
+    top: 20%;
+    left: 35%;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+}
+
+
+#noResult>p {
+    font-weight: 900;
+    color: white;
+    font-size: 1rem; 
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
+
+
+#noResult > i {
+    position: relative;
+    left: 85%;
+    color: #e67600; 
+    font-size: 2rem; 
+    font-weight: 700; 
+    cursor: hand;
+}   
+
 #loading {
 width: 20%;
 height: 40%;
 border: 0;
-position:absolute;
+position:fixed;
 top: 30%;
 left: 40%; 
+right: 40%;
 z-index:10000; 
-text-align: center;
 background-color: transparent;
 vertical-align: middle;
-font-size: 20px;
-font-weight: 700;
 display:none;
 }
+
+
+
+
+#wrapper {
+  position: relative;
+  width: 400px;
+  height: 300px;
+  margin-left: 0;
+
+}
+#progressBar {
+  position: absolute;
+  width: 75%;
+  height: 80%;
+  left: 13%;
+  top: 10%;
+  margin: 0px auto;
+    margin-top: 50px;
+}
+.circle {
+  position: absolute;
+  left: 15%;
+  top: 8%;
+  width: 200px;
+  height: 200px;
+  border: 1px solid #ccf;
+  background: #ccf;
+  box-shadow: 1px 1px 2px #ccf;
+  border-radius: 50%;
+}
+#topUp, #bottomUp {
+  clip: rect(0,210px,100px,0);
+  z-index: 3;
+}
+#topDown {
+  clip: rect(100px,210px,210px,0);
+  z-index: 1;
+  animation: fillAndChange 30s linear 29.99s;
+  animation-fill-mode: forwards;
+}
+#middleCircle {
+  position: absolute;
+  left: 25%;
+  top: 20%;
+  width: 140px;
+  height: 140px;
+  background: #FFF;
+  border: 2px solid #ccf;
+  border-radius: 50%;
+  z-index: 5;
+}
+#bottomUp {
+  z-index: 2;
+  background: #069;
+  animation: begin 60s linear, bringUp .01s linear 30s, changeColor 45s linear 15s;
+  animation-fill-mode: forwards;
+}
+@keyframes begin {
+  0%{transform: rotate(0deg);}
+  100%{transform: rotate(360deg);}
+}
+@keyframes bringUp{
+  100%{z-index:4;}
+}
+@keyframes fillAndChange{
+  0%,50%{background: #093;}
+  51%, 99.99%{background: #099;}
+  100%{background: #f90;}
+}
+@keyframes changeColor {
+  0%, 33.33%{background: #ff5050;}
+  34%, 66.66%{background: #093;}
+  67%, 99.99%{background: #099;}
+  100%{background: #f90;}
+}
+.progress{
+  font-size: 2.5em;
+  font-family: 'Arial', cursive;
+  position: absolute;
+  top: 40%;
+  left: 40%;
+}
+
+.font {
+  font-family: 'Arial', cursive;
+  font-weight: 700;
+}
+
+
+@keyframes hide{
+  100%{z-index: 0;}
+}
+@keyframes show{
+  100%{z-index: 6;left:35%;}
+}
+
 
 
 table {
@@ -62,25 +182,45 @@ table {
 }
 
 table,
-th,
-td {
+th
+{
     border: 0;
     height: 20%;
     text-align: center;
 }
 
+
+td {
+    border: 0;
+    height: 20%;
+    text-align: center;
+    padding-top: 3%;
+    padding-bottom: 3%;
+}
+
+
+tr {
+    vertical-align: middle;
+}
 table>thead>tr>th {
     color: #e67600;
 }
 
+.routeOptions:hover {
+    background: #656669;
+}
+
+ul {
+   list-style-type: none;
+}
 
 
-
-
-
+ul li {
+    color: white;
+    margin-top: 5%;
+}
 
 .routes {
-    height: 100%;
     width: 100%;
     float: left;
 }
@@ -147,17 +287,12 @@ main {
     display: block;
 }
 
-/**
- * Add the correct margin in IE 8.
- */
+
 figure {
     margin: 1em 40px;
 }
 
-/**
- * 1. Add the correct box sizing in Firefox.
- * 2. Show the overflow in Edge and IE.
- */
+
 hr {
     box-sizing: content-box;
     /* 1 */
@@ -167,10 +302,7 @@ hr {
     /* 2 */
 }
 
-/**
- * 1. Correct the inheritance and scaling of font size in all browsers.
- * 2. Correct the odd `em` font sizing in all browsers.
- */
+
 pre {
     font-family: monospace, monospace;
     /* 1 */
@@ -178,12 +310,7 @@ pre {
     /* 2 */
 }
 
-/* Text-level semantics
-   ========================================================================== */
-/**
- * 1. Remove the gray background on active links in IE 10.
- * 2. Remove gaps in links underline in iOS 8+ and Safari 8+.
- */
+
 a {
     background-color: transparent;
     /* 1 */
@@ -191,10 +318,7 @@ a {
     /* 2 */
 }
 
-/**
- * 1. Remove the bottom border in Chrome 57- and Firefox 39-.
- * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
- */
+
 abbr[title] {
     border-bottom: none;
     /* 1 */
@@ -204,26 +328,19 @@ abbr[title] {
     /* 2 */
 }
 
-/**
- * Prevent the duplicate application of `bolder` by the next rule in Safari 6.
- */
+
 b,
 strong {
     font-weight: inherit;
 }
 
-/**
- * Add the correct font weight in Chrome, Edge, and Safari.
- */
+
 b,
 strong {
     font-weight: bolder;
 }
 
-/**
- * 1. Correct the inheritance and scaling of font size in all browsers.
- * 2. Correct the odd `em` font sizing in all browsers.
- */
+
 code,
 kbd,
 samp {
@@ -233,32 +350,23 @@ samp {
     /* 2 */
 }
 
-/**
- * Add the correct font style in Android 4.3-.
- */
+
 dfn {
     font-style: italic;
 }
 
-/**
- * Add the correct background and color in IE 9-.
- */
+
 mark {
     background-color: #ff0;
     color: #000;
 }
 
-/**
- * Add the correct font size in all browsers.
- */
+
 small {
     font-size: 80%;
 }
 
-/**
- * Prevent `sub` and `sup` elements from affecting the line height in
- * all browsers.
- */
+
 sub,
 sup {
     font-size: 75%;
@@ -275,44 +383,29 @@ sup {
     top: -0.5em;
 }
 
-/* Embedded content
-   ========================================================================== */
-/**
- * Add the correct display in IE 9-.
- */
+
 audio,
 video {
     display: inline-block;
 }
 
-/**
- * Add the correct display in iOS 4-7.
- */
+
 audio:not([controls]) {
     display: none;
     height: 0;
 }
 
-/**
- * Remove the border on images inside links in IE 10-.
- */
+
 img {
     border-style: none;
 }
 
-/**
- * Hide the overflow in IE.
- */
+
 svg:not(:root) {
     overflow: hidden;
 }
 
-/* Forms
-   ========================================================================== */
-/**
- * 1. Change the font styles in all browsers (opinionated).
- * 2. Remove the margin in Firefox and Safari.
- */
+
 button,
 input,
 optgroup,
@@ -338,32 +431,21 @@ input {
     overflow: visible;
 }
 
-/**
- * Remove the inheritance of text transform in Edge, Firefox, and IE.
- * 1. Remove the inheritance of text transform in Firefox.
- */
+
 button,
 select {
-    /* 1 */
     text-transform: none;
 }
 
-/**
- * 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`
- *    controls in Android 4.
- * 2. Correct the inability to style clickable types in iOS and Safari.
- */
+
 button,
 html [type="button"],
 [type="reset"],
 [type="submit"] {
     -webkit-appearance: button;
-    /* 2 */
 }
 
-/**
- * Remove the inner border and padding in Firefox.
- */
+
 button::-moz-focus-inner,
 [type="button"]::-moz-focus-inner,
 [type="reset"]::-moz-focus-inner,
@@ -372,9 +454,7 @@ button::-moz-focus-inner,
     padding: 0;
 }
 
-/**
- * Restore the focus styles unset by the previous rule.
- */
+
 button:-moz-focusring,
 [type="button"]:-moz-focusring,
 [type="reset"]:-moz-focusring,
@@ -382,19 +462,12 @@ button:-moz-focusring,
     outline: 1px dotted ButtonText;
 }
 
-/**
- * Correct the padding in Firefox.
- */
+
 fieldset {
     padding: 0.35em 0.75em 0.625em;
 }
 
-/**
- * 1. Correct the text wrapping in Edge and IE.
- * 2. Correct the color inheritance from `fieldset` elements in IE.
- * 3. Remove the padding so developers are not caught out when they zero out
- *    `fieldset` elements in all browsers.
- */
+
 legend {
     box-sizing: border-box;
     /* 1 */
@@ -1767,13 +1840,12 @@ span.flatpickr-weekday {
 .s011 form {
     width: 100%;
     max-width: 870px;
-    height: 100%;
 }
 
 
 
 .s011 form fieldset {
-    margin-bottom: 1em;
+    margin-bottom: 0;
 }
 
 .s011 form fieldset legend {
@@ -2116,20 +2188,10 @@ span.flatpickr-weekday {
     background: #e67600;
 }
 
-
+#loading_icon {
+    display: none;
+}
     
-
-   
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2137,13 +2199,19 @@ span.flatpickr-weekday {
 
 
 @media screen and (max-width: 767px) {
+    
+    
+    
+
+    
 
     #map {
         height: 100%;
         width: 100%;
         margin: 0;
         padding: 0;
-
+        position: fixed;
+        z-index: 10;
     }   
     
     
@@ -2154,6 +2222,9 @@ span.flatpickr-weekday {
     overflow-x: hidden;
     z-index: 999;
 }  
+    
+
+
     
     
   .s011 form #searchButtonforBigScreen {
@@ -2178,7 +2249,20 @@ span.flatpickr-weekday {
 }
 
 
+ 
+ .detailForRoute > div > ul >li {
+    padding: 0;
+    margin: 0;
+}   
     
+    
+ .detailForRoute > div > i {
+     position: relative;
+     left: 85%;
+     bottom: 3rem;
+}      
+    
+
     
  .s011 form #searchButtonforSmallScreen {
     min-width: 100px;
@@ -2201,14 +2285,48 @@ span.flatpickr-weekday {
     background: #e67600;
 }  
     
+   
     
+  #noResult {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 10000;
+    background: white;
+}
 
+
+#noResult > p {
+    position: fixed;
+    top: 45%;
+    margin-left: 20%;
+    margin-right: 20%;
+    color: black;
+    z-index: 10000;
+}
+    
+#noResult>i {
+    position: relative;
+    left: 85%;
+    top: 50%;
+    color: #e67600; 
+    font-size: 2rem; 
+    font-weight: 700; 
+    cursor: hand;
+}    
+    
+    
+    
+    
 
     #startjourney {
         display: block;
         background-color: #ff8300;
         opacity: 0.5;
-        position: absolute;
+        position: fixed;
         left: 30%;
         top: 10%;
         width: 40%;
@@ -2218,6 +2336,7 @@ span.flatpickr-weekday {
         color: white;
         font-weight: 600;
         cursor:pointer;
+        z-index: 10;
     }
 
 
@@ -2270,8 +2389,36 @@ span.flatpickr-weekday {
         background: transparent;
     }
 
-
-
+    
+    
+    #loading_icon {
+    position: fixed; 
+    left: 25%; 
+    top: 33%; 
+    z-index: 99999;
+    width: 50%;
+    height: 40%;  
+}
+    
+    
+    
+    .detailForRoute {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        height: 25%;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+        overflow: auto;
+    } 
+    
+    
+    
+    #detailText {
+        display: none;
+    }
+    
 
     nav {
         display: block;
@@ -2286,6 +2433,7 @@ span.flatpickr-weekday {
         transition: right 0.2s linear;
         width: 83%;
         z-index: 900;
+        overflow: auto;
         /* IT'S OVER 9000! */
     }
 
@@ -2301,7 +2449,18 @@ span.flatpickr-weekday {
 
 
 
-
+#loading_2 {
+width: 100%;
+height: 100%;
+border: 0;
+position:fixed;
+top: 0;
+left: 0; 
+z-index:9999; 
+background-color: white;
+vertical-align: middle;
+display:none;
+}
 
 
 
@@ -2420,6 +2579,8 @@ span.flatpickr-weekday {
 }
 
 @media screen and (max-width: 516px) {
+    
+
     .ui-autocomplete {
     height: 250px;
     overflow-y: scroll;
@@ -2427,7 +2588,18 @@ span.flatpickr-weekday {
     z-index: 9999;
 }
     
+
+ .detailForRoute > div > ul >li {
+    padding: 0;
+    margin: 0;
+}   
     
+    
+ .detailForRoute > div > i {
+     position: relative;
+     left: 85%;
+     bottom: 3rem;
+}   
     
     
     .s011 form .inner-form header {
@@ -2461,14 +2633,72 @@ span.flatpickr-weekday {
     }
 
 
+#loading_2 {
+width: 100%;
+height: 100%;
+border: 0;
+position:fixed;
+top: 0;
+left: 0; 
+z-index:9999; 
+background-color: white;
+vertical-align: middle;
+display:none;
+}
+
+    
+#loading_icon {
+    position: fixed; 
+    left: 25%; 
+    top: 33%; 
+    z-index: 99999;
+    width: 50%;
+    height: 28%;
+}   
+    
+    
+
+    
+  #noResult {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 10000;
+    background: white;
+}
 
 
+#noResult > p {
+    position: fixed;
+    left: 10%;
+    top: 45%;
+    margin: 0;
+    color: black;
+    z-index: 10000;
+}
+    
+#noResult>i {
+    position: relative;
+    left: 85%;
+    top: 50%;
+    color: #e67600; 
+    font-size: 2rem; 
+    font-weight: 700; 
+    cursor: hand;
+}     
+    
+
+    
     #map {
         height: 100%;
         width: 100%;
         margin: 0;
         padding: 0;
-
+        position: fixed;
+        z-index: 10;
     }   
     
     
@@ -2529,7 +2759,7 @@ span.flatpickr-weekday {
         display: block;
         background-color: #ff8300;
         opacity: 0.5;
-        position: absolute;
+        position: fixed;
         left: 30%;
         top: 10%;
         width: 40%;
@@ -2540,6 +2770,7 @@ span.flatpickr-weekday {
         font-weight: 600;
         cursor:pointer;
         min-width: 90px;
+        z-index: 10;
     }
 
 
@@ -2554,10 +2785,15 @@ span.flatpickr-weekday {
         color: transparent;
     }
 
-
+.details {
+    height: 90%;
+    width: 100%;
+}
+    
+    
 
     .s011 {
-        min-height: 900px;
+        min-height: 600px;
         -ms-flex-pack: center;
         justify-content: center;
         -ms-flex-align: center;
@@ -2571,6 +2807,9 @@ span.flatpickr-weekday {
         float: left;
         height: 100%;
     }
+    
+    
+
 
     .s011 form .inner-form .main-form {
         background: transparent;
@@ -2593,6 +2832,18 @@ span.flatpickr-weekday {
     }
 
 
+    
+       .detailForRoute {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        height: 20%;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+    }  
+    
+
 
 
     nav {
@@ -2608,6 +2859,8 @@ span.flatpickr-weekday {
         transition: right 0.2s linear;
         width: 83%;
         z-index: 900;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
         /* IT'S OVER 9000! */
     }
 

@@ -39,10 +39,13 @@ def return_routes(request):
     start_stop = request.GET['startstop']
     dest_stop = request.GET['endstop']
 
+
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
 
     time_specified = request.GET['time_specified']
+
+
     date_specified = request.GET['date_specified']
 
 

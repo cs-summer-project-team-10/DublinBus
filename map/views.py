@@ -42,14 +42,15 @@ def return_routes(request):
 
     start_stop = request.GET['startstop']
     dest_stop = request.GET['endstop']
-    #start_stop = 1069
-    #dest_stop = 670
+    #start_stop = 319
+    #dest_stop = 27
 
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
 
     time_specified = request.GET['time_specified']
-    #time_specified = ''
+    #time_specified = '12:00'
+    #date_specified = ''
     date_specified = request.GET['date_specified']
 
     # Now option and an empty later option

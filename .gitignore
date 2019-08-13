@@ -7,3 +7,4 @@ map/migrations/*
 .idea/*
 DublinBus-development
 README.md
+database_scripts/weather_scripts/*

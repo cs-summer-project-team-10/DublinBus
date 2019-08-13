@@ -1,7 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8486cb03-e887-40f9-9e3e-3442d9a33f7e" name="Default Changelist" comment="" />
+    <list default="true" id="8486cb03-e887-40f9-9e3e-3442d9a33f7e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/map/pickles/SGD_original_model.sav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements_3_8_19.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/102_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/104_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/111_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/114_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/116_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/118_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/11_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/120_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/122_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/123_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/130_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/13_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/140_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/142_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/145_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/14_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/14c_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/150_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/151_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/15_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/15a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/15b_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/15d_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/161_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/16_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/16c_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/17_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/17a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/184_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/185_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/18_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/1_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/220_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/236_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/238_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/239_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/25_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/25a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/25b_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/25d_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/25x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/26_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/270_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/27_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/27a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/27b_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/27x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/29a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/31_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/31a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/31b_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/31d_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/32_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/32x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/33_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/33a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/33b_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/33x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/37_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/38_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/38a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/38b_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/38d_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/39_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/39a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/39x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/40_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/40b_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/40d_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/41_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/41a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/41b_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/41c_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/41x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/42_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/42d_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/43_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/44_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/44b_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/45a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/46a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/46e_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/47_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/49_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/4_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/51d_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/51x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/53_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/54a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/56a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/59_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/61_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/63_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/65_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/65b_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/66_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/66a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/66b_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/66x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/67_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/67x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/68_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/68a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/68x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/69_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/69x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/70_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/70d_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/75_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/76_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/76a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/77a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/77x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/79_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/79a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/7_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/7a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/7b_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/7d_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/83_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/83a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/84_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/84a_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/84x_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/pickles/9_bus_model.sav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/map/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/map/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/website/settings.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,11 +146,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/map/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="475">
-              <caret line="36" selection-start-line="36" selection-end-line="36" />
+            <state relative-caret-position="-688">
+              <caret line="47" selection-start-line="47" selection-end-line="47" />
             </state>
           </provider>
         </entry>
@@ -28,17 +161,7 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/map/static/js/stop.js">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/map/static/js/choices.js">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/map/static/js/main.js">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
@@ -78,11 +201,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/map/templates/map/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-12309">
-              <caret line="15" column="4" selection-start-line="15" selection-start-column="4" selection-end-line="15" selection-end-column="4" />
+            <state>
+              <caret line="14" column="4" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -149,7 +272,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -214,6 +336,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -396,6 +519,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
       <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.22760801" />
@@ -559,6 +683,7 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/map/templates/map/index_mobile.html" />
     <entry file="file://$PROJECT_DIR$/map/migrations/0001_initial.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -601,20 +726,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/map/views.py">
+    <entry file="file://$PROJECT_DIR$/map/templates/map/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="36" selection-start-line="36" selection-end-line="36" />
+        <state>
+          <caret line="14" column="4" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="4" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/map/templates/map/index_mobile.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/map/templates/map/index.html">
+    <entry file="file://$PROJECT_DIR$/map/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-12309">
-          <caret line="15" column="4" selection-start-line="15" selection-start-column="4" selection-end-line="15" selection-end-column="4" />
+        <state relative-caret-position="-688">
+          <caret line="47" selection-start-line="47" selection-end-line="47" />
         </state>
       </provider>
     </entry>

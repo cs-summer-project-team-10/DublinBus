@@ -5,5 +5,4 @@ urlpatterns = [
 
     path('', views.home_page, name='home_page'),
     path('routes/', views.return_routes, name='return_routes'),
-    path('predict/', views.predict, name='predict')
 ]

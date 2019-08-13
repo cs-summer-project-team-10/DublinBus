@@ -435,7 +435,7 @@ class MultiRoutes(Route):
 
                                     self.dest_trips_dict[trip_key2].used_trip = True
 
-                                    if options_count >= 5:
+                                    if options_count >= 2:
                                         return multi_trip_list
 
                                     break

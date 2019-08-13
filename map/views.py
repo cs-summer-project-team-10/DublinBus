@@ -536,14 +536,11 @@ class Trip():
         stop_sequence_list = list(MapTripStopTimes.objects.filter(trip_id = self.trip_id).values_list('stop_sequence', flat = True))
 
         self.departure_time = stop_ids[0][2]
-        #print(self.departure_time)
-        #print(stops)
 
         route_short_name = self.route_short_name
         stop_sequence_list = stop_sequence_list
 
         stop_seq_time_diff_dict = predict(self.weather_temp, self.weather_rain, self.weather_humidity, self.time_period, self.weekday, route_short_name, stop_sequence_list)
-
 
 
         for stop in stop_ids:

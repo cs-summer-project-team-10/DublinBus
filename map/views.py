@@ -42,17 +42,20 @@ def return_routes(request):
 
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
+    
 
     time_specified = request.GET['time_specified']
 
 
     date_specified = request.GET['date_specified']
 
-
     # Now option and an empty later option
     if time_specified == '' and date_specified == '':
-        time_specified = (datetime.datetime.now()).strftime('%H:%M:%S')
-        specified_date_time = datetime.datetime.now()
+        now = datetime.datetime.now()
+        #Account for clock being off
+        time_specified = (now + datetime.timedelta(seconds = 3892)).strftime('%H:%M:%S')
+        today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        specified_date_time = datetime.datetime.strptime(today_date + "-" + time_specified, '%Y-%m-%d-%H:%M:%S')
 
         weather = get_current_weather()
         weather_temp = weather[0]
@@ -70,7 +73,10 @@ def return_routes(request):
         weather_humidity = weather[2]
 
     elif time_specified == '':
-        time_specified = (datetime.datetime.now()).strftime('%H:%M:%S')
+        now = datetime.datetime.now()
+        #Account for clock being off
+        time_specified = (now + datetime.timedelta(seconds = 3892)).strftime('%H:%M:%S')
+
         specified_date_time = datetime.datetime.strptime(date_specified + "-" + time_specified, '%m/%d/%y-%H:%M:%S')
 
         weather = get_weather_forecast(specified_date_time)
@@ -86,6 +92,8 @@ def return_routes(request):
         weather_temp = weather[0]
         weather_rain = weather[1]
         weather_humidity = weather[2]
+
+    #print("here",time_specified)
 
     # Convert time to time period
     time_period = get_time_period(specified_date_time)
@@ -428,7 +436,7 @@ class MultiRoutes(Route):
 
                                     self.dest_trips_dict[trip_key2].used_trip = True
 
-                                    if options_count >= 5:
+                                    if options_count >= 2:
                                         return multi_trip_list
 
                                     break
@@ -914,7 +922,7 @@ def predict(weather_temp, weather_rain, weather_humidity, time_period, weekday, 
                  '51D', '42D', '29A', '83', '69X', '39A', '41', '27B', '66A', '16', '25X', '26',
                  '118', '123']
 
-    file = 'map/pickles/SGD_original_model.sav'
+    file = '/home/student/application/DublinBus/map/pickles/SGD_original_model.sav'
     da_model = joblib.load(file)
 
     try:
@@ -955,7 +963,7 @@ def get_current_weather():
             'user': 'student',
             'password': 'group10bus',
             'host': 'localhost',
-            'port': 3333
+            'port': 5432
             }
 
         conn = psycopg2.connect(**params)
@@ -992,7 +1000,7 @@ def get_weather_forecast(datetime_object):
         'user': 'student',
         'password': 'group10bus',
         'host': 'localhost',
-        'port': 3333
+        'port': 5432
         }
 
     conn = psycopg2.connect(**params)

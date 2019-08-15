@@ -481,20 +481,17 @@ class Trip():
         self.time_specified = datetime.time(hour, min, sec)
 
         if start_stop:
-            #print("Start stop")
             self.start_stop = start_stop
             self.start_stop_id = start_stop.stop_id
             self.start_stop_id_short = start_stop.stop_id_short
 
         if dest_stop:
-            #print("Dest stop")
             self.dest_stop = start_stop
             self.dest_stop_id = dest_stop.stop_id
             self.dest_stop_id_short = dest_stop.stop_id_short
 
 
         trips_query_set = Trips.objects.filter(trip_id = self.trip_id).values_list('route_id', 'trip_headsign', 'shape_id')
-        #print(trips_query_set)
 
         self.route_id = trips_query_set[0][0]
         self.trip_headsign = trips_query_set[0][1]
@@ -506,10 +503,17 @@ class Trip():
         if all(hasattr(self, attr) for attr in ["start_stop", "dest_stop"]):
             self.check_valid_stop_sequence()
 
+        else:
+            self.valid_stop_sequence = True
+
         # Check if valid, maybe terminate if not
         if hasattr(self, 'start_stop') :
             self.check_valid_arrival_time()
 
+        else:
+            self.valid_start_arrival_time = True
+
+        self.check_valid()
 
 
         self.subroute_stops_list = self.get_subroute_stops()
@@ -670,21 +674,27 @@ class Trip():
                 if stop_sequence <= self.dest_stop_sequence:
                     stops.append(stop_dict)
 
-        #print(stops)
         return stops
 
     def check_valid_stop_sequence(self):
         if self.start_stop_sequence < self.dest_stop_sequence:
-            self.valid = True
+            self.valid_stop_sequence = True
 
         else:
-            self.valid = False
+            self.valid_stop_sequence = False
 
 
     def check_valid_arrival_time(self):
         '''
         '''
         if self.predicted_start_arrival_time > self.time_specified:
+            self.valid_start_arrival_time = True
+
+        else:
+            self.valid_start_arrival_time = False
+
+    def check_valid(self):
+        if self.valid_stop_sequence == True and self.valid_start_arrival_time == True:
             self.valid = True
 
         else:

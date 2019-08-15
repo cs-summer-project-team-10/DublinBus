@@ -17,8 +17,10 @@
 <body><!-- the style of search block was referenced from Colorlib (https://colorlib.com) -->
 <div id="map"></div>
 <div class="s011">
-    <nav> <a href="" class="menuToggle" id="menuToggleIcon" title="Go Back" style="display: none"> <span class="navClosed"><i>Go Back</i></span></a>
-        <form style="overflow: hidden">
+<nav> <a href="" class="menuToggle" id="menuToggleIcon" title="Go Back" style="display: none"> <span class="navClosed"><i>Go Back</i></span></a>
+
+    
+        <form>
             <fieldset>
                 <legend>Dublin Bus</legend>
             </fieldset>
@@ -136,6 +138,7 @@
                                 <i class="fa fa-arrow-left" onclick="javascript: $('.detailForRoute').css('display','none'); javascript: $('.details').css('display','block'); showStartJourney()" style="color: #e67600; font-size: 3rem; font-weight: 700; position: relative; left: 85%; bottom: 5rem; cursor: hand"></i>
                         </div>
                         <div style="display: none" id="NowMultiple">
+                           <h1 style="color: #e67600; text-align: center" id="detailText">Detail</h1>
                             <ul>
                                 <li>Route</li>
                                 <li>Transfer Stop</li>
@@ -148,6 +151,7 @@
                             <i class="fa fa-arrow-left" onclick="javascript: $('.detailForRoute').css('display','none'); javascript: $('.details').css('display','block'); showStartJourney()" style="color: #e67600; font-size: 3rem; font-weight: 700; position: relative; left: 85%; bottom: 5rem; cursor: hand"></i>
                         </div>
                         <div style="display: none" id="LaterSingle">
+                           <h1 style="color: #e67600; text-align: center" id="detailText">Detail</h1>
                             <ul>
                                 <li>Route</li>
                                 <li>Stop Number</li>
@@ -157,6 +161,7 @@
                             <i class="fa fa-arrow-left" onclick="javascript: $('.detailForRoute').css('display','none'); javascript: $('.details').css('display','block'); showStartJourney()" style="color: #e67600; font-size: 3rem; font-weight: 700; position: relative; left: 85%; bottom: 5rem; cursor: hand"></i>
                         </div>
                         <div style="display: none" id="LaterMultiple">
+                           <h1 style="color: #e67600; text-align: center" id="detailText">Detail</h1>
                             <ul>
                                 <li>Route</li>
                                 <li>Transfer Stop</li>
@@ -172,9 +177,10 @@
                 </div>
             </div>
         </form>
-    
+  
 </nav>
-</div>
+</div> 
+
 <button class="menuToggle" id="startjourney">Start Journey</button>
 <div id='loading'>
 <div id='wrapper' align="center">
@@ -527,7 +533,7 @@ $(".details").on("click",".routeOptions",function(e){
     }
         $(".details").css('display','none'); 
         $(".detailForRoute").css('display','block'); 
-   });
+   });
 
 
     

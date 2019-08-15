@@ -1,0 +1,87 @@
+
+/*    <style>
+*/        h1,h3{
+            text-align: center;
+        }
+         p{
+            text-align: center;
+             color:red;
+             font-size:20px;
+             text-align: center;
+             font-weight: bold;
+
+        }
+        .input-container {
+        float: left;
+        margin-right: 30px;
+        }
+        .results{
+        float: right;
+        margin-right: 30px;
+        }
+
+
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+          #weather {
+              margin-top: 20px;
+              float: left;
+              height: 430px;
+              width: 200px;
+              border:1px solid #00F;
+              background-color: antiquewhite;
+              border-radius: 6px;
+               font-size: 45px;
+                margin-right: 10px;
+
+        }
+        #description{
+            color: Black;
+            font-size: 15px;
+
+        }
+          #myChart {
+             /*float: left;*/
+             /*margin-right: 10px;*/
+             border:1px solid #00F;
+             width:430px;
+              height:410px;
+              margin-top: 20px;
+        }
+        #myChart1 {
+              /*margin-left: 10px;*/
+              border:1px solid #00F;
+              width:430px;
+              height:410px;
+               margin-top: 20px;
+
+        }
+        #container{
+            /*width:100%;*/
+            height:440px;
+            display: block;
+
+        }
+        #container1{
+
+            width:550px;
+            height:430px;
+            float: left;
+        }
+        #container2{
+            width:550px;
+            height:430px;
+            float: right;
+            margin-right: 20px;
+
+        }
+
+
+
+        .clear {
+            clear: both;
+        }
+
+ /*   </style>*/

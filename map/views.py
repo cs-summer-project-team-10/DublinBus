@@ -12,6 +12,9 @@ from datetime import date
 
 from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
 
+with open('/etc/config.json') as config_file:
+    config = json.load(config_file)
+
 
 def home_page(request):
     ''' Simple view that renders the index html template with all the bus stop information
@@ -958,7 +961,7 @@ def get_current_weather():
         params = {
             'database': 'weather',
             'user': 'student',
-            'password': 'group10bus',
+            'password': config['DB_PASSWORD'],
             'host': 'localhost',
             'port': 5432
             }
@@ -981,7 +984,6 @@ def get_current_weather():
 
     except:
         #Backup weather
-        #print("Backup")
         weather_temp = 15
         weather_rain = 0
         weather_humidity = 80
@@ -995,7 +997,7 @@ def get_weather_forecast(datetime_object):
     params = {
         'database': 'weather',
         'user': 'student',
-        'password': 'group10bus',
+        'password': config['DB_PASSWORD'],
         'host': 'localhost',
         'port': 5432
         }

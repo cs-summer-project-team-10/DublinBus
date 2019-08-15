@@ -105,8 +105,9 @@ def return_routes(request):
     day = specified_date_time.weekday()
 
     # Set time ranges for range of trips to return
-    start_range = (specified_date_time + datetime.timedelta(minutes=-10)).strftime('%H:%M:%S')
+    start_range = (specified_date_time + datetime.timedelta(minutes=-5)).strftime('%H:%M:%S')
     end_range = (specified_date_time + datetime.timedelta(minutes=20)).strftime('%H:%M:%S')
+    changeover_start = (specified_date_time).strftime('%H:%M:%S')
     changeover_range = (specified_date_time + datetime.timedelta(minutes=100)).strftime('%H:%M:%S')
 
     #Get service IDs for todays dates
@@ -150,7 +151,7 @@ def return_routes(request):
         valid_start_stop_trip_ids = valid_trip_id_list
 
         # Dest stop trip ids within a larger time frame
-        dest_stop_trip_ids = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = dest_stop, arrival_time__range = (start_range, changeover_range)))
+        dest_stop_trip_ids = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = dest_stop, arrival_time__range = (changeover_start, changeover_range)))
         valid_dest_stop_trip_ids = list(Trips.objects.values_list('trip_id', flat = True).filter(trip_id__in = dest_stop_trip_ids, service_id__in = service_list))
 
         travel_options = MultiRoutes(weather_temp, weather_rain, weather_humidity, weekday, time_specified, time_period, start_stop, dest_stop, valid_start_stop_trip_ids, valid_dest_stop_trip_ids)
@@ -517,10 +518,17 @@ class Trip():
         if all(hasattr(self, attr) for attr in ["start_stop", "dest_stop"]):
             self.check_valid_stop_sequence()
 
+        else:
+            self.valid_stop_sequence = True
+
         # Check if valid, maybe terminate if not
         if hasattr(self, 'start_stop') :
             self.check_valid_arrival_time()
 
+        else:
+            self.valid_start_arrival_time = True
+
+        self.check_valid()
 
 
         self.subroute_stops_list = self.get_subroute_stops()
@@ -686,21 +694,27 @@ class Trip():
 
     def check_valid_stop_sequence(self):
         if self.start_stop_sequence < self.dest_stop_sequence:
-            self.valid = True
+            self.valid_stop_sequence = True
 
         else:
-            self.valid = False
+            self.valid_stop_sequence = False
 
 
     def check_valid_arrival_time(self):
         '''
         '''
         if self.predicted_start_arrival_time > self.time_specified:
+            self.valid_start_arrival_time = True
+
+        else:
+            self.valid_start_arrival_time = False
+
+    def check_valid(self):
+        if self.valid_stop_sequence == True and self.valid_start_arrival_time == True:
             self.valid = True
 
         else:
             self.valid = False
-
 
     def get_all_shape_points(self):
         '''

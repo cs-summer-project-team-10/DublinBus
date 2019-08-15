@@ -974,9 +974,9 @@ def get_current_weather():
     except:
         #Backup weather
         #print("Backup")
-        weather_temp = 10
-        weather_rain = 0.3
-        weather_humidity = 70
+        weather_temp = 15
+        weather_rain = 0
+        weather_humidity = 80
 
     return [weather_temp, weather_rain, weather_humidity]
 
@@ -1012,9 +1012,9 @@ def get_weather_forecast(datetime_object):
 
     #Backup weather
     else:
-        weather_temp = 10
-        weather_rain = 0.3
-        weather_humidity = 70
+        weather_temp = 15
+        weather_rain = 0
+        weather_humidity = 80
         #print("Backup future", date_string, "weather", weather_temp, weather_rain, weather_humidity)
 
     if(conn):

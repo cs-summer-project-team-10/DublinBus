@@ -2442,7 +2442,7 @@ span.flatpickr-weekday {
         display: block;
         position: relative;
         height: 3em;
-        left: -3.3em;
+        right: 83%;
         top: 4.8em;
         width: 3.2em;
     }
@@ -2869,7 +2869,7 @@ display:none;
         display: block;
         position: relative;
         height: 3em;
-        left: -3.3em;
+        right: 83%;
         top: 4.8em;
         width: 3.2em;
     }

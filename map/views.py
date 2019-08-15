@@ -547,14 +547,11 @@ class Trip():
         stop_sequence_list = list(MapTripStopTimes.objects.filter(trip_id = self.trip_id).values_list('stop_sequence', flat = True))
 
         self.departure_time = stop_ids[0][2]
-        #print(self.departure_time)
-        #print(stops)
 
         route_short_name = self.route_short_name
         stop_sequence_list = stop_sequence_list
 
         stop_seq_time_diff_dict = predict(self.weather_temp, self.weather_rain, self.weather_humidity, self.time_period, self.weekday, route_short_name, stop_sequence_list)
-
 
 
         for stop in stop_ids:
@@ -985,9 +982,9 @@ def get_current_weather():
     except:
         #Backup weather
         #print("Backup")
-        weather_temp = 10
-        weather_rain = 0.3
-        weather_humidity = 70
+        weather_temp = 15
+        weather_rain = 0
+        weather_humidity = 80
 
     return [weather_temp, weather_rain, weather_humidity]
 
@@ -1023,9 +1020,9 @@ def get_weather_forecast(datetime_object):
 
     #Backup weather
     else:
-        weather_temp = 10
-        weather_rain = 0.3
-        weather_humidity = 70
+        weather_temp = 15
+        weather_rain = 0
+        weather_humidity = 80
         #print("Backup future", date_string, "weather", weather_temp, weather_rain, weather_humidity)
 
     if(conn):

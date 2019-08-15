@@ -1,21 +1,21 @@
 import csv, os, django, sys
 from django.shortcuts import get_object_or_404
-sys.path.append('../../')
+from map.models import Routes, Stops, Shapes, CalendarService, CalendarExceptions, Trips
 
+sys.path.append('../../')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE','website.settings')
 django.setup()
 
-from map.models import Routes, Stops, Shapes, CalendarService, CalendarExceptions, Trips
-
 
 def change_date_format(date):
-   '''
+    '''
     Simple function that inserts '-' between YYYY MM DD
-'''
+    '''
 
     new_date = date[:4] + "-" + date[4:6] + "-" + date[6:]
 
     return new_date
+
 
 def change_stop_id(stop_id):
     '''
@@ -41,12 +41,11 @@ def change_stop_id(stop_id):
             short_stop_id = int(s[6:])
 
         except ValueError:
-            #print(stop_id)
             dict_value = exception_dict[stop_id]
             short_stop_id = change_stop_id(dict_value)
-            #print(short_stop_id)
 
     return short_stop_id
+
 
 
 with open("../csvs/routes.txt", "r") as read_file:
@@ -79,6 +78,7 @@ with open("../csvs/stops.txt", "r") as read_file:
 
         Stops.objects.get_or_create(stop_id = stop_id, stop_id_short = stop_id_short, stop_name = stop_name, stop_lat = stop_lat, stop_lng = stop_lng)
 
+
 with open("../csvs/calendar.txt", "r") as read_file:
     reader = csv.reader(read_file, delimiter=',')
     next(reader, None)
@@ -104,6 +104,7 @@ with open("../csvs/calendar_dates.txt", "r") as read_file:
         exception_type = row[2]
 
         CalendarExceptions.objects.get_or_create(service_id = service_id, exception_date = exception_date, exception_type = exception_type)
+
 
 with open("../csvs/shapes.txt", "r") as read_file:
     reader = csv.reader(read_file, delimiter=',')
@@ -131,7 +132,6 @@ with open("../csvs/trips.txt", "r") as read_file:
         trip_headsign = row[2]
         shape_id = row[3]
         service_id = CalendarService.objects.get(service_id = row[4])
-       # print(trip_id,route_id,direction,trip_headsign,shape_id,service_id)
 
         Trips.objects.get_or_create(trip_id = trip_id, route_id = route_id, direction = direction, trip_headsign = trip_headsign, shape_id = shape_id, service_id = service_id)
 
@@ -140,16 +140,11 @@ with open("../csvs/trips.txt", "r") as read_file:
 Used to create models using SQL to speed up process
 '''
 
-
-
 from sqlalchemy import create_engine
 import pandas as pd
 import sqlalchemy
 
 engine = create_engine('postgresql+psycopg2://stephen:1993@127.0.0.1:5432/new_models')
-
-#data = pd.read_csv("../csvs/shapes.txt")
-#data.to_sql('test', engine, if_exists = 'append', chunksize = 1000)
 
 data = pd.read_csv("../csvs/stop_times.txt")
 
@@ -163,31 +158,3 @@ data.to_sql(name = 'map_trip_stop_times', con = engine, if_exists = 'append', ch
                     "scheduled_dept_time" : sqlalchemy.DateTime(),
                     "stop_headsign" : sqlalchemy.types.VARCHAR(length=200),
                     "distance_travelled" : sqlalchemy.types.VARCHAR(length=200)})
-
-'''
-# Old long way of creating models
-'''
-'''
-with open("../csvs/stop_times.txt", "r") as read_file:
-    reader = csv.reader(read_file, delimiter=',')
-    next(reader, None)
-
-    bulk_list = []
-
-    for row in reader:
-        trip_id = Trips.objects.get(trip_id = row[0])
-        stop_id = Stops.objects.get(stop_id = row[3])
-        scheduled_arrival_time = row[1]
-        scheduled_dept_time = row[2]
-        stop_sequence = row[4]
-        stop_headsign = row[5]
-        distance_travelled = str(row[8])
-
-        bulk_list.append(StopTripTimes(trip_id = trip_id, stop_id = stop_id, scheduled_arrival_time = scheduled_arrival_time, scheduled_dept_time = scheduled_dept_time, stop_sequence = stop_sequence, stop_headsign = stop_headsign, distance_travelled = distance_travelled))
-
-    print("Finished making list")
-
-    StopTripTimes.objects.bulk_create(bulk_list)
-
-        #StopTripTimes.get_or_create(trip_id = trip_id, stop_id = stop_id, scheduled_arrival_time = scheduled_arrival_time, scheduled_dept_time = scheduled_dept_time, stop_sequence = stop_sequence, stop_headsign = stop_headsign, distance_travelled = distance_travelled)
-'''

@@ -1,15 +1,15 @@
 
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import HttpResponse, render, redirect
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+
 import json
 import requests
 import datetime
 import pandas as pd
 import psycopg2
+
 from sklearn.externals import joblib
 from datetime import date
-
 from .models import MapTripStopTimes, Stops, CalendarService, Trips, Routes, Shapes
 
 
@@ -28,26 +28,18 @@ def home_page(request):
 
 def return_routes(request):
     '''
-    Function that checks for common bus routes between two stops provided by user.
-    Initially will check between two stops provided and in time will check also common
-    bus stops between routes servicing these stops.
-
-    It will then call a predictive model on this route per stop etc.
+    Function that returns the routes if any between 2 specified bus stops using an optional
+    specified time and date
     '''
-
 
     start_stop = request.GET['startstop']
     dest_stop = request.GET['endstop']
-
 
     start_stop = Stops.objects.get(stop_id_short = start_stop)
     dest_stop = Stops.objects.get(stop_id_short = dest_stop)
 
     time_specified = request.GET['time_specified']
-
-
     date_specified = request.GET['date_specified']
-
 
     # Now option and an empty later option
     if time_specified == '' and date_specified == '':
@@ -59,6 +51,7 @@ def return_routes(request):
         weather_rain = weather[1]
         weather_humidity = weather[2]
 
+    # Date not specfied
     elif date_specified == '':
         time_specified = time_specified + ":00"
         today_date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -69,6 +62,7 @@ def return_routes(request):
         weather_rain = weather[1]
         weather_humidity = weather[2]
 
+    # Time not specfied
     elif time_specified == '':
         time_specified = (datetime.datetime.now()).strftime('%H:%M:%S')
         specified_date_time = datetime.datetime.strptime(date_specified + "-" + time_specified, '%m/%d/%y-%H:%M:%S')
@@ -78,6 +72,7 @@ def return_routes(request):
         weather_rain = weather[1]
         weather_humidity = weather[2]
 
+    # Both specfied
     else:
         time_specified = time_specified + ":00"
         specified_date_time = datetime.datetime.strptime(date_specified + "-" + time_specified, '%m/%d/%y-%H:%M:%S')
@@ -94,11 +89,12 @@ def return_routes(request):
     day = specified_date_time.weekday()
 
     # Set time ranges for range of trips to return
-    start_range = (specified_date_time + datetime.timedelta(minutes=-10)).strftime('%H:%M:%S')
+    start_range = (specified_date_time + datetime.timedelta(minutes=-5)).strftime('%H:%M:%S')
     end_range = (specified_date_time + datetime.timedelta(minutes=20)).strftime('%H:%M:%S')
+    start_changeover = (specified_date_time).strftime('%H:%M:%S')
     changeover_range = (specified_date_time + datetime.timedelta(minutes=100)).strftime('%H:%M:%S')
 
-    #Get service IDs for todays dates
+    #Get service IDs for specified date
     if day == 0:
         service_list = list(CalendarService.objects.values_list('service_id', flat = True).filter(start_date__lte = specified_date_time, end_date__gte = specified_date_time, monday = True))
         weekday = True
@@ -133,13 +129,14 @@ def return_routes(request):
     # Create dictionary of routes possible between stops
     data = []
 
-    # If no common trips between stops
+    # If no common trips between the two stops
     if len(common_trip_id_list) == 0:
 
         valid_start_stop_trip_ids = valid_trip_id_list
 
         # Dest stop trip ids within a larger time frame
-        dest_stop_trip_ids = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = dest_stop, arrival_time__range = (start_range, changeover_range)))
+        dest_stop_trip_ids = list(MapTripStopTimes.objects.values_list('trip_id', flat = True).filter(stop_id = dest_stop, arrival_time__range = (start_changeover, changeover_range)))
+
         valid_dest_stop_trip_ids = list(Trips.objects.values_list('trip_id', flat = True).filter(trip_id__in = dest_stop_trip_ids, service_id__in = service_list))
 
         travel_options = MultiRoutes(weather_temp, weather_rain, weather_humidity, weekday, time_specified, time_period, start_stop, dest_stop, valid_start_stop_trip_ids, valid_dest_stop_trip_ids)
@@ -168,7 +165,6 @@ def return_routes(request):
                 route_option_dict["stage2_time"] = travel_option["stage2_time"]
                 route_option_dict["total_time"] = travel_option["total_time"]
 
-                #print(route_option_dict)
 
                 stage_dict = {}
 
@@ -211,7 +207,7 @@ def return_routes(request):
 
                 data.append(route_option_dict)
 
-
+    # If common trips then create direct routes with this trip
     else:
         travel_options = DirectRoutes(weather_temp, weather_rain, weather_humidity, weekday, time_specified, time_period, start_stop, dest_stop, common_trip_id_list)
 
@@ -247,21 +243,30 @@ def return_routes(request):
     return JsonResponse({'routes_data': data})
 
 
+
 def change_to_timestamp(datetime_time_object):
    '''
+   Function that changes a datetime time object into a timestamp for todays date,
+   simply used by frontend to display arrival time.
    '''
+
    t = datetime_time_object
    seconds = (((t.hour * 60) + t.minute) * 60) + t.second
    date_specified = datetime.datetime.now()
    date_specified = date_specified.replace(hour=0, minute=0, second=0, microsecond=0)
    timestamp = datetime.datetime.timestamp(date_specified)
    arrival_timestamp = timestamp + seconds
+
    return int(arrival_timestamp * 1000)
+
 
 
 class Route():
     '''
+    Superclass object that represents anytype of route between a
+    start and end destination bus stop.
 
+    Contains attributes relating to weather, date specified and bus stops.
     '''
 
     def __init__(self, weather_temp, weather_rain, weather_humidity, weekday, time, time_period, start_stop, dest_stop):
@@ -270,7 +275,6 @@ class Route():
         self.weather_humidity = weather_humidity
         self.weekday = weekday
         self.time_period = time_period
-        #self.direction
 
         self.time = time
         time = time.split(":")
@@ -278,7 +282,6 @@ class Route():
         min = int(time[1])
         sec = int(time[2])
         self.time_specified = datetime.time(hour, min, sec)
-
 
         self.start_stop = start_stop
         self.dest_stop = dest_stop
@@ -288,8 +291,12 @@ class Route():
         self.dest_stop_id_short = dest_stop.stop_id_short
 
 
+
 class DirectRoutes(Route):
     '''
+    Subclass of Route that represents a direct route between two bus stops.
+
+    Contains an additional attribute representing the trip IDs common to both bus stops.
     '''
 
     def __init__(self, weather_temp, weather_rain, weather_humidity, weekday, time, time_period, start_stop, dest_stop, common_trip_ids):
@@ -298,6 +305,11 @@ class DirectRoutes(Route):
         self.common_trips_dict = self.create_trips(self.common_trip_ids)
 
     def create_trips(self, common_trip_ids):
+        '''
+        Function that creates trip objects for each trip ID contained in the list
+        Returns a dictionary of trip ID to Trip Object
+        '''
+
         trip_dict = {}
 
         for trip in common_trip_ids:
@@ -306,8 +318,14 @@ class DirectRoutes(Route):
         return trip_dict
 
 
+
 class MultiRoutes(Route):
     '''
+    Subclass of Route that represents a multi route between two stops e.g one that
+    no direct route exists
+
+    Contains additional attributes of two lists that represent trip IDs of the start and destination
+    stop respectively
     '''
 
     def __init__(self, weather_temp, weather_rain, weather_humidity, weekday, time, time_period, start_stop, dest_stop, start_trip_ids, dest_trip_ids):
@@ -317,11 +335,16 @@ class MultiRoutes(Route):
         self.start_trips_dict = self.create_start_trips(self.start_trip_ids)
         self.dest_trips_dict = self.create_dest_trips(self.dest_trip_ids)
 
-        #self.display_route_details()
         self.multi_trips_list = self.check_for_common_stops()
 
 
     def create_start_trips(self, trip_id_list):
+        '''
+        Function that creates trip objects for each trip in the list
+
+        Returns dictionary of trip ID to trip Object
+        '''
+
         trip_dict = {}
 
         for trip in trip_id_list:
@@ -329,12 +352,18 @@ class MultiRoutes(Route):
 
             # If arrival time is before time specified then delete
             if trip_dict[trip].valid == False:
-                #print("Deleting trip", trip, "from dict because", trip_dict[trip].predicted_start_arrival_time )
                 del trip_dict[trip]
 
         return trip_dict
 
+
     def create_dest_trips(self, trip_id_list):
+        '''
+        Function that creates trip objects for each trip in the list
+
+        Returns dictionary of trip ID to trip Object
+        '''
+
         trip_dict = {}
 
         for trip in trip_id_list:
@@ -342,12 +371,38 @@ class MultiRoutes(Route):
 
         return trip_dict
 
+
     def reset_flags(self, trip_dict):
+        '''
+        Function that resets the "used_trip" flag for each trip in the dictionary
+        provided for each iteration through the multi-route calculation algorithm
+        '''
+
         for key in trip_dict:
             trip_dict[key].used_trip = False
 
 
     def check_for_common_stops(self):
+        '''
+        Function responsible for calculating that multi routing between two
+        dictionarys of trip IDs. Compares each stop in each trip of the
+        starting location to each stop of each trip in the destination
+        location
+
+        Contains a flag that prevents two trips from matching on more
+        than one bus stop
+
+        If a match is found a check is carried out to ensure that the second
+        bus stop arrival time is greater than the first bus stop arrival time
+        eg that the second bus departs after the arrival of the first bus
+
+        The wait time between buses is limited to 40 minutes
+
+        A counter limits this function to 5 results
+
+        The function returns a list of dictionaries representing different
+        multi-route options
+        '''
 
         multi_trip_list = []
 
@@ -384,10 +439,6 @@ class MultiRoutes(Route):
                                     stage1_stop_sequence = stop_dict["stop_sequence"]
                                     stage2_stop_sequence = stop_dict2["stop_sequence"]
 
-                                    #print("VALID OPTION:", options_count + 1, " \nGet Route ID -",self.start_trips_dict[trip_key].route_short_name,"from", self.start_stop_id,\
-                                    #        "at",self.start_trips_dict[trip_key].predicted_start_arrival_time,"to", common_stop_id,"arriving at", first_leg_arrival,"wait",wait_time_seconds/60,"mins then get Route",\
-                                    #        self.dest_trips_dict[trip_key2].route_short_name,"departing at",second_leg_dept,"to",self.dest_stop_id,"arriving at dest at", self.dest_trips_dict[trip_key2].predicted_dest_arrival_time)
-
                                     options_count += 1
 
 
@@ -423,7 +474,6 @@ class MultiRoutes(Route):
                                     multi_trip_dict["stage1_subroute_shape_points"] = stop_and_shapes_list_stage1[0]
                                     multi_trip_dict["stage2_subroute_shape_points"] = stop_and_shapes_list_stage2[0]
 
-                                    #print(multi_trip_dict)
                                     multi_trip_list.append(multi_trip_dict)
 
                                     self.dest_trips_dict[trip_key2].used_trip = True
@@ -439,29 +489,20 @@ class MultiRoutes(Route):
         return multi_trip_list
 
 
-    def display_route_details(self):
-        '''
-        Simple function that prints attributes to terminal, useful for development
-        '''
-
-        print("************************************")
-        print("Weather:", self.weather, "\nWeekday:", self.weekday, "\nTime Period:", self.time_period)
-        print("Route from", self.time_specified)
-        print("Route from", self.start_stop_id_short, "to", self.dest_stop_id_short)
-        print("Route from", self.start_stop_id, "to", self.dest_stop_id)
-        print("Start stop trips:", self.start_trip_ids)
-        print("Dest stop trips:", self.dest_trip_ids)
-        print("Start trip dict:", self.start_trips_dict)
-        print("Dest trip dict:", self.dest_trips_dict)
-        print("************************************")
-
-
-
-
-
 
 class Trip():
     '''
+    Another class that is a component of Direct Routes and MultiRoutes. It represents a
+    specific trip with a specfic ID between two bus stops
+
+    Both DirectRoutes and MultiRoutes create multiple trip objects
+
+    Contains the same attributes as Route and its subclasses with additional
+    trip specific attributes such as Headsign, shape ID, Route ID and route short name
+
+    Contains several lists, a list of all the bus stops along the full route, a sub list of
+    these stops but jsut along the route specfied, a list of all shape points and again
+    a sublist of the shape points needed
     '''
 
     def __init__(self, trip_id, weather_temp, weather_rain, weather_humidity, weekday, time, time_period, start_stop = None, dest_stop = None):
@@ -472,7 +513,6 @@ class Trip():
         self.weather_humidity = weather_humidity
         self.weekday = weekday
         self.time_period = time_period
-        #self.direction
 
         time = time.split(":")
         hour = int(time[0])
@@ -489,7 +529,6 @@ class Trip():
             self.dest_stop = start_stop
             self.dest_stop_id = dest_stop.stop_id
             self.dest_stop_id_short = dest_stop.stop_id_short
-
 
         trips_query_set = Trips.objects.filter(trip_id = self.trip_id).values_list('route_id', 'trip_headsign', 'shape_id')
 
@@ -523,19 +562,18 @@ class Trip():
         self.subroute_shape_points = self.get_subroute_shape_points()
 
 
-        #self.display_route_details()
-
-
     def get_all_stops(self):
         '''
         Function that returns a list of stops as a dictionary object and assigns it
-        to self.all_stops_list.
-        This dictionary contains stop name, id, lat, lng, stop_sequence, due_arrival_time,
-        distance travelled and distance from previous stop.
-        Query based on trip_id
-        Assigns deptarture time
+        to self.all_stops_list
 
+        This dictionary contains stop name, id, lat, lng, stop_sequence, due_arrival_time,
+        distance travelled and distance from previous stop
+
+        Calculates the predicted arrival time at each bus stop by calling the
+        predict function with the trip attributes
         '''
+
         stops = []
 
         stop_ids = list(MapTripStopTimes.objects.filter(trip_id = self.trip_id).values_list('stop_id','stop_sequence', 'arrival_time', 'shape_dist_traveled'))
@@ -549,15 +587,10 @@ class Trip():
 
         stop_seq_time_diff_dict = predict(self.weather_temp, self.weather_rain, self.weather_humidity, self.time_period, self.weekday, route_short_name, stop_sequence_list)
 
-
         for stop in stop_ids:
-            #print(stop)
-            #print(stop[0])
+
             stop_dict = {}
             stops_query_set = Stops.objects.filter(stop_id = stop[0]).values_list('stop_name', 'stop_lat', 'stop_lng', 'stop_id_short')
-            #print(stops_query_set)
-
-
 
             stop_dict["stop_id"] = stop[0]
             stop_dict["stop_id_short"] = stops_query_set[0][3]
@@ -567,22 +600,16 @@ class Trip():
             stop_dict["stop_sequence"] = stop[1]
             stop_dict["due_arrival_time"] = stop[2]
 
-            #predicted_diff_in_time = predict(self.weather, self.time_period, self.weekday, self.route_short_name, stop_dict["stop_sequence"], 0)
             stop_sequence = stop[1]
+
             predicted_diff_in_time = stop_seq_time_diff_dict[stop_sequence]
-            #print(predicted_diff_in_time)
 
             due_time = datetime.datetime.strptime(stop_dict["due_arrival_time"], "%H:%M:%S")
-
-
             predicted_arrival_time = (due_time + datetime.timedelta(minutes=predicted_diff_in_time)).time()
-
             stop_dict["predicted_arrival_time"] = predicted_arrival_time
-
 
             if hasattr(self, 'start_stop') and stop[0] == self.start_stop_id:
                 self.predicted_start_arrival_time = predicted_arrival_time
-
 
             if stop[3] == None:
                 previous_dist_travelled = 0
@@ -601,7 +628,6 @@ class Trip():
                 else:
                     self.start_stop_distance = stop[3]
 
-
             if hasattr(self, 'dest_stop') and stop[0] == self.dest_stop_id:
                 self.predicted_dest_arrival_time = predicted_arrival_time
                 self.dest_stop_sequence = stop[1]
@@ -612,12 +638,10 @@ class Trip():
                     self.dest_stop_distance = stop[3]
 
             previous_dist_travelled = stop_dict["shape_distance_travelled"]
-            #print(stop_dict)
+
             stops.append(stop_dict)
 
         if all(hasattr(self, attr) for attr in ["start_stop", "dest_stop"]):
-
-            #print(type(self.predicted_start_arrival_time), type(self.predicted_dest_arrival_time))
 
             predicted_start_arrival_time_seconds = (self.predicted_start_arrival_time.hour * 60 + self.predicted_start_arrival_time.minute) * 60 + self.predicted_start_arrival_time.second
 
@@ -626,57 +650,59 @@ class Trip():
             total_travel_time = (predicted_dest_arrival_time_seconds - predicted_start_arrival_time_seconds)/60
 
             self.total_travel_time = total_travel_time
-        #print(stops)
+
         return stops
-
-
-
 
 
     def get_subroute_stops(self):
         '''
-        Returns a list of tuples which contain the stop ID and stop sequence number.
-        Uses the start and dest stop sequence along this trip/route to slice a subset of stops.
+        Function that creates a list of subroute bus stops depending on
+        the type of trip object eg first leg, second leg or direct route
+
+        Returns a list of dictionaries
         '''
         stops = []
 
         # Check which type of subroute is needed
         # Has start and dest stop IDs e.g Direct Route
         if all(hasattr(self, attr) for attr in ["start_stop", "dest_stop"]):
-            #print("Has both")
 
-            end_stop_order = max(self.start_stop_sequence,self.dest_stop_sequence)
-            start_stop_order = min(self.start_stop_sequence,self.dest_stop_sequence)
+            end_stop_order = max(self.start_stop_sequence, self.dest_stop_sequence)
+            start_stop_order = min(self.start_stop_sequence, self.dest_stop_sequence)
 
             for stop_dict in self.all_stops_list:
                 stop_sequence = stop_dict["stop_sequence"]
-                #print(stop_sequence)
+
                 if stop_sequence <= end_stop_order and stop_sequence >= start_stop_order:
                     stops.append(stop_dict)
 
         # Has just start stop ID specfied, start to end subroute
         elif hasattr(self, 'start_stop'):
-            #print("Has start")
 
             for stop_dict in self.all_stops_list:
                 stop_sequence = stop_dict["stop_sequence"]
-                #print(stop_sequence)
+
                 if stop_sequence >= self.start_stop_sequence:
                     stops.append(stop_dict)
 
         # Has just dest ID specified, all to dest subroute
         elif hasattr(self, 'dest_stop'):
-            #print("Has dest")
 
             for stop_dict in self.all_stops_list:
                 stop_sequence = stop_dict["stop_sequence"]
-                #print(stop_sequence)
+
                 if stop_sequence <= self.dest_stop_sequence:
                     stops.append(stop_dict)
 
         return stops
 
+
     def check_valid_stop_sequence(self):
+        '''
+        Checks that the start stop has lower stop sequence then
+        destination else it is invalid
+        '''
+
         if self.start_stop_sequence < self.dest_stop_sequence:
             self.valid_stop_sequence = True
 
@@ -686,7 +712,10 @@ class Trip():
 
     def check_valid_arrival_time(self):
         '''
+        Checks that the bus arrival time to start bus stop is less
+        than that specified by the user else invalid
         '''
+
         if self.predicted_start_arrival_time > self.time_specified:
             self.valid_start_arrival_time = True
 
@@ -694,6 +723,10 @@ class Trip():
             self.valid_start_arrival_time = False
 
     def check_valid(self):
+        '''
+        Checks that both arrival time and stop sequence are valid
+        '''
+
         if self.valid_stop_sequence == True and self.valid_start_arrival_time == True:
             self.valid = True
 
@@ -707,36 +740,20 @@ class Trip():
         '''
 
         shape_points = list(Shapes.objects.filter(shape_id = self.shape_id).values('shape_point_sequence', 'shape_point_lat', 'shape_point_lng', 'shape_dist_travelled'))
-        #print(shape_points)
 
         return shape_points
 
 
-
-
-    def get_stop_distance(self, stop_id):
-        '''
-        OBSOLETE
-        Function that gets distance travelled to reach a specififed stop id.
-        Used by get_subroute_shape_points function to identify start and stop
-        of sub route shape
-        '''
-
-        shape_distance_travelled = MapTripStopTimes.objects.filter(trip_id = self.trip_id, stop_id = stop_id).values_list('shape_dist_traveled', flat = True)[0]
-        #print(shape_distance_travelled)
-        return shape_distance_travelled
-
-
     def get_subroute_shape_points(self):
         '''
-        Function that returns all the shape points for a subroute
+        Function that creates a list of sub route shape points
+
+        Returns a list of shape poin=t dictionaries
         '''
 
         shape_points = []
 
-
         if all(hasattr(self, attr) for attr in ["start_stop", "dest_stop"]):
-            #print("Has both for sub shape points")
 
             for point in self.route_shape_points:
 
@@ -752,7 +769,6 @@ class Trip():
                 shape_seq = point["shape_point_sequence"]
 
                 if shape_seq >= min_seq and shape_seq <= max_seq:
-                    #print(point)
                     shape_points.append(point)
 
 
@@ -767,9 +783,7 @@ class Trip():
                 shape_seq = point["shape_point_sequence"]
 
                 if shape_seq >= start_seq:
-                    #print(point)
                     shape_points.append(point)
-
 
         elif hasattr(self, 'dest_stop'):
             for point in self.route_shape_points:
@@ -782,63 +796,20 @@ class Trip():
                 shape_seq = point["shape_point_sequence"]
 
                 if shape_seq <= end_seq:
-                    #print(point)
                     shape_points.append(point)
 
         return shape_points
 
-    def get_stage_subroutes_and_shapes(self, common_stop_sequence):
-        '''
-        '''
-
-        stop_and_shapes_list = []
-
-        stops = []
-        # Check which type of stage_subroute is needed
-
-        # Has just start stop ID specfied, start to end subroute
-        if hasattr(self, 'start_stop'):
-            #print("Has start")
-
-            for stop_dict in self.subroute_stops_list:
-                stop_sequence = stop_dict["stop_sequence"]
-                #print(stop_sequence)
-                if stop_sequence == common_stop_sequence:
-                    common_stop_distance = stop_dict["shape_distance_travelled"]
-                    #print("Call function with distance:", common_stop_distance)
-                    shapes = self.get_stage_subroute_shape_points(common_stop_distance)
-                    stop_and_shapes_list.append(shapes)
-
-                if stop_sequence <= common_stop_sequence:
-                    stops.append(stop_dict)
-
-        # Has just dest ID specified, all to dest subroute
-        elif hasattr(self, 'dest_stop'):
-            #print("Has dest")
-
-            for stop_dict in self.subroute_stops_list:
-                stop_sequence = stop_dict["stop_sequence"]
-                #print(stop_sequence)
-                if stop_sequence == common_stop_sequence:
-                    common_stop_distance = stop_dict["shape_distance_travelled"]
-                    #print("Call function with distance:", common_stop_distance)
-                    shapes = self.get_stage_subroute_shape_points(common_stop_distance)
-                    stop_and_shapes_list.append(shapes)
-
-                if stop_sequence >= common_stop_sequence:
-                    stops.append(stop_dict)
-
-        stop_and_shapes_list.append(stops)
-        #print(stops)
-        return stop_and_shapes_list
-
 
     def get_stage_subroute_shape_points(self, common_stop_distance):
         '''
+        Function similar to the get_subroute_shape_points that returns a subroute
+        of shape points based on the common bus stop for a multi-route
+
+        Returns a list of shape points dictionaries
         '''
 
         shape_points = []
-
 
         if hasattr(self, 'start_stop'):
             for point in self.subroute_shape_points:
@@ -851,9 +822,7 @@ class Trip():
                 shape_seq = point["shape_point_sequence"]
 
                 if shape_seq <= seq:
-                    #print(point)
                     shape_points.append(point)
-
 
         elif hasattr(self, 'dest_stop'):
             for point in self.subroute_shape_points:
@@ -866,43 +835,73 @@ class Trip():
                 shape_seq = point["shape_point_sequence"]
 
                 if shape_seq >= seq:
-                    #print(point)
                     shape_points.append(point)
 
-        #print(shape_points)
         return shape_points
 
 
-    def display_route_details(self):
+    def get_stage_subroutes_and_shapes(self, common_stop_sequence):
         '''
-        Simple function that prints attributes to terminal, useful for development
+        Function similar to the get_subroute_stops
+        Uses the get_stage_subroute_shape_points function to creat a
+        list of shape points for this subroute
+
+        Returns a list of two lists, one for shape points and one
+        for bus stops, both are dictionaries
         '''
 
-        print("************************************")
-        print("TRIP")
-        print("Weather:", self.weather, "\nWeekday:", self.weekday, "\nTime Period:", self.time_period)
-        print("Route from", self.time_specified)
+        stop_and_shapes_list = []
+        stops = []
+
+        # Check which type of stage_subroute is needed
+        # Has just start stop ID specfied, start to end subroute
         if hasattr(self, 'start_stop'):
-            print("Start stop", self.start_stop_id_short, self.start_stop_id)
-        if hasattr(self, 'dest_stop'):
-            print("Dest stop", self.dest_stop_id_short, self.dest_stop_id)
-        print("Trip ID:", self.trip_id, "\nRoute ID:", self.route_id)
-        print("Route Name:", self.route_short_name, "Headsign:", self.trip_headsign)
-        print("Shape ID:", self.shape_id)
-        print("All stops for trip:", self.all_stops_list)
-        print("Sub Route stops", self.subroute_stops_list)
-        print("All Route Shape Points", self.route_shape_points)
-        print("Sub route shape points", self.subroute_shape_points)
-        print("Length of trip:", self.number_stops)
-        if hasattr(self, 'start_stop'):
-            print(self.start_stop_distance)
-        if hasattr(self, 'dest_stop'):
-            print(self.dest_stop_distance)
-        print("************************************")
+
+            for stop_dict in self.subroute_stops_list:
+                stop_sequence = stop_dict["stop_sequence"]
+
+                if stop_sequence == common_stop_sequence:
+
+                    common_stop_distance = stop_dict["shape_distance_travelled"]
+                    shapes = self.get_stage_subroute_shape_points(common_stop_distance)
+                    stop_and_shapes_list.append(shapes)
+
+                if stop_sequence <= common_stop_sequence:
+                    stops.append(stop_dict)
+
+        # Has just dest ID specified, all to dest subroute
+        elif hasattr(self, 'dest_stop'):
+
+            for stop_dict in self.subroute_stops_list:
+                stop_sequence = stop_dict["stop_sequence"]
+
+                if stop_sequence == common_stop_sequence:
+
+                    common_stop_distance = stop_dict["shape_distance_travelled"]
+                    shapes = self.get_stage_subroute_shape_points(common_stop_distance)
+                    stop_and_shapes_list.append(shapes)
+
+                if stop_sequence >= common_stop_sequence:
+                    stops.append(stop_dict)
+
+        stop_and_shapes_list.append(stops)
+
+        return stop_and_shapes_list
 
 
 
 def predict(weather_temp, weather_rain, weather_humidity, time_period, weekday, route_short_name, stop_sequence_list):
+    '''
+    Predict function that calculates the prediction of arrival times for each
+    bus stop along a route
+
+    Loads the SGD model from a SAV file
+
+    Returns a dictionary of bus stop sequence number as key and the
+    variance in arrival time as the value
+
+    eg sequence 16: +20seconds
+    '''
 
     route_short_name = route_short_name
     stop_stop_sequence_list = stop_sequence_list
@@ -925,16 +924,16 @@ def predict(weather_temp, weather_rain, weather_humidity, time_period, weekday, 
     da_model = joblib.load(file)
 
     try:
-        # Make line equal to any of the lines in line_list
         binary="{0:08b}".format(line_list.index(route_short_name))
         numbers=list(binary)
-        numbers = [ int(x) for x in numbers ]
+        numbers = [int(x) for x in numbers]
 
         dataframe = pd.DataFrame(columns=('progr_number',  'rain', 'temp', 'rhum', 'Time_period', 'weekday', 'Col_1', 'Col_2', 'Col_3', 'Col_4', 'Col_5', 'Col_6', 'Col_7', 'Col_8'))
         features = ['progr_number',  'rain', 'temp', 'rhum', 'Time_period', 'weekday', 'Col_1', 'Col_2', 'Col_3', 'Col_4', 'Col_5', 'Col_6', 'Col_7', 'Col_8']
 
         for i in range(len(stop_stop_sequence_list)):
             dataframe.loc[i] = [stop_stop_sequence_list[i], weather_rain, weather_temp, weather_humidity, 2, weekday, numbers[0], numbers[1], numbers[2], numbers[3], numbers[4], numbers[5], numbers[6], numbers[7]]
+
     except:
         # Backup Model
         dataframe = pd.DataFrame(columns=('progr_number',  'rain', 'temp', 'rhum', 'Time_period', 'weekday', 'Col_1', 'Col_2', 'Col_3', 'Col_4', 'Col_5', 'Col_6', 'Col_7', 'Col_8'))
@@ -942,7 +941,6 @@ def predict(weather_temp, weather_rain, weather_humidity, time_period, weekday, 
 
         for i in range(len(stop_stop_sequence_list)):
             dataframe.loc[i] = [stop_stop_sequence_list[i], weather_rain, weather_temp, weather_humidity, 2, weekday, 0, 0, 0, 0, 0, 0, 0, 0]
-
 
     finally:
         time_dif_list = da_model.predict(dataframe[features])
@@ -954,8 +952,14 @@ def predict(weather_temp, weather_rain, weather_humidity, time_period, weekday, 
 
 
 
-
 def get_current_weather():
+    '''
+    Function that returns a list of the current weather
+    Connects to database where the data is stored
+
+    Returns temperature, rain and humidity
+    '''
+
     try:
         params = {
             'database': 'weather',
@@ -979,11 +983,7 @@ def get_current_weather():
             curs.close()
             conn.close()
 
-        #print("used current weather", weather_temp, weather_rain, weather_humidity)
-
     except:
-        #Backup weather
-        #print("Backup")
         weather_temp = 15
         weather_rain = 0
         weather_humidity = 80
@@ -993,6 +993,15 @@ def get_current_weather():
 
 
 def get_weather_forecast(datetime_object):
+    '''
+    Function that returns a list of the weather forecast for a specfied
+    date and time
+    Connects to database where the data is stored
+
+    Returns temperature, rain and humidity
+
+    Has Backup weather in case forecast is unavailable
+    '''
 
     params = {
         'database': 'weather',
@@ -1018,14 +1027,12 @@ def get_weather_forecast(datetime_object):
         weather_temp = rows[0][0]
         weather_rain = rows[0][1]
         weather_humidity = rows[0][2]
-        #print("used", rows[0][3], "actual time", date_string, "weather", weather_temp, weather_rain, weather_humidity)
 
     #Backup weather
     else:
         weather_temp = 15
         weather_rain = 0
         weather_humidity = 80
-        #print("Backup future", date_string, "weather", weather_temp, weather_rain, weather_humidity)
 
     if(conn):
         curs.close()
@@ -1034,7 +1041,14 @@ def get_weather_forecast(datetime_object):
     return [weather_temp, weather_rain, weather_humidity]
 
 
+
 def get_time_period(specified_date_time):
+    '''
+    Function that turns a specified time into a time period bin
+    that will be used with the predictive model
+
+    Returns an integer between 0 and 6
+    '''
 
     seconds =(specified_date_time.hour * 60 + specified_date_time.minute) * 60 + specified_date_time.second
 

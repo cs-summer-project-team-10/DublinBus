@@ -17,10 +17,6 @@ while True:
         curs = conn.cursor()
         print("Database connected")
 
-        #psql_query = 'INSERT INTO current_weather (city, weather_id, weather_main, weather_description, weather_temp, weather_rain, weather_humidity, timestamp) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);'
-        #values = ("Dublin City", "10d", "cloud", "cloudy", 19.2, 0, 85, date)
-
-        #response = requests.get("http://api.openweathermap.org/data/2.5/weather?q=Buenaventura,CO&appid=0927fd5dff272fdbd486187e54283310")
         response = requests.get("http://api.openweathermap.org/data/2.5/weather?id=7778677&APPID=0927fd5dff272fdbd486187e54283310")
         weather_data = json.loads(response.content.decode('utf-8'))
 

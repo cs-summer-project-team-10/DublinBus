@@ -15,6 +15,7 @@ def change_date_format(raw_day_of_service):
 
     return day_of_service
 
+
 with open("/home/stephen/Documents/College/Group_project/Sample_data/sorted_10000_rt_trips_DB_2018.csv", "r") as read_file:
     with open('reformatted_sorted_10000_rt_trips_DB_2018.csv','w') as write_file:
         reader = csv.reader(read_file, delimiter=';')

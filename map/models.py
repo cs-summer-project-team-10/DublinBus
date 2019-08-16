@@ -6,6 +6,7 @@ class Routes(models.Model):
     agency_id = models.CharField(verbose_name = "Agency associated with data", max_length=20)
     route_short_name = models.CharField(verbose_name = "Line ID", max_length=20)
 
+
 class Stops(models.Model):
 
     stop_id = models.CharField(primary_key = True, verbose_name = "Bus stop ID", max_length = 100)
@@ -13,6 +14,7 @@ class Stops(models.Model):
     stop_name = models.CharField(verbose_name = "Stop Name", max_length = 200)
     stop_lat = models.FloatField(verbose_name = "Stop Latitude")
     stop_lng = models.FloatField(verbose_name = "Stop Longitude")
+
 
 class CalendarService(models.Model):
 
@@ -27,6 +29,7 @@ class CalendarService(models.Model):
     saturday = models.BooleanField(verbose_name = "Serviced on this day")
     sunday = models.BooleanField(verbose_name = "Serviced on this day")
 
+
 class CalendarExceptions(models.Model):
 
     service_id = models.ForeignKey("CalendarService", on_delete=models.CASCADE, verbose_name = "Service ID from calendar table")
@@ -35,6 +38,7 @@ class CalendarExceptions(models.Model):
 
     class Meta:
         unique_together = ('service_id', 'exception_date')
+
 
 class Shapes(models.Model):
 
@@ -47,6 +51,7 @@ class Shapes(models.Model):
     class Meta:
         unique_together = ('shape_id', 'shape_point_sequence')
 
+
 class Trips(models.Model):
 
     trip_id = models.CharField(primary_key = True, verbose_name = "Unique trip ID that represents a route, time of day, direction and specific calendar schedule", max_length = 100)
@@ -58,8 +63,6 @@ class Trips(models.Model):
 
 
 #Insert Here Model from inspectDB
-
-
 class MapTripStopTimes(models.Model):
 
     trip = models.ForeignKey('Trips', models.CASCADE, primary_key=True)
